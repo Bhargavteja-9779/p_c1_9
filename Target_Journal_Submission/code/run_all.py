@@ -21,6 +21,7 @@ from data import datasets as D
 from training import grid as G
 from training.harness import run_cell
 from training.invariance import run_method_cell
+from training.shortcut import run_shortcut_cell
 from preprocessing.cache import features, feature_spec_to_pipe, dataset_orbits
 from preprocessing.standardize import OrbitConfig, PROTONATION_BACKEND
 
@@ -111,6 +112,20 @@ def _abl_job(args):
     return rows
 
 
+def _shortcut_job(args):
+    spec, seed, model, feat, split = args
+    tag = f"shortcut|{spec.name}|{seed}|{model}|{feat}"
+    c = _cached(tag)
+    if c is not None:
+        return c
+    try:
+        rows = [run_shortcut_cell(spec, seed, model_name=model, feat=feat, orbit_cfg=ORBIT_CFG)]
+    except Exception as e:
+        _log_fail(tag, e); return []
+    _save(tag, rows)
+    return rows
+
+
 def _method_job(args):
     spec, seed, model, feat, split = args
     tag = f"method|{spec.name}|{seed}|{model}|{feat}|{split}"
@@ -170,6 +185,12 @@ def main():
             for m in cfg["method_models"] for f in cfg["method_feats"]]
     meth = _run_pool(_method_job, jobs, args.nproc, "method")
     pd.DataFrame(meth).to_csv(os.path.join(RESULTS, "method_results.csv"), index=False)
+
+    print("[E5b semi-synthetic shortcut]", flush=True)
+    jobs = [(s, seed, m, "ecfp", split) for s in specs for seed in cfg["shortcut_seeds"]
+            for m in cfg["shortcut_models"]]
+    sc = _run_pool(_shortcut_job, jobs, args.nproc, "shortcut")
+    pd.DataFrame(sc).to_csv(os.path.join(RESULTS, "shortcut_results.csv"), index=False)
 
     print("DONE. Results in", RESULTS, flush=True)
 
