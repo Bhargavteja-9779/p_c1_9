@@ -1,0 +1,7 @@
+RUN {'mode': 'full', 'nproc': 4, 'device': 'cpu', 'protonation_backend': 'dimorphite_dl', 'n_datasets': 55, 'orbit_cfg': {'max_tautomers': 3, 'include_ph74': True, 'include_neutral': True, 'include_stripstereo': True, 'include_mdlarom': True, 'max_members': 6}}
+[precompute caches]
+  precompute 1/55: tdc:caco2_wang (31s)
+  precompute 2/55: tdc:ppbr_az (37s)
+  precompute 3/55: tdc:lipophilicity_astrazeneca (90s)
+  precompute 4/55: tdc:half_life_obach (140s)
+  precompute 5/55: tdc:clearance_hepatocyte_az (157s)

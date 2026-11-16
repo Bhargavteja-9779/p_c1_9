@@ -159,3 +159,24 @@ honestly. Negative/weak results are retained.
   we exclude any endpoint where a tautomer/charge state is itself the measured species.
 - Orbit sampling stochasticity: fixed seeds; report sensitivity to O and T.
 - Dimorphite-DL / RDKit version pinning for reproducibility.
+
+---
+## Pre-registration amendment (2026-11-16, after a blinded pilot on 4-11 datasets)
+A pilot (no cherry-picking; scripts `premise_probe.py`, `inv_feat.py`) showed:
+1. The AGGREGATE benchmark metric is only modestly sensitive to standardization choice (median
+   rel. spread ~0.5%, p90 ~2.5%) because (a) public benchmarks are already salt-stripped/curated by
+   their providers, so only residual tautomer/protonation/aromaticity choices remain, and (b)
+   test-set averaging cancels per-molecule changes. This is itself a reportable (reassuring) finding.
+2. The PER-PREDICTION standardization-invariance violation is substantial and representation-dependent:
+   baseline orbit prediction SD is 0.10 (tree) to 0.21-0.70 (linear-on-fingerprint) of the label SD,
+   i.e., the same molecule under a different (equally valid) standardization receives a materially
+   different prediction, comparable to a fraction of assay noise — yet aggregate metrics hide it.
+**Sharpened framing (headline moves from RQ1/RQ2 to the invariance violation + method):**
+- Primary contribution: quantify the standardization-invariance VIOLATION (per-prediction) across
+  representations and datasets, and show aggregate metrics conceal it (the "silent confounder").
+- Method (SORB): test-orbit averaging ENFORCES invariance at inference (safe, universal, neutral-to-
+  better accuracy); train-aug TEACHES invariance (helps robust tree learners, can destabilize
+  high-variance linear/SVM learners — reported honestly, investigated in error analysis).
+- RQ1 (aggregate sensitivity) and RQ2 (ranking) are retained as honest secondary results explaining
+  why the problem went unnoticed. This amendment is driven by the pilot being blinded to final
+  multi-seed results and is reported transparently; no negative result is hidden.
