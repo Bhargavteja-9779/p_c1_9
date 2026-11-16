@@ -1,0 +1,1177 @@
+{
+ "10.1021/acs.jcim.6c00727": [
+  2026,
+  "Reliable Molecular Retrieval from Mass Spectra Using Conformal Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c00597": [
+  2026,
+  "Multitask Learning\nfor Membrane Permeability Prediction\nacross Assays with Prediction Reliability Assessment",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c01633": [
+  2025,
+  "Conformal Selection for Efficient and Accurate Compound Screening in Drug Discovery",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c00484": [
+  2025,
+  "Enhancing Drug-Target Interaction Prediction through Transfer Learning from Activity Cliff Prediction Tasks",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.3c01524": [
+  2023,
+  "When Yield Prediction Does Not Yield Prediction: An Overview of the Current Challenges",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c01142": [
+  2025,
+  "HMBVIP: A Novel Hierarchical Multi-Bio-View Intelligent Prediction Networks for Drug\u2013Target Interaction Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02430": [
+  2026,
+  "Benchmarking Machine\nLearning Models for Viral Nanobody\nEpitope Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02416": [
+  2026,
+  "Spatially Resolved\nTranscriptomic Correlation Improves\nthe Prediction of Anticancer Drug Candidates",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02460": [
+  2026,
+  "Persistent Local\nLaplacian Prediction of Protein\u2013Ligand\nBinding Affinities",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c00697": [
+  2026,
+  "Bridging between\nStructure-Based and Data-Driven Affinity\nPrediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02933": [
+  2026,
+  "A Three-Level Noise\nFloor for Cyclodextrin Binding\nConstants and What It Permits for Descriptor-Based Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02021": [
+  2026,
+  "MMGNN: Multilevel, Multicolor Graph Neural Networks\nfor Molecular Property Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c01425": [
+  2026,
+  "Chemically Interpretable\nExplanations for Molecular\nProperty Prediction via Fragment-Level Shapley Values",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c01190": [
+  2026,
+  "Bayesian Uncertainty-Guided\nFidelity Fusion for Bioactivity\nPrediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02217": [
+  2026,
+  "Domain-Aware Feature\nEngineering for Prediction of\nMolecular Optical Interference in High-Throughput Screening",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c02949": [
+  2025,
+  "Small Single-Stranded DNA Structure Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.4c00426": [
+  2024,
+  "Benchmarking Methods for PROTAC Ternary Complex Structure Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c01171": [
+  2026,
+  "Enhancing Generalization\nin Synthesizability Prediction\nof Structurally Dissimilar Materials",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c00018": [
+  2025,
+  "Understanding Conformation Importance in Data-Driven Property Prediction Models",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02247": [
+  2026,
+  "RNADaemon: Reinforcement\nLearning-Guided Molecular\nDynamics for RNA Tertiary Structure Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02297": [
+  2026,
+  "Structure Prototype\nLearning for Federated Molecular\nProperty Prediction under Scaffold Heterogeneity",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c01209": [
+  2026,
+  "Self-Supervised\nLearning for Molecular Property Prediction:\nMethods, Multimodal Insights, and Benchmark Comparisons",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.4c01200": [
+  2024,
+  "Improving Crystal Property Prediction from a Multiplex Graph Perspective",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02159": [
+  2026,
+  "Learning from SILCS FragMaps: Combining Physics-Based\nEnergies with Artificial Intelligence for Rapid Drug Permeability\nPrediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.3c00771": [
+  2024,
+  "graphLambda: Fusion Graph Neural Networks for Binding Affinity Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02413": [
+  2026,
+  "GLH2Syn: Global\u2013Local Dual-View\nHeterogeneous Hypergraph Learning for Drug Synergy Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c00906": [
+  2025,
+  "Structure Prediction of Alternate Frame Folding Systems with AlphaFold3",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.2c01486": [
+  2023,
+  "AiZynthTrain: Robust,\nReproducible, and Extensible\nPipelines for Training Synthesis Prediction Models",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.3c01860": [
+  2024,
+  "ACPScanner: Prediction of Anticancer Peptides by Integrated Machine Learning Methodologies",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02049": [
+  2026,
+  "Surrogate Machine\nLearning Models for ADME Prediction:\nFrom Synthetic Labels to Experimental Data",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.2c01317": [
+  2023,
+  "Serverless Prediction of Peptide Properties with Recurrent Neural Networks",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c01386": [
+  2026,
+  "A Multimodal Semi-Supervised\nLearning Framework for\nPharmaceutical Cocrystals Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.2c00939": [
+  2022,
+  "Advances in RNA 3D Structure Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.3c01936": [
+  2024,
+  "Can Protein Structure Prediction Methods Capture Alternative Conformations of Membrane Transporters?",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c03155": [
+  2026,
+  "Energy-Guided Denoising Contrastive Learning for Molecular Property Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.3c00591": [
+  2023,
+  "Data-Driven Prediction of Configurational Stability of Molecule-Adsorbed Heterogeneous Catalysts",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c02094": [
+  2025,
+  "Descriptor-First Approach for ADMET Prediction in the PolarisHub Antiviral Challenge",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c01508": [
+  2025,
+  "Rethinking Retrosynthesis: Curriculum Learning Reshapes Transformer-Based Small-Molecule Reaction Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.3c00768": [
+  2023,
+  "DeepGRID: Deep Learning Using GRID Descriptors for BBB Prediction",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.5c00516": [
+  2025,
+  "Machine Learning Pipeline for Molecular Property Prediction Using ChemXploreML",
+  "conformal prediction"
+ ],
+ "10.1021/acs.jcim.6c02492": [
+  2026,
+  "Candidate Structure\nPrioritization in Non-Target Screening\nwith Predicted Collision Cross-Sections and Uncertainty Quantification",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c00981": [
+  2026,
+  "Uncertainty Quantification\nwith Domain Classification\nModels for Acetylcholinesterase Inhibition",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c02381": [
+  2026,
+  "Uncertainty Quantification in Molecular Machine Learning for Property Predictions under Data Shifts",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c01003": [
+  2025,
+  "Explainable Graph Neural Networks in Chemistry: Combining Attribution and Uncertainty Quantification",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.4c01578": [
+  2024,
+  "UNIQUE: A Framework for Uncertainty Quantification Benchmarking",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c00885": [
+  2026,
+  "Reliability-Aware Deep Learning Framework for Chemical Genotoxicity Prediction with Uncertainty Quantification",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c02178": [
+  2026,
+  "ElemeNet: Multiscale\nMolecular Machine Learning with\nUncertainty Quantification across the Periodic Table",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c01878": [
+  2026,
+  "Unimodal vs Multimodal\nLearning: A Systematic Evaluation\nof Fusion Strategies and Model Design for Molecular Property Prediction\nand Uncertainty Quantification",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c00464": [
+  2025,
+  "Upgrading Reliability in Molecular Property Prediction by Robust Quantification of Uncertainty from Machine Learning Models",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.4c01139": [
+  2024,
+  "Conformalized Graph Learning for Molecular ADMET Property Prediction and Reliable Uncertainty Quantification",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c01597": [
+  2025,
+  "Combining Bayesian and Evidential Uncertainty Quantification for Improved Bioactivity Modeling",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c00556": [
+  2025,
+  "Uncertainty Quantification and Temperature Scaling Calibration for Protein-RNA Binding Site Prediction",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c00762": [
+  2025,
+  "Site-of-Metabolism Prediction with Aleatoric and Epistemic Uncertainty Quantification",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.2c00972": [
+  2022,
+  "Rapid Automated Quantification of Triacylglyceride Crystallinity in Molecular Dynamics Simulations",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.4c01766": [
+  2024,
+  "Classification-Based Detection and Quantification of Cross-Domain Data Bias in Materials Discovery",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c00973": [
+  2026,
+  "Atomic Uncertainty Pinpoints Critical Failure Structures\nfor Trustworthy Molecular Property Prediction",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.4c01358": [
+  2024,
+  "Uncertainty Qualification for Deep Learning-Based Elementary Reaction Property Prediction",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c02541": [
+  2026,
+  "Uncertainty-Aware Prediction of\n                    <sup>195</sup>\n                    Pt Chemical Shifts from Limited Data",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c00550": [
+  2025,
+  "Assessing Uncertainty in Machine Learning for Polymer Property Prediction: A Benchmark Study",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.3c00373": [
+  2023,
+  "Characterizing Uncertainty in Machine Learning for Chemistry",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c01761": [
+  2026,
+  "CUE: A Chemical\nUncertainty-Aware Embedding Framework\nfor Multimodal Drug Selectivity Prediction",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c00249": [
+  2025,
+  "Improved Machine Learning Predictions of EC50s Using Uncertainty Estimation from Dose\u2013Response Data",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c00985": [
+  2026,
+  "Toward Class Imbalance\nand Uncertainty in Powder XRD\nAnalysis: A Dual-Channel Fusion Network for Space Group Classification",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.4c00555": [
+  2024,
+  "Accelerating Polymer Discovery with Uncertainty-Guided PGCNN: Explainable AI for Predicting Properties and Mechanistic Insights",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c00612": [
+  2025,
+  "Uncertainty-Informed Screening for Safer Solvents Used in the Synthesis of Perovskites via Language Models",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.3c00704": [
+  2023,
+  "How E-, L-, and P-Selectins Bind to sLe<sup>x</sup> and PSGL-1: A Quantification of Critical Residue Interactions",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.3c00601": [
+  2023,
+  "Linear-Scaling Kernels for Protein Sequences and Small Molecules Outperform Deep Learning While Providing Uncertainty Quantitation and Improved Interpretability",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c02083": [
+  2026,
+  "Optimizing Prediction of Chemical Bonds in Interfacial Dynamics through Local Uncertainty Estimates with Neural Network Ensembles",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.3c01241": [
+  2023,
+  "An Uncertainty-Guided Deep Learning Method Facilitates Rapid Screening of CYP3A4 Inhibitors",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c01177": [
+  2026,
+  "Decoding Molecular\nBinding Equilibria through Uncertainty-Aware\nMemory Retrieval",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c02075": [
+  2026,
+  "KinEAGER: An Evidence-Aware\nMultitask Model with Calibrated\nUncertainty for Enzyme Kinetics Prediction",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.6c00127": [
+  2026,
+  "Trans-GP: Uncertainty-Calibrated Antibody\u2013Antigen Binding Classification Using Protein Language Models",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c00947": [
+  2025,
+  "Quantification of the Impact of Structure Quality on Predicted Binding Free Energy Accuracy",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.4c02219": [
+  2025,
+  "KUTE: Green\u2013Kubo Uncertainty-Based Transport Coefficient Estimator",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c03023": [
+  2026,
+  "DUW-MGCA: A Dynamic Uncertainty-Weighted Multi-Granularity Coattention Framework for Protein\u2013Ligand Interaction Prediction from Hybrid QM/MD Data",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.4c02332": [
+  2025,
+  "T-ALPHA: A Hierarchical Transformer-Based Deep Neural Network for Protein\u2013Ligand Binding Affinity Prediction with Uncertainty-Aware Self-Learning for Protein-Specific Alignment",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.2c00041": [
+  2022,
+  "Machine Learning on DNA-Encoded Library Count Data Using an Uncertainty-Aware Probabilistic Loss Function",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.5c01532": [
+  2025,
+  "Uncertainty-Aware Deep Learning and Structural Feature Analysis for Reliable Nephrotoxicity Prediction",
+  "uncertainty quantification"
+ ],
+ "10.1021/acs.jcim.2c00786": [
+  2022,
+  "Spectral Encoder to Extract the Features of Near-Infrared Spectra for Multivariate Calibration",
+  "calibration probability"
+ ],
+ "10.1021/acs.jcim.2c00758": [
+  2022,
+  "Inclusion of High-Field Target Data in AMOEBA\u2019s Calibration Improves Predictions of Protein\u2013Ion Interactions",
+  "calibration probability"
+ ],
+ "10.1021/acs.jcim.4c00704": [
+  2024,
+  "Evolutionary Probability and Stacked Regressions Enable Data-Driven Protein Engineering with Minimized Experimental Effort",
+  "calibration probability"
+ ],
+ "10.1021/acs.jcim.4c02235": [
+  2025,
+  "Optimizing On-the-Fly Probability Enhanced Sampling for Complex RNA Systems: Sampling Free Energy Surfaces of an H-Type Pseudoknot",
+  "calibration probability"
+ ],
+ "10.1021/acs.jcim.5c00214": [
+  2025,
+  "Batched Bayesian Optimization by Maximizing the Probability of Including the Optimum",
+  "calibration probability"
+ ],
+ "10.1021/acs.jcim.5c03220": [
+  2026,
+  "Generation of Molecules Near the Applicability Domain Boundaries of Property Prediction Models",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.2c00293": [
+  2022,
+  "Isometric Stratified Ensembles: A Partial and Incremental Adaptive Applicability Domain and Consensus-Based Classification Strategy for Highly Imbalanced Data Sets with Application to Colloidal Aggregation",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c01672": [
+  2025,
+  "ADvisor: An Open-Source Tool for Applicability Domain Definition and Optimization in Molecular Predictive Modeling",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c01227": [
+  2025,
+  "Systematic Search for Blood\u2013Brain Barrier Modulating Peptides Based on Exhaustive E-Cadherin Domain\u2013Domain Docking",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c02122": [
+  2025,
+  "Boosting Drug Discovery: Expanding the Applicability of Fragment Dissolved Molecular Dynamics to Accelerate Binding Mode Elucidation",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c03093": [
+  2026,
+  "Enhanced Sampling on Domain/Motif Level with Kinetic Accelerated Molecular Dynamics",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.6c01321": [
+  2026,
+  "QRxVision: Multimodal\nQR Encoding and Computer Vision\nfor Domain-Specific Drug Discovery",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.4c02029": [
+  2025,
+  "Cost-Efficient Domain-Adaptive Pretraining of Language Models for Optoelectronics Applications",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.2c01259": [
+  2023,
+  "OpticalBERT and\nOpticalTable-SQA: Text- and Table-Based\nLanguage Models for the Optical-Materials Domain",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.4c01932": [
+  2025,
+  "Effects of Point Mutations on the Thermal Stability of the NBD1 Domain of hCFTR",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c02521": [
+  2026,
+  "Conformational Transition of the CARF Domain Driven by Binding Free Energy",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.6c00136": [
+  2026,
+  "Autogenerating\na Domain-Specific Question-Answering\nData Set to Enable High-Performing Language Models for Magnetic Materials",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c00833": [
+  2025,
+  "Covalent Adducts Formed by the Androgen Receptor Transactivation Domain and Small Molecule Drugs Remain Disordered",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.2c01277": [
+  2022,
+  "Learning Cell Annotation under Multiple Reference Datasets by Multisource Domain Adaptation",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.3c01387": [
+  2023,
+  "E2EDA: Protein Domain Assembly Based on End-to-End Deep Learning",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.6c00304": [
+  2026,
+  "Benchmarking Experiments\nwith External Data, Domain-Specific\nFeatures, and Learning Strategies for Modeling ADME and Potency of\nCoronavirus Main Protease Inhibitors",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.6c01601": [
+  2026,
+  "Computational Study\nof Allosteric Switch of NLRP3:\nHow ATP Binding Unlocks the NACHT Domain",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.1c01283": [
+  2022,
+  "Effect of an Inhibitor on the ACE2-Receptor-Binding Domain of SARS-CoV-2",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.3c01822": [
+  2024,
+  "Helical Content Correlations and Hydration Structures of the Folding Ensemble of the B Domain of Protein A",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c02828": [
+  2025,
+  "Enhanced and Classical MD Simulations Map Aggregation-Prone Regions in the Olfactomedin Domain of Myocilin",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.4c00063": [
+  2024,
+  "How Beneficial Is Pretraining on a Narrow Domain-Specific Corpus for Information Extraction about Photocatalytic Water Splitting?",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.2c01660": [
+  2023,
+  "Conformational and Thermodynamic Differences Underlying Wild-Type and Mutant Eleven-Nineteen-Leukemia YEATS Domain Specificity for Epigenetic Marks",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.6c02202": [
+  2026,
+  "A Chemical Foundation\nModel Benchmark for PFAS Bioactivity\nPrediction: Multi-Task Fine-Tuning Beats Fingerprint Baselines, PFAS\nDomain Pretraining Does Not Help",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.2c00303": [
+  2022,
+  "Catalytic Mechanism of ATP Hydrolysis in the ATPase Domain of Human DNA Topoisomerase II\u03b1",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.3c00688": [
+  2023,
+  "SDBA: Score Domain-Based Attention for DNA N4-Methylcytosine Site Prediction from Multiperspectives",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.6c00359": [
+  2026,
+  "Force Field Evaluation\nfor an Intrinsically Disordered\nDomain: MD\u2013NMR\u2013FCS Benchmarking of Protein 4.1G Headpiece\nEnsembles",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c00840": [
+  2025,
+  "Autogenerating a Domain-Specific Question-Answering Data Set from a Thermoelectric Materials Database to Enable High-Performing BERT Models",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.2c00397": [
+  2022,
+  "Omicron Binding Mode: Contact Analysis and Dynamics of the Omicron Receptor-Binding Domain in Complex with ACE2",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c01839": [
+  2025,
+  "Targeting SARS-CoV-2 Receptor Binding Domain and Main Protease with D-Peptides",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.1c01508": [
+  2022,
+  "Dissociation Pathways of the p53 DNA Binding Domain from DNA and Critical Roles of Key Residues Elucidated by dPaCS-MD/MSM",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c02033": [
+  2025,
+  "QCBench: Evaluating Large Language Models on Domain-Specific Quantitative Chemistry",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c00629": [
+  2025,
+  "Dual-Site Targeting by Peptide Inhibitors of the N-Terminal Domain of Hsp90: Mechanism and Design",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c00070": [
+  2025,
+  "Boosting Drug-Disease Association Prediction for Drug Repositioning via Dual-Feature Extraction and Cross-Dual-Domain Decoding",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c03121": [
+  2026,
+  "Evaluating Molecular Representations for Predicting Cyclodextrin-PFAS Binding Energy with Machine Learning: Domain Transfer and Data Limitations",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.5c01207": [
+  2025,
+  "PAZ Domain Pivoting is the Rate-Limiting Step for Target DNA Recognition in the Middle Region of <i>Thermus thermophilus</i> Argonaute",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.3c01319": [
+  2023,
+  "Binding of Cholesterol to the N-Terminal Domain of the NPC1L1 Transporter: Analysis of the Epimerization-Related Binding Selectivity and Loop Mutations",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.2c00984": [
+  2022,
+  "Conformational Analysis of the Loop-to-Helix Transition of the \u03b1-Helix3 Plastic Region in the N-Terminal Domain of Human Hsp90\u03b1 by a Computational Biochemistry Approach",
+  "applicability domain"
+ ],
+ "10.1021/acs.jcim.6c02120": [
+  2026,
+  "State-Constrained\nSHAP Distills Polymer Property Models\ninto Transferable Structural Rules for Fixed-Interval Screening",
+  "prediction interval"
+ ],
+ "10.1021/acs.jcim.6c01847": [
+  2026,
+  "Toward Imbalanced\nMolecular Property Regression: A\nBenchmark Study and Interval-Aware Mixture of Experts",
+  "prediction interval"
+ ],
+ "10.1021/acs.jcim.2c01383": [
+  2023,
+  "Message Passing Neural Networks Improve Prediction of Metabolite Authenticity",
+  "prediction interval"
+ ],
+ "10.1021/acs.jcim.5c00506": [
+  2025,
+  "iCliff Taylor\u2019s Version: Robust and Efficient Activity Cliff Determination",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.2c00327": [
+  2022,
+  "ACGCN: Graph Convolutional Networks for Activity Cliff Prediction between Matched Molecular Pairs",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.5c00949": [
+  2025,
+  "Task-Specific Activity Cliff Prediction Method Based on Transfer Learning and a Hyper Connection Graph Model",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.5c01915": [
+  2025,
+  "MAPCliff-WMGR: Exploring Activity Cliffs in Molecular Activity Prediction Enhanced by Weighted Molecular Graph Representations",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c00380": [
+  2026,
+  "Efficiently Finding Activity Cliffs with BitBIRCH",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.5c02858": [
+  2026,
+  "AssayMatch: Learning To Select Data for Molecular Activity Models",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.2c00104": [
+  2022,
+  "Current Trends in Computational Quantum Chemistry Studies on Antioxidant Radical Scavenging Activity",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.1c01163": [
+  2022,
+  "Benchmarking Molecular Feature Attribution Methods with Activity Cliffs",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.5c00189": [
+  2025,
+  "Understanding RNA Chaperone Activity of ProQ Protein",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.4c00525": [
+  2024,
+  "FerroLigandDB: A Ferroptosis Ligand Database of Structure\u2013Activity Relations",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.3c00423": [
+  2023,
+  "Correction to \u201cExposing\nthe Limitations of\nMolecular Machine Learning with Activity Cliffs\u201d",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.4c00228": [
+  2024,
+  "Multifaceted Activity of Fabimycin: Insights from Molecular Dynamics Studies on Bacterial Membrane Models",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.2c01073": [
+  2022,
+  "Exposing the Limitations of Molecular Machine Learning with Activity Cliffs",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.5c00465": [
+  2025,
+  "Predicting Biological Activity from Biosynthetic Gene Clusters Using Neural Networks",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.5c01556": [
+  2025,
+  "Structural, Thermodynamic, and Dynamic Descriptors for the Differential Mechanism of HIF-2 Activity Modulators",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.4c00485": [
+  2024,
+  "Ligand-Based Compound Activity Prediction via Few-Shot Learning",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c02365": [
+  2026,
+  "PriMPT: Prior-Informed\nMultiscale Paired-Token Representation\nLearning for CRISPR/Cas9 Off-Target Cleavage Activity Prediction",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.1c01578": [
+  2022,
+  "Graph-Based Feature Selection Approach for Molecular Activity Prediction",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.5c01112": [
+  2025,
+  "Exploring Peptide\u2019s\nAntifreeze Activity Using\na Semi-Automated Molecular Dynamics-Enabled Screening Framework",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.3c01530": [
+  2023,
+  "Anatomy of Potency Predictions Focusing on Structural Analogues with Increasing Potency Differences Including Activity Cliffs",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.3c00032": [
+  2023,
+  "Activity Map and Transition Pathways of G Protein-Coupled Receptor Revealed by Machine Learning",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.3c01576": [
+  2023,
+  "Correction to \u201cExposing the Limitations of Molecular Machine Learning with Activity Cliffs\u201d",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.2c01551": [
+  2023,
+  "Bacteria-Specific Feature Selection for Enhanced Antimicrobial Peptide Activity Predictions Using Machine-Learning Methods",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c00317": [
+  2026,
+  "Mapping Allosteric Communication in the Nucleosome with Conditional Activity",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.2c01531": [
+  2023,
+  "Activity Models of Key GPCR Families in the Central Nervous System: A Tool for Many Purposes",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.3c00137": [
+  2023,
+  "Predicting Antimicrobial Activity for Untested Peptide-Based Drugs Using Collaborative Filtering and Link Prediction",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c02144": [
+  2026,
+  "DeepMolVir: Learning Virtual Virus Representations\nfor Sequence-Aware Virus\u2013Inhibitor Activity Prediction",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c00199": [
+  2026,
+  "GHGEAT: Gibbs\u2013Helmholtz-Constrained Graph External Attention for Temperature-Dependent Activity Coefficient Prediction at Infinite Dilution",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.5c01830": [
+  2025,
+  "TCNeKP: A Novel Deep Learning Architecture for Enzyme Catalytic Activity Prediction",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c01736": [
+  2026,
+  "Mechanistic Origins\nof Enhanced PET Hydrolase Activity\nfrom Molecular Dynamics and Deep Learning-Assisted Network Analysis",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.3c00465": [
+  2023,
+  "MolSHAP: Interpreting Quantitative Structure\u2013Activity Relationships Using Shapley Values of R-Groups",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c00128": [
+  2026,
+  "MotifLeadDB: A Hierarchical Structural Data Set for Congeneric Ligand Binding Activity Change",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.4c02020": [
+  2025,
+  "Lipid Shape as a Membrane Activity Modulator of a Fusogenic Antimicrobial Peptide",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.3c02050": [
+  2024,
+  "Predicting the Activity of Unidentified Chemicals in Complementary Bioassays from the HRMS Data to Pinpoint Potential Endocrine Disruptors",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c02659": [
+  2026,
+  "A Task-Adaptive\nMultimodal Pretrained Framework for\nAntibiotic Virtual Screening with Joint Activity and Cytotoxicity\nPrediction",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.4c01713": [
+  2025,
+  "High-Accuracy Identification and Structure\u2013Activity Analysis of Antioxidant Peptides via Deep Learning and Quantum Chemistry",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.2c01419": [
+  2023,
+  "Bridging Thermodynamics, Antimicrobial Activity, and pH Sensitivity of Cationic Membranolytic Heptapeptides\u2013A Computational and Experimental Study",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c00067": [
+  2026,
+  "Exploring Chemoinformatics Aspects of Few-Shot Meta-Learning by Example of an Infinite Dilution Activity Coefficient in Ionic Liquid Prediction",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.6c00524": [
+  2026,
+  "PegaPlus\u2500Interactive Machine Learning by Human Observation for Efficient Clustering and Analysis of Structure\u2013Activity Data",
+  "activity cliff"
+ ],
+ "10.1021/acs.jcim.5c01262": [
+  2025,
+  "MS25: Materials Science-Focused Benchmark Data Set for Machine Learning Interatomic Potentials",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.5c01372": [
+  2025,
+  "Precision in Predicting Protein\u2013Nucleic Acid Complexes: Establishing a Benchmark Data Set and Comparative Metrics",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c00819": [
+  2026,
+  "An End-User Audit of Reproducibility, Data Leakage,\nand Overfitting of the Top-Ranked ADMET Prediction Models in TDC Leaderboards",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.2c01472": [
+  2023,
+  "Solvent Model Benchmark\nfor Molecular Dynamics of\nGlycosaminoglycans",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c01293": [
+  2026,
+  "Multiparadigm Benchmark\nof Molecular Docking: From\nPhysics to Co-Folding and Hybrid Models",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c00677": [
+  2026,
+  "Can LLMs Solve\nSolubility Tasks? The SoluBench Benchmark\nfor Pure and Mixed Solvent Systems",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c00295": [
+  2026,
+  "QUASAR: A Universal Autonomous System for Atomistic Simulation and a Benchmark of Its Capabilities",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.5c00719": [
+  2025,
+  "A Benchmark Set of Bioactive Molecules for Diversity Analysis of Compound Libraries and Combinatorial Chemical Spaces",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.3c01894": [
+  2024,
+  "Prevention of Leakage in Machine Learning Prediction for Polymer Composite Properties",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c00259": [
+  2026,
+  "3DOpt: Benchmark for Automated Design of 3D Molecular Structures across the Periodic Table",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c02552": [
+  2026,
+  "Public Database\nLeakage Distorts Model Rankings in\nReal-Spectra NMR Structure Elucidation",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.5c03092": [
+  2026,
+  "A Comprehensive Benchmark Database of Per- and Polyfluoroalkyl Substance Properties from Quantum Mechanical Methods",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.5c03212": [
+  2026,
+  "Comprehensive Assessment and Benchmark of Deep Generative Models for Proteolysis TArgeting Chimera (PROTAC) Design",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.2c01355": [
+  2023,
+  "Generative Models Should at Least Be Able to Design Molecules That Dock Well: A New Benchmark",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.5c02978": [
+  2026,
+  "xTB-Based High-Throughput Screening of TADF Emitters: 747-Molecule Benchmark",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c01457": [
+  2026,
+  "The LiPP Benchmark Set for Modeling Lipid\u2013Protein Complexes: Comparison of Co-Folding and Docking Methods",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c01742": [
+  2026,
+  "Membrane Lipid\nComposition and Asymmetry Modulate\nTranslocation Versus Leakage of the Model Amphipathic Peptide MAP",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.4c02232": [
+  2024,
+  "Durian: A Comprehensive Benchmark for Structure-Based 3D Molecular Generation",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.4c01598": [
+  2024,
+  "How Good are Current Pocket-Based 3D Generative Models?: The Benchmark Set and Evaluation of Protein Pocket-Based 3D Molecular Generative Models",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c00286": [
+  2026,
+  "RxnBench: A Multimodal Benchmark for Evaluating Large Language Models on Chemical Reaction Understanding from the Scientific Literature",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.4c01280": [
+  2024,
+  "Geometry Optimization Using the Frozen Domain and Partial Dimer Approaches in the Fragment Molecular Orbital Method: Implementation, Benchmark, and Applications to Protein Ligand-Binding Sites",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.3c00761": [
+  2023,
+  "A Comparative Analysis of Data Synthesis Techniques to Improve Classification Accuracy of Raman Spectroscopy Data",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c02093": [
+  2026,
+  "DockBind: A Quality-Controlled\nData Set of Modeled\nProtein\u2013Ligand Complexes Associated with Affinity Data",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.3c00607": [
+  2023,
+  "Data Sharing in Chemistry: Lessons Learned and a Case for Mandating Structured Reaction Data",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.4c00292": [
+  2024,
+  "ORDerly: Data Sets and Benchmarks for Chemical Reaction Data",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.5c00608": [
+  2025,
+  "COMPAS-4: A Data Set of (BN)\n                    <sub>1</sub>\n                    Substituted\n                    <i>Cata</i>\n                    -Condensed Polybenzenoid Hydrocarbons\u2500Data Analysis and Feature Engineering",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c00542": [
+  2026,
+  "Data Management and Analysis of Metal\u2013Organic Framework Synthesis Using Data Models",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.5c01049": [
+  2025,
+  "Computational Material\nScience Has a Data Problem",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c01764": [
+  2026,
+  "<i>In Silico</i>\n                    Isomerization Produces\nApt Negative Data for VHTS Validation",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.6c02115": [
+  2026,
+  "Ranking-Based Surrogate\nModeling for Bayesian Optimization\nunder Small-Data Conditions",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.2c01189": [
+  2023,
+  "Blinded Predictions and Post Hoc Analysis of the Second Solubility Challenge Data: Exploring Training Data and Feature Set Selection for Machine and Deep Learning Models",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.3c01281": [
+  2023,
+  "Snowball 2.0: Generic Material Data Parser for ChemDataExtractor",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.4c02373": [
+  2025,
+  "MHNfs: Prompting In-Context Bioactivity Predictions\nfor Low-Data Drug Discovery",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.2c00779": [
+  2022,
+  "Few-Shot Learning for Low-Data Drug Discovery",
+  "data leakage benchmark"
+ ],
+ "10.1021/acs.jcim.3c01774": [
+  2024,
+  "Real-World Molecular Out-Of-Distribution: Specification and Investigation",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.5c03204": [
+  2026,
+  "Pseudodata-Guided Invariant Representation Learning Boosts the Out-of-Distribution Generalization in Enzymatic Kinetic Parameter Prediction",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.5c00475": [
+  2025,
+  "Evaluating Machine Learning Models for Molecular Property Prediction: Performance and Robustness on Out-of-Distribution Data",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.5c02610": [
+  2026,
+  "The Disordered JM Motif in RTKs Promotes Classical DFG\n                    <sub>\n                      <i>out</i>\n                    </sub>\n                    Conformation Formation via the Dynamic Effect",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.4c00054": [
+  2024,
+  "HBCalculator: A Tool for Hydrogen Bond Distribution Calculations in Molecular Dynamics Simulations",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.4c02229": [
+  2025,
+  "Digging out the Molecular Connections between the Catalytic Mechanism of Human Lysosomal \u03b1-Mannosidase and Its Pathophysiology",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.5c02389": [
+  2026,
+  "Deep GIST: Deep Learning Models for Predicting the Distribution of Hydration Thermodynamics around Proteins",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.2c01272": [
+  2022,
+  "Accelerated Enveloping Distribution Sampling (AEDS) Allows for Efficient Sampling of Orthogonal Degrees of Freedom",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.6c01358": [
+  2026,
+  "ToxiSpecies: Task-Aware\nMeta-Learning for Cross-Species\nModeling of Acute Chemical Toxicity under Distribution Shift",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.4c00639": [
+  2024,
+  "Denoising Drug Discovery Data for Improved Absorption, Distribution, Metabolism, Excretion, and Toxicity Property Prediction",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.6c01684": [
+  2026,
+  "Correction to \u201cDeep GIST: Deep Learning Models for Predicting the Distribution of Hydration Thermodynamics around Proteins\u201d",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.5c00102": [
+  2025,
+  "Construction of PROTAC-Mediated Ternary Complex Structure Distribution Profiles Using Extensive Conformational Search",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.5c00746": [
+  2025,
+  "NOX Transmembrane Electron Transfer Is Governed by a Subtly Balanced, Self-Adjusting Charge Distribution",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.4c02014": [
+  2025,
+  "Graph-Based Deep Learning Models for Thermodynamic Property Prediction: The Interplay between Target Definition, Data Distribution, Featurization, and Model Architecture",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.2c00245": [
+  2022,
+  "Exploring Deep Learning of Quantum Chemical Properties for Absorption, Distribution, Metabolism, and Excretion Predictions",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.4c00046": [
+  2024,
+  "Development of Novel Methods for QSAR Modeling by Machine Learning Repeatedly: A Case Study on Drug Distribution to Each Tissue",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.5c01838": [
+  2025,
+  "Predicting and Analyzing Nitrate Adsorption on High-Entropy Alloys Based on Pair Distribution Function Using a Hybrid Machine Learning Framework",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.3c00160": [
+  2023,
+  "Prospective Validation of Machine Learning Algorithms for Absorption, Distribution, Metabolism, and Excretion  Prediction: An Industrial Perspective",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.3c01350": [
+  2023,
+  "Distribution of Bound Conformations in Conformational Ensembles for X-ray Ligands Predicted by the ANI-2X Machine Learning Potential",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.2c01373": [
+  2023,
+  "Using Machine Learning\nTo Predict Partition Coefficient\n(Log\n                    <i>P</i>\n                    ) and Distribution Coefficient (Log\n                    <i>D</i>\n                    ) with Molecular Descriptors and Liquid Chromatography\nRetention Time",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.2c00318": [
+  2022,
+  "Predicting Total Drug Clearance and Volumes of Distribution Using the Machine Learning-Mediated Multimodal Method through the Imputation of Various Nonclinical Data",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.2c00383": [
+  2022,
+  "Replica-Exchange Enveloping Distribution Sampling Using Generalized AMBER Force-Field Topologies: Application to Relative Hydration Free-Energy Calculations for Large Sets of Molecules",
+  "out-of-distribution"
+ ],
+ "10.1021/acs.jcim.6c01505": [
+  2026,
+  "SSE-DDI: Selective\nSubstructure Encoding with Bond-Centered\nMolecular Representations for Drug\u2013Drug Interaction Prediction",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.6c01234": [
+  2026,
+  "MSR-ARN: A Multiscale\nResidual Attentive Deep Learning\nFramework for Chemical Space-Guided Prediction of Selective MMP-12\nInhibitors",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.4c02153": [
+  2025,
+  "Rationalizing Predictions of Isoform-Selective Phosphoinositide 3-Kinase Inhibitors Using MolAnchor Analysis",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.2c01281": [
+  2023,
+  "Structural Dynamics\nof Lys11-Selective Deubiquitinylase\nCezanne\u20111 during the Catalytic Cycle",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.5c00951": [
+  2025,
+  "RiSKs in Computational\nModeling of Isoform-Selective\nRSK Inhibitors",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.6c01267": [
+  2026,
+  "Closed-Loop Multi-Objective\nOptimization for Receptor-Selective\nCell-Penetrating Peptide Design",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.3c01630": [
+  2023,
+  "Mechanism of Selective Aromatic Hydroxylation in the Metabolic Transformation of Paclitaxel Catalyzed by Human CYP3A4",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.5c02403": [
+  2026,
+  "Identification of Subtype-Selective Binding Sites in the Opioid Receptor Family",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.6c00021": [
+  2026,
+  "Structural and Energetic Basis of Ca\n                    <sup>2+</sup>\n                    -Selective Permeation in the TRPV5 Channel",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.4c02022": [
+  2025,
+  "mTOR Variants Activation Discovers PI3K-like Cryptic Pocket, Expanding Allosteric, Mutant-Selective Inhibitor Designs",
+  "selective prediction"
+ ],
+ "10.1021/acs.jcim.5c02054": [
+  2025,
+  "Robust Chemical Reaction Condition Recommendations via Label Mix Strategy",
+  "noise label"
+ ],
+ "10.1021/acs.jcim.6c01188": [
+  2026,
+  "MMU-DPI: Enhancing\nGeneralization in Drug\u2013Protein\nInteraction Prediction through Multimodal Learning and a Label Mix\nStrategy",
+  "noise label"
+ ],
+ "10.1021/acs.jcim.6c00294": [
+  2026,
+  "DWPL-GCNMF: Structure-Aware Dynamic Weighted Pseudo-Label Learning for Adverse Drug Reaction Prediction",
+  "noise label"
+ ],
+ "10.1021/acs.jcim.4c01589": [
+  2024,
+  "TIWMFLP: Two-Tier Interactive Weighted Matrix Factorization and Label Propagation Based on Similarity Matrix Fusion for Drug-Disease Association Prediction",
+  "noise label"
+ ],
+ "10.1021/acs.jcim.4c00049": [
+  2024,
+  "Combining IC\n                    <sub>50</sub>\n                    or\n                    <i>K</i>\n                    <sub>\n                      <i>i</i>\n                    </sub>\n                    Values from Different Sources Is a Source of Significant Noise",
+  "noise label"
+ ],
+ "10.1021/acs.jcim.6c01242": [
+  2026,
+  "MVGCL: Noise-Robust\nMulti-Source Similarity Fusion\nand Type-Aware Dual-Pathway Learning for Drug Repositioning",
+  "noise label"
+ ],
+ "10.1021/acs.jcim.5c01164": [
+  2025,
+  "Noise-Consistent Hypergraph Autoencoder Based on Contrastive Learning for Cancer ceRNA Association Prediction in Complex Biological Regulatory Networks",
+  "noise label"
+ ]
+}

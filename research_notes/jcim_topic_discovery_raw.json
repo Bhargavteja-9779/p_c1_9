@@ -1,0 +1,671 @@
+[
+ {
+  "jif": "Not delivered. A safety classifier stopped my earlier final answer, and I was told not to produce that content again, even reworded. This run should be treated as incomplete.",
+  "jcr_quartiles": "Not delivered: the earlier answer was withheld by a safety classifier.",
+  "apc": "Not delivered: the earlier answer was withheld by a safety classifier.",
+  "scope": "Not delivered: the earlier answer was withheld by a safety classifier.",
+  "author_guidelines": "Not delivered: the earlier answer was withheld by a safety classifier.",
+  "ml_editorial_expectations": "Not delivered: the earlier answer was withheld by a safety classifier.",
+  "benchmark_papers": [],
+  "quality_benchmark_summary": "Not delivered. A safety classifier stopped the earlier final answer, and I was told not to produce that content again. No findings from this run are recorded here. If the benchmark is still needed, the workflow should re-run this step."
+ },
+ {
+  "landscape_summary": "UQ for molecular property/activity prediction is a crowded space, but the sub-problems cluster into a few well-worked areas and a couple of genuine holes. WELL-WORKED (treat as baselines/kill-list, not contributions): (a) conformal prediction (CP) as a formal applicability-domain replacement and QSAR interval method (Xu 2023 arXiv:2304.00970; Or\u0161oli\u0107 2023 Bioinformatics 10.1093/bioinformatics/btad465; CPSign 2024 10.1186/s13321-024-00870-9); (b) CP coverage collapse under scaffold/covariate shift and weighted/density-ratio fixes (CoDrug 2023 arXiv:2310.12033; KMM-CP 2026 arXiv:2603.26415; temporal recalibration Morger 2022 10.1038/s41598-022-09309-3); (c) conformal SELECTION with FDR control for compound prioritisation \u2014 now published IN JCIM (Bai 2025 10.1021/acs.jcim.5c01633), with the general ML machinery mature (Jin & Cand\u00e8s 2022 arXiv:2210.01408, 2023 arXiv:2307.09291; MCCS 2025 arXiv:2510.08075; SCoRE 2026 arXiv:2603.24704); (d) Venn-ABERS/probability calibration (Mervin 2020 10.1021/acs.jcim.0c00476); (e) class-conditional Mondrian fixing minority under-coverage (Tursunbadalov 2026 arXiv:2607.06605); (f) a sharp negative result showing selective-prediction abstention tracks local label variance not novelty and does NOT beat point-ranking for prioritisation (Srivastava & Kassetty 2026 arXiv:2611.01512). THE CLEAREST OPEN HOLE is censored/qualified labels meeting conformal methods. Censored activity labels are ~24% of ChEMBL potency records (NeurIPS 2026 abstract, unverified), and the pharma-ML community has attacked TRAINING with them (Tobit UQ: Svensson 2025 10.1016/j.ailsci.2025.100128; temporal shift: Friesacher 2025 10.1016/j.ailsci.2025.100132) \u2014 but NOT conformal calibration/selection. Meanwhile all conformal-censored theory lives in survival analysis with random RIGHT-censoring (Cand\u00e8s 2021 arXiv:2103.09763; Gui/Barber 2022 arXiv:2211.01227; Sesia & Svetnik 2024 arXiv:2412.09729; Holmes & Marandon 2024 arXiv:2410.24136), a different regime from molecular assay censoring, which is type-I-like (threshold known for every record) and typically one-sided at a detection/solubility limit. No one has asked: what happens to CP coverage, to interval width, or to FDR-controlled hit selection when the CALIBRATION labels themselves are bounds? Naive practice silently drops ~a quarter of data or imputes bounds as exact, both of which should break the guarantee. This gap is precise, testable, strongly baselined, multi-dataset (ChEMBL native qualifiers + semi-synthetic censoring on 15-22 TDC/MoleculeNet regression sets), CPU-cheap (fingerprints + LightGBM/sklearn), and defensible on validity/efficiency/decision-quality even if point accuracy only ties. Two secondary holes are also viable: new-group (unseen-scaffold-cluster) coverage via hierarchical exchangeability (theory exists \u2014 Lee/Barber/Willett 2023 arXiv:2306.06342 \u2014 but untested on chemotypes), and a practical-significance, multi-dataset audit (per Ash 2025 10.1021/acs.jcim.5c01609) of whether any UQ signal improves downstream decisions over point-ranking, generalising Srivastava's 2-dataset negative result.",
+  "candidates": [
+   {
+    "id": "C1",
+    "title": "Censoring-aware conformal prediction for molecular activity: valid intervals when the calibration labels are qualified (>/<)",
+    "problem": "In real bioactivity data a large fraction of potency labels are censored (reported as '>X' or '<X' at an assay detection/solubility limit, not an exact value). Split conformal prediction assumes every calibration point yields a computable nonconformity score |y-yhat|, which a bound does not. Practitioners therefore either drop censored rows (discarding ~a quarter of data, and non-randomly \u2014 censoring correlates with inactivity/edge-of-range) or impute the bound as an exact value. Both silently violate the exchangeability/scoring assumptions that CP's coverage guarantee rests on, yet no cheminformatics work quantifies the damage or offers a principled calibration under censoring.",
+    "what_exists": "Conformal regression for QSAR with exact labels (Xu 2023 arXiv:2304.00970; CPSign 2024). Training-side censored-label methods: Tobit-based UQ (Svensson 2025 10.1016/j.ailsci.2025.100128) and temporal-shift UQ (Friesacher 2025 10.1016/j.ailsci.2025.100132) \u2014 both learn from bounds but evaluate point/UQ accuracy, never conformal calibration. Conformal theory for censoring exists only in survival analysis with random right-censoring (Cand\u00e8s 2021 arXiv:2103.09763; Gui/Barber 2022 arXiv:2211.01227; Sesia & Svetnik 2024 arXiv:2412.09729; Holmes & Marandon 2024 arXiv:2410.24136; two-sided Tobit label-shift Choi 2026 arXiv:2607.02173). A NeurIPS 2026 abstract quantifies ~24% censoring in ChEMBL 36 but studies point RMSE, not intervals (unverified).",
+    "gap": "No method, and no benchmark, for split-conformal interval construction whose finite-sample coverage is preserved (or provably conservative) when a known fraction of the CALIBRATION set carries one-sided type-I-censored (threshold-known) labels \u2014 the regime that actually characterises molecular assays, as opposed to survival's random right-censoring. The distinction matters: molecular censoring thresholds are observed for every record, enabling exact partial-order scoring rather than IPCW imputation.",
+    "proposed_contribution": "A 'partial-order / interval-score' conformal calibration: for a right-censored active ('>X') the true nonconformity |y-yhat| is only known to lie in [max(0, X-yhat), inf) when yhat<X, and is a computable point when yhat>X; symmetric for left-censored. Treat each censored calibration score as a one-sided interval and take the conservative (coverage-safe) quantile over the resulting partially-ordered score set \u2014 provably >= nominal coverage with no distributional assumption, degrading gracefully to standard split CP at 0% censoring. Compare against (i) drop-censored, (ii) impute-at-threshold, (iii) impute-Tobit-conditional-mean, (iv) treat-bound-as-exact. Provide a one-sided-interval variant (lower predictive bound for actives, the decision-relevant quantity) and a Mondrian variant stratified by censoring status.",
+    "hypothesis": "As censoring fraction rises, drop-censored and impute-as-exact calibration lose coverage monotonically (PICP falls below 1-alpha, biased because censored points are non-exchangeable with exact ones), whereas the partial-order calibration maintains >= nominal coverage at the cost of modestly wider intervals; crucially it keeps intervals tighter than the trivially-conservative 'drop + widen' approach, and recovers more usable (non-infinite) lower bounds for actives.",
+    "nearest_prior_work": [
+     {
+      "citation": "Svensson et al., Enhancing uncertainty quantification in drug discovery with censored regression labels, AI in the Life Sciences 2025",
+      "doi_or_arxiv": "10.1016/j.ailsci.2025.100128",
+      "what_it_does": "Tobit-model training/UQ from censored labels; point and NLL metrics, no conformal calibration. Releases UQ4DD data (github.com/MolecularAI/uq4dd).",
+      "verified": true
+     },
+     {
+      "citation": "Gui, Hore, Ren, Barber, Conformalized survival analysis with adaptive cutoffs, 2022",
+      "doi_or_arxiv": "arXiv:2211.01227",
+      "what_it_does": "Valid lower predictive bounds under right-censoring via weighted conformal; survival regime, random censoring, not assay type-I censoring.",
+      "verified": true
+     },
+     {
+      "citation": "Choi, Conformal Bayes for Two-Sided Censored Gaussian Regression under Label Shift, 2026",
+      "doi_or_arxiv": "arXiv:2607.02173",
+      "what_it_does": "Weighted conformal Bayes for two-sided Tobit under label shift; synthetic only, no molecular benchmark, Bayesian-head specific.",
+      "verified": true
+     },
+     {
+      "citation": "Cand\u00e8s, Lei, Ren, Conformalized Survival Analysis, 2021",
+      "doi_or_arxiv": "arXiv:2103.09763",
+      "what_it_does": "Foundational LPB-under-censoring method the survival line builds on.",
+      "verified": true
+     }
+    ],
+    "datasets": "ChEMBL REST API single-target potency sets with NATIVE standard_relation qualifiers (select 15-25 targets with >=1000 records and 10-50% censoring across IC50/Ki/Kd) \u2014 the only source of real molecular censoring. PLUS semi-synthetic censoring injected at controlled fractions (0/10/25/40%) and known thresholds on fully-observed regression sets from TDC ADMET group (e.g. Solubility_AqSolDB, Lipophilicity_AstraZeneca, Caco2, PPBR, Clearance; ~15-22 sets) and MoleculeNet (ESOL, FreeSolv, Lipophilicity). Semi-synthetic gives ground truth to measure true coverage against the uncensored label.",
+    "baselines": "drop-censored split CP; impute-at-threshold CP; impute-Tobit-mean CP; treat-bound-as-exact CP; (survival transplant) right-censored conformal LPB a la Gui 2022 adapted to type-I; normalized/Mondrian CP. Models: Morgan-FP + LightGBM/XGBoost/RF and a small CPU MPNN on <=20k sets. CQR and absolute-residual scores.",
+    "metrics": "Marginal coverage (PICP) vs nominal across censoring fraction; mean/median interval width and fraction of non-trivial (finite) lower bounds; conditional coverage by censoring status and by activity decile; practical-significance effect sizes and paired tests across datasets per Ash 2025 (10.1021/acs.jcim.5c01609); decision metric: how many true actives' lower bound clears a potency cutoff.",
+    "compute_estimate": "All fingerprint+GBDT: a few CPU-minutes per (dataset x method x seed). 20 datasets x 5 methods x 5 seeds x 4 censoring levels x CQR/abs ~ a few thousand fits, well under 15h on 4 cores; small MPNN ablation on 3-4 <=20k sets adds ~2-3h.",
+    "risks": "(1) The NeurIPS-2026-abstract finding that 'treating bounds as exact does not hurt point RMSE' could extend to coverage, weakening the motivation \u2014 mitigate by showing coverage/decision metrics (not RMSE) are where it bites, and by the non-random-censoring argument. (2) Partial-order conservative quantile may be loose at high censoring \u2014 report the efficiency gap honestly and position as the price of a guarantee. (3) ChEMBL curation (units, assay heterogeneity) is laborious \u2014 lean on semi-synthetic for the controlled claims and use ChEMBL as the realism check.",
+    "reviewer_objections": "'Isn't this just survival conformal relabelled?' \u2014 No: type-I/threshold-known one-sided assay censoring admits exact partial-order scores and needs no IPCW/censoring-model, a strictly simpler and assumption-leaner construction; we show the survival transplant is unnecessarily conservative here. 'Does it beat impute-as-exact in practice?' \u2014 the controlled semi-synthetic sweep answers this with ground-truth coverage. 'Accuracy doesn't improve' \u2014 the contribution is validity + usable-bound efficiency + decision quality, explicitly defensible under a tie, matching JCIM's method-comparison guidance."
+   },
+   {
+    "id": "C2",
+    "title": "Conformal hit-selection with FDR control that uses, rather than discards, censored calibration labels",
+    "problem": "Conformal selection prioritises compounds with FDR control but its p-values require nonconformity scores on a labelled calibration set. When calibration actives are reported as '>X' (right-censored), the standard construction cannot score them, so pipelines drop them \u2014 exactly the high-potency compounds most informative for selecting more actives. This both wastes data and can bias the FDR guarantee if the dropped set is non-exchangeable.",
+    "what_exists": "Conformal selection with FDR control is published in JCIM for compound screening with EXACT labels (Bai et al. 2025 10.1021/acs.jcim.5c01633; machinery: Jin & Cand\u00e8s 2022 arXiv:2210.01408; weighted/covariate-shift Jin & Cand\u00e8s 2023 arXiv:2307.09291; optimised scores Bai & Jin 2024 arXiv:2411.17983; multi-condition MCCS 2025 arXiv:2510.08075; general risk SCoRE 2026 arXiv:2603.24704). None handles censored calibration labels.",
+    "gap": "No conformal-selection procedure that incorporates censored (qualified) calibration labels while retaining finite-sample FDR control. A '>X' active gives a one-sided bound on its calibration score, which can be used conservatively to build valid (possibly conservative) conformal p-values instead of discarding the record.",
+    "proposed_contribution": "Define censoring-robust conformal p-values: for selecting compounds with activity above threshold c, a calibration active censored at '>X' with X>=c is a certain-positive whose score bound tightens (not loosens) the p-value; one censored below contributes a conservative score. Prove FDR control via the exchangeability of the conservative scores (BH on conformal p-values). Deliver a drop-in extension of Bai 2025 that is never anti-conservative and recovers power by retaining censored actives.",
+    "hypothesis": "At matched target FDR, the censoring-aware selector achieves strictly higher power (more true actives selected / larger valid batch) than the drop-censored selector, with empirical FDR at or below nominal across datasets; the gap widens with censoring fraction.",
+    "nearest_prior_work": [
+     {
+      "citation": "Bai, Tang, Xu, Svetnik, Conformal Selection for Efficient and Accurate Compound Screening in Drug Discovery, JCIM 2025",
+      "doi_or_arxiv": "10.1021/acs.jcim.5c01633",
+      "what_it_does": "FDR-controlled conformal selection for screening with exact labels \u2014 the direct predecessor this extends; assumes exact calibration labels.",
+      "verified": true
+     },
+     {
+      "citation": "Jin & Cand\u00e8s, Selection by Prediction with Conformal p-values, 2022",
+      "doi_or_arxiv": "arXiv:2210.01408",
+      "what_it_does": "Core conformal-selection / conformal-p-value framework with BH FDR control.",
+      "verified": true
+     },
+     {
+      "citation": "Jin & Cand\u00e8s, Model-free selective inference under covariate shift via weighted conformal p-values, 2023",
+      "doi_or_arxiv": "arXiv:2307.09291",
+      "what_it_does": "Weighted conformal p-values for covariate shift; combinable with censoring extension for scaffold-shifted screening.",
+      "verified": true
+     },
+     {
+      "citation": "Bai & Jin, Conformal Selective Prediction with General Risk Control (SCoRE), 2026",
+      "doi_or_arxiv": "arXiv:2603.24704",
+      "what_it_does": "e-value selective prediction with general bounded risk; alternative machinery for the censored-risk variant.",
+      "verified": true
+     }
+    ],
+    "datasets": "Same corpus as C1: ChEMBL single-target sets with native qualifiers (binarised active/inactive at a potency cutoff, keeping qualifier info) for 15-25 targets; semi-synthetic censoring on TDC ADMET + MoleculeNet for controlled FDR/power curves with ground truth. MoleculeACE 30 ChEMBL activity sets as an additional selection benchmark.",
+    "baselines": "drop-censored conformal selection (Bai 2025 as-is); impute-as-exact selection; non-conformal top-k ranking; naive threshold on predicted probability. GBDT + fingerprints.",
+    "metrics": "Empirical FDR vs nominal (0.1/0.2/0.3); power (true actives selected); realised batch size; robustness under scaffold-split calibration; multi-dataset paired effect sizes (Ash 2025 protocol).",
+    "compute_estimate": "Selection is a thin layer on cached model scores; thousands of selection runs are seconds each. Full suite comfortably <5h on 4 cores.",
+    "risks": "(1) Srivastava & Kassetty 2026 (arXiv:2611.01512) found exact conformal selection can EXCEED its FDR target under training-scaffold calibration \u2014 so demonstrate calibration-provenance robustness, not just censoring handling, or the contribution looks fragile. (2) If censored actives are rare above the chosen cutoff, power gains shrink \u2014 report cutoff sensitivity. (3) Overlaps conceptually with C1; may be stronger as one paper's second experiment than standalone.",
+    "reviewer_objections": "'Bai 2025 already did conformal selection' \u2014 yes, for exact labels; the novelty is provably valid use of the ~quarter of censored records they must drop. 'Covariate/scaffold shift breaks FDR' \u2014 we compose with weighted conformal p-values (Jin & Cand\u00e8s 2023) and report empirical FDR under scaffold splits."
+   },
+   {
+    "id": "C3",
+    "title": "Does any uncertainty signal improve molecular decisions over point-ranking? A 15+ dataset practical-significance audit of calibration provenance and selective prioritisation",
+    "problem": "CP and selective prediction are promoted as decision tools for prioritisation and abstention, but recent evidence suggests the UQ signal may add nothing over ranking by the point prediction, and that coverage validity depends more on where the calibration set comes from (random vs scaffold vs temporal) than on the method. These claims exist only at small scale (1-2 datasets, single model) and have not been subjected to the field's own practical-significance standards.",
+    "what_exists": "Srivastava & Kassetty 2026 (arXiv:2611.01512): on 2 datasets, 1 GBDT model, abstention tracks local label variance not novelty, width/variance gating never beats point-ranking for hit precision, and conformal coverage hinges on calibration provenance. Temporal coverage loss + recalibration (Morger 2022 10.1038/s41598-022-09309-3). Practical-significance method-comparison protocol (Ash 2025 10.1021/acs.jcim.5c01609). Benchmarks of UQ accuracy (MUBen 2023 arXiv:2306.10060) but keyed to calibration error, not decision quality.",
+    "gap": "No large-scale, protocol-grade test of the decision-usefulness of UQ (CP, Venn-ABERS, ensemble variance, AD) for compound prioritisation and abstention, nor a systematic map of how calibration provenance (random/scaffold-cluster/temporal) controls realised coverage and FDR across many datasets.",
+    "proposed_contribution": "An evaluation-validity paper: across >=15 datasets, >=3 model families, and 3 calibration-provenance regimes, measure (a) realised coverage/FDR vs nominal, (b) whether gating/abstaining on each UQ signal improves decision metrics (precision@budget, BEDROC, enrichment) over point-ranking, with practical-significance effect sizes and correct paired statistics per Ash 2025. Deliver a reusable, CPU-only benchmark and a decision-rule recommendation (when UQ helps, when ranking suffices).",
+    "hypothesis": "Marginal CP coverage is systematically optimistic under scaffold/temporal calibration and restored only by matched-provenance calibration; and UQ-based gating yields no practically-significant improvement over point-ranking for prioritisation on most datasets, with gains concentrated in high-shift, small-budget regimes.",
+    "nearest_prior_work": [
+     {
+      "citation": "Srivastava & Kassetty, Abstention Spends Its Budget on Local Label Variance More Than on Novelty, 2026",
+      "doi_or_arxiv": "arXiv:2611.01512",
+      "what_it_does": "The 2-dataset single-model result this scales up and stress-tests with proper statistics.",
+      "verified": true
+     },
+     {
+      "citation": "Ash et al., Practically Significant Method Comparison Protocols for ML in Small Molecule Drug Discovery, JCIM 2025",
+      "doi_or_arxiv": "10.1021/acs.jcim.5c01609",
+      "what_it_does": "The protocol/statistics standard the audit operationalises.",
+      "verified": true
+     },
+     {
+      "citation": "Morger et al., Studying and mitigating the effects of data drifts..., Sci Rep 2022",
+      "doi_or_arxiv": "10.1038/s41598-022-09309-3",
+      "what_it_does": "Temporal coverage loss and calibration-set-update fix; one provenance regime in the audit.",
+      "verified": true
+     },
+     {
+      "citation": "Li et al., MUBen: Benchmarking the Uncertainty of Molecular Representation Models, 2023",
+      "doi_or_arxiv": "arXiv:2306.10060",
+      "what_it_does": "UQ-accuracy benchmark; complementary (calibration error) but not decision-quality or provenance-focused.",
+      "verified": true
+     }
+    ],
+    "datasets": "TDC ADMET group (22 datasets) + MoleculeNet regression/classification + MoleculeACE (30) for a prioritisation-heavy subset; ChEMBL time-stamped sets for the temporal-provenance arm. >=15 easily met.",
+    "baselines": "Point-prediction ranking (the null to beat); split CP / CQR; Venn-ABERS; ensemble variance; AD (kNN distance). Models: RF, LightGBM, small MPNN.",
+    "metrics": "Coverage/FDR calibration error by provenance; decision metrics precision@k, BEDROC, enrichment with bootstrap effect sizes and paired tests; win/tie/loss matrices vs the point-ranking null.",
+    "compute_estimate": "Fingerprint+GBDT across 20+ datasets x 3 models x 3 provenances x 5 seeds x several UQ methods is CPU-bound but light (minutes each); ~6-10h on 4 cores including small MPNN arm.",
+    "risks": "(1) Largely a negative/confirmatory result \u2014 JCIM may want a constructive method too; pair with a concrete decision-rule deliverable. (2) Scope creep across 20+ datasets x methods; freeze the design up front. (3) Perceived as 'just scaling Srivastava' \u2014 differentiate via multi-model, temporal provenance, and the decision-rule output.",
+    "reviewer_objections": "'Benchmarks aren't novel' \u2014 the novelty is the decision-quality-vs-ranking question answered at protocol grade, a known JCIM priority (Ash 2025); reusable CPU benchmark has community value even on a tie/negative outcome."
+   },
+   {
+    "id": "C4",
+    "title": "Coverage for unseen chemotypes: hierarchical/Mondrian conformal prediction with new-group guarantees over scaffold clusters",
+    "problem": "Lead optimisation asks for reliable prediction on chemical series NOT represented in training (new scaffold clusters). Marginal CP guarantees only average coverage and demonstrably under-covers novel groups; within-group Mondrian only helps groups seen at calibration time. The relevant object \u2014 coverage for a test point from a brand-new group \u2014 needs group-level (hierarchical) exchangeability, which has theory but no cheminformatics instantiation.",
+    "what_exists": "Hierarchical-exchangeability distribution-free inference with new-group coverage (Lee, Barber, Willett 2023 arXiv:2306.06342; two-layer Dunn/Wasserman/Ramdas 2018 arXiv:1809.07441). Molecular Mondrian/group-conditional CP for SEEN groups (DTI: Rakhshaninejad 2025 arXiv:2505.18890). Overlapping-group coverage (Kandinsky 2025 arXiv:2502.17264). Minority class-conditional fix (Tursunbadalov 2026 arXiv:2607.06605). Covariate-shift scaffold fixes (CoDrug 2023 arXiv:2310.12033; KMM-CP 2026 arXiv:2603.26415).",
+    "gap": "No application of hierarchical-exchangeability new-group CP to molecular scaffold clusters, and no benchmark of whether treating scaffold clusters as exchangeable groups yields valid coverage for held-out clusters (unseen chemotypes) at tolerable interval width.",
+    "proposed_contribution": "Cast Bemis-Murcko / Butina scaffold clusters as exchangeable groups; apply split hierarchical CP (calibrate at the group level) to produce intervals with coverage for a test molecule from an unseen cluster; compare marginal, within-group Mondrian, covariate-shift-weighted, and hierarchical constructions; characterise the width/validity trade-off and when scaffold clusters are 'exchangeable enough'.",
+    "hypothesis": "Marginal and seen-group Mondrian CP under-cover held-out scaffold clusters; hierarchical-exchangeability CP restores >= nominal cluster-level coverage at the cost of wider intervals, and does so more reliably than covariate-shift weighting when support overlap is poor.",
+    "nearest_prior_work": [
+     {
+      "citation": "Lee, Barber, Willett, Distribution-free inference with hierarchical data, 2023",
+      "doi_or_arxiv": "arXiv:2306.06342",
+      "what_it_does": "Hierarchical exchangeability + new-group coverage theory this instantiates for scaffolds.",
+      "verified": true
+     },
+     {
+      "citation": "Rakhshaninejad et al., Conformal Prediction for Uncertainty Estimation in DTI, 2025",
+      "doi_or_arxiv": "arXiv:2505.18890",
+      "what_it_does": "Mondrian/cluster-conditioned CP for seen drug/target groups; closest molecular analogue, but not new-group/hierarchical.",
+      "verified": true
+     },
+     {
+      "citation": "Bairaktari, Wu, Wu, Kandinsky Conformal Prediction, 2025",
+      "doi_or_arxiv": "arXiv:2502.17264",
+      "what_it_does": "Coverage for overlapping groups; relevant because scaffold clusters overlap.",
+      "verified": true
+     },
+     {
+      "citation": "Dunn, Wasserman, Ramdas, Distribution-Free Prediction Sets for Two-Layer Hierarchical Models, 2018",
+      "doi_or_arxiv": "arXiv:1809.07441",
+      "what_it_does": "Early two-layer hierarchical CP; theoretical grounding.",
+      "verified": true
+     }
+    ],
+    "datasets": "TDC ADMET + MoleculeNet with scaffold-cluster splits; MoleculeACE 30 sets (clean per-target series). >=15 datasets with many clusters each.",
+    "baselines": "Marginal split CP; within-group Mondrian; covariate-shift weighted CP (CoDrug/KMM-CP style); normalized CP. Fingerprint + GBDT and small MPNN.",
+    "metrics": "Held-out-cluster coverage (new-group), marginal coverage, interval width/efficiency, number of clusters meeting nominal; effect sizes across datasets.",
+    "compute_estimate": "Clustering (Butina on Morgan FP) + GBDT is CPU-cheap; full suite ~4-6h on 4 cores.",
+    "risks": "(1) Hierarchical new-group intervals can be very wide / need many clusters, limiting practical appeal \u2014 must show a usable operating point. (2) Scaffold clusters may not be exchangeable (continuous chemical-space drift), partially violating the assumption \u2014 report where it holds. (3) Risk of being 'yet another CP-under-shift' paper; differentiate via the new-group guarantee specifically.",
+    "reviewer_objections": "'This is covariate shift again' \u2014 no: hierarchical CP targets group-level exchangeability and coverage for entirely unseen clusters, a different guarantee than importance-weighted covariate-shift CP; we benchmark both. 'Intervals too wide to use' \u2014 quantify the width cost and recommend cluster-size thresholds."
+   },
+   {
+    "id": "C5",
+    "title": "Conditional-coverage recovery at activity cliffs via roughness/AD-conditioned Mondrian conformal prediction, with guarantees, on 30 MoleculeACE sets",
+    "problem": "Standard calibrated UQ gives valid marginal coverage but fails exactly on activity cliffs (near-identical molecules, large potency gaps), because popular reliability signals are organised around distance-to-training-data and cliffs are close to training data. Clinicians/chemists most need reliability precisely at these mispredictions.",
+    "what_exists": "A Research Square preprint (rs-10071162, UNVERIFIED) reports that RF-variance, AD, and Sheridan estimators are at-chance for cliffs on 30 MoleculeACE targets, proposes a neighbour-based roughness measure (median ROC-AUC ~0.69) and roughness-conditioned CP intervals that stabilise coverage. MoleculeACE benchmark (van Tilborg 2022 10.1021/acs.jcim.2c01073). AD-vs-uncertainty link (Hosni 2026 10.1021/acsomega.5c11875). dAD local CP (Or\u0161oli\u0107 2023 10.1093/bioinformatics/btad465). Mondrian class-conditional (Tursunbadalov 2026 arXiv:2607.06605).",
+    "gap": "The roughness-CP idea is only a single unverified preprint with no formal coverage framing, no comparison to Mondrian-conditioned-on-roughness with guarantees, and no decision-quality evaluation. Whether conditioning CP on a cliff/roughness variable yields valid GROUP-conditional coverage (not just stabilised marginal coverage) across many datasets is open.",
+    "proposed_contribution": "Formalise cliff-aware CP as Mondrian CP with bins defined by a local-roughness / AD score (and combinations), delivering group-conditional coverage guarantees for cliff vs smooth regions; benchmark against marginal CP, variance-normalised CP, and AD-conditioned CP on all 30 MoleculeACE sets; report both coverage and whether cliff-flagging improves any downstream decision.",
+    "hypothesis": "Roughness-binned Mondrian CP achieves near-nominal coverage within the cliff bin where marginal and variance-normalised CP under-cover, at a modest width cost, and roughness outperforms AD/variance as the conditioning variable for cliff coverage.",
+    "nearest_prior_work": [
+     {
+      "citation": "van Tilborg, Alenicheva, Grisoni, Exposing the Limitations of Molecular ML with Activity Cliffs (MoleculeACE), JCIM 2022",
+      "doi_or_arxiv": "10.1021/acs.jcim.2c01073",
+      "what_it_does": "Defines the 30-target cliff benchmark used throughout.",
+      "verified": true
+     },
+     {
+      "citation": "Or\u0161oli\u0107 & \u0160muc, Dynamic applicability domain (dAD) with local conformal prediction, Bioinformatics 2023",
+      "doi_or_arxiv": "10.1093/bioinformatics/btad465",
+      "what_it_does": "AD-conditioned local CP for affinity; closest existing conditioned-CP method, not cliff-targeted.",
+      "verified": true
+     },
+     {
+      "citation": "Hosni, Gillet, Marchese Robinson, Explicit Applicability Domain Calculations..., ACS Omega 2026",
+      "doi_or_arxiv": "10.1021/acsomega.5c11875",
+      "what_it_does": "Links AD status to when uncertainty estimates are less reliable; motivates AD as a conditioning variable.",
+      "verified": true
+     },
+     {
+      "citation": "Research Square preprint on cliff-aware roughness + conformal (rs-10071162)",
+      "doi_or_arxiv": "researchsquare rs-10071162",
+      "what_it_does": "Proposes neighbour-roughness and roughness-conditioned CP; the unverified precursor this formalises and extends.",
+      "verified": false
+     }
+    ],
+    "datasets": "MoleculeACE 30 ChEMBL activity-cliff sets (GitHub, credential-free); optionally TDC/MoleculeNet for generality.",
+    "baselines": "Marginal split CP/CQR; variance-normalised CP; AD-conditioned CP (dAD-style); roughness-conditioned Mondrian CP (proposed). Fingerprint + GBDT, small MPNN.",
+    "metrics": "Cliff-bin vs smooth-bin conditional coverage; interval width; cliff-detection ROC-AUC; decision impact of cliff-flagging; multi-dataset effect sizes.",
+    "compute_estimate": "30 small datasets, fingerprint+GBDT, neighbour roughness O(n^2) but n is small; full suite ~2-4h on 4 cores.",
+    "risks": "(1) Built on an unverified preprint \u2014 must independently reproduce the cliff-failure claim before extending, and risk of being scooped if that preprint is published first. (2) Mondrian-on-roughness may just trade cliff coverage for width without decision benefit (cf. Srivastava 2026 negative result) \u2014 report decision metrics honestly. (3) Narrower scope (cliffs) than C1-C3.",
+    "reviewer_objections": "'The preprint already did roughness-CP' \u2014 we add formal group-conditional guarantees, the Mondrian framing, head-to-head AD/variance/roughness conditioning, and decision-quality evaluation across all 30 sets, and independently reproduce the base claim. 'Coverage gain is cosmetic' \u2014 the conditional-coverage guarantee is the point and is testable."
+   }
+  ],
+  "already_done": [
+   {
+    "idea": "Conformal selection with FDR control for compound prioritisation/screening (exact labels)",
+    "citation": "Bai, Tang, Xu, Svetnik, Conformal Selection for Efficient and Accurate Compound Screening in Drug Discovery, JCIM 2025",
+    "doi_or_arxiv": "10.1021/acs.jcim.5c01633"
+   },
+   {
+    "idea": "Marginal CP under-covers the minority class on imbalanced molecular data; class-conditional (Mondrian) calibration recovers it (traced to generic benzene/pyridine scaffolds)",
+    "citation": "Tursunbadalov & Tursunbadalov, A Quiet Failure in Calibrated Virtual Screening, 2026",
+    "doi_or_arxiv": "arXiv:2607.06605"
+   },
+   {
+    "idea": "Selective prediction / abstention on the least-reliable compounds, hoping width/variance gating beats point-ranking for prioritisation \u2014 shown NOT to beat ranking, and abstention tracks local label variance not novelty; coverage hinges on calibration provenance",
+    "citation": "Srivastava & Kassetty, Abstention Spends Its Budget on Local Label Variance More Than on Novelty, 2026",
+    "doi_or_arxiv": "arXiv:2611.01512"
+   },
+   {
+    "idea": "Weighted/density-ratio conformal prediction to restore coverage under scaffold/covariate shift for molecular property prediction",
+    "citation": "Laghuvarapu, Deb, Sun, KMM-CP (2026) and Laghuvarapu, Lin, Sun, CoDrug/Conformal Drug Property Prediction under Covariate Shift (2023)",
+    "doi_or_arxiv": "arXiv:2603.26415 ; arXiv:2310.12033"
+   },
+   {
+    "idea": "Temporal coverage loss of conformal predictors on time-split chemical data, fixed by updating the calibration set without retraining",
+    "citation": "Morger et al., Studying and mitigating the effects of data drifts on ML model performance..., Sci Rep 2022",
+    "doi_or_arxiv": "10.1038/s41598-022-09309-3"
+   },
+   {
+    "idea": "Training molecular models to learn from censored (qualified) activity labels via Tobit loss for better point/UQ estimates",
+    "citation": "Svensson et al., Enhancing uncertainty quantification in drug discovery with censored regression labels, AI in the Life Sciences 2025",
+    "doi_or_arxiv": "10.1016/j.ailsci.2025.100128"
+   },
+   {
+    "idea": "Characterising temporal distribution shift in real pharma data and its effect on QSAR uncertainty methods",
+    "citation": "Friesacher et al., Temporal distribution shift in real-world pharmaceutical data, AI in the Life Sciences 2025",
+    "doi_or_arxiv": "10.1016/j.ailsci.2025.100132"
+   },
+   {
+    "idea": "Venn-ABERS / scaling-method probability calibration for bioactivity classification across many targets",
+    "citation": "Mervin et al., Comparison of Scaling Methods to Obtain Calibrated Probabilities of Activity for Protein-Ligand Predictions, JCIM 2020",
+    "doi_or_arxiv": "10.1021/acs.jcim.0c00476"
+   },
+   {
+    "idea": "Conformalized ADMET/graph learning with reliable UQ (exact labels)",
+    "citation": "Li, Hua, Ma, Hu, Conformalized Graph Learning for Molecular ADMET Property Prediction..., JCIM 2024",
+    "doi_or_arxiv": "10.1021/acs.jcim.4c01139"
+   },
+   {
+    "idea": "Lower-predictive-bound conformal methods for right-censored (survival) data, incl. doubly-robust and two-sided variants",
+    "citation": "Cand\u00e8s/Lei/Ren 2021; Gui/Hore/Ren/Barber 2022; Sesia & Svetnik 2024; Holmes & Marandon 2024",
+    "doi_or_arxiv": "arXiv:2103.09763 ; arXiv:2211.01227 ; arXiv:2412.09729 ; arXiv:2410.24136"
+   },
+   {
+    "idea": "General-purpose benchmarking of molecular UQ methods' calibration/accuracy under shift",
+    "citation": "Li et al., MUBen: Benchmarking the Uncertainty of Molecular Representation Models, 2023",
+    "doi_or_arxiv": "arXiv:2306.10060"
+   },
+   {
+    "idea": "Applicability domain as a formal signal for when uncertainty estimates are unreliable; AD-conditioned local conformal prediction",
+    "citation": "Hosni et al. ACS Omega 2026 ; Or\u0161oli\u0107 & \u0160muc Bioinformatics 2023",
+    "doi_or_arxiv": "10.1021/acsomega.5c11875 ; 10.1093/bioinformatics/btad465"
+   }
+  ]
+ },
+ {
+  "landscape_summary": "The 2022-2026 literature on data quality and evaluation validity in molecular ML has converged on a clear message: reported accuracy gains on standard benchmarks are frequently smaller than, or confounded by, irreducible label noise, split artefacts, and leakage. Three strands anchor the field. (1) Noise quantification: Landrum & Riniker (JCIM 2024, 10.1021/acs.jcim.4c00049) show combining IC50/Ki across assays injects large noise (65% of points differ >0.3 log with minimal curation; Kendall tau ~0.51); Crusius, Cipcigan & Biggin (Faraday Discuss. 2025, 10.1039/d4fd00091a) derive per-dataset performance ceilings from assumed experimental error and release NoiseEstimator, finding several popular datasets may already be at/above their noise ceiling; Nelen et al. (J Cheminform 2025, 10.1186/s13321-025-00956-y) show matched pairs are more robust to inter-assay variance. (2) Evaluation protocol: Ash, Wognum et al. (JCIM 2025, 10.1021/acs.jcim.5c01609) lay out practically-significant method-comparison protocols (repeated splits, paired tests, effect sizes, Polaris tooling) \u2014 now the expected standard for JCIM method papers. (3) Split/leakage validity: audits of LIT-PCBA (arXiv 2507.21404) and emerging ADMET near-duplicate censuses show random and even scaffold splits leak near-duplicates and inflate scores; SIMPD (J Cheminform 2023, 10.1186/s13321-023-00787-9) offers simulated temporal splits (99 ChEMBL datasets). Censored labels are contested: Svensson et al. (AILS 2025, 10.1016/j.ailsci.2025.100128) argue Tobit-style modelling improves UQ, while a NeurIPS 2026 submission reports Tobit hurts naive regression on linear-IC50 rows \u2014 an open empirical question. Pairwise/delta learning (DeepDelta, J Cheminform 2023, 10.1186/s13321-023-00769-x; DeltaClassifier, RSC Med Chem 2024, 10.1039/d4md00325j) claims large small-data gains, but its evaluation (every test pair scored, implicit augmentation) has unresolved leakage and fairness questions. Activity cliffs (MoleculeACE, van Tilborg 2022) are intrinsically pairwise yet scored per-compound. The common thread and opportunity: contributions that remain defensible on an accuracy tie \u2014 noise-normalised leaderboards, leakage-corrected and pairwise-correct metrics, calibration/coverage guarantees under realistic splits, and decision-quality rather than RMSE. Several adjacent ideas (ADMET leakage census, censored-label census) are already appearing at NeurIPS 2026, so positioning must avoid those exact framings. All proposals below use only public data already cached locally (TDC ADMET 22 datasets; MoleculeACE 30 ChEMBL activity-cliff sets) plus optional ChEMBL REST, and fit 4 CPU / 15 GB / <=15 h with RDKit + LightGBM/XGBoost/sklearn and small CPU GNNs.",
+  "candidates": [
+   {
+    "id": "A",
+    "title": "Noise-ceiling-normalised leaderboards: how much of the molecular-ML ranking survives when you divide out the irreducible label noise?",
+    "problem": "Benchmark leaderboards (TDC ADMET, MoleculeACE) rank methods by raw RMSE/Spearman, but the achievable ceiling differs per dataset because experimental/replicate noise differs per assay. A 0.02 RMSE gap on a high-noise assay and a low-noise assay are not comparable, yet both are reported identically. No multi-dataset study has (a) estimated the ceiling empirically from replicate/assay variance per dataset and (b) re-ranked a full method pool against that ceiling using a rigorous paired protocol.",
+    "what_exists": "Crusius et al. (Faraday Discuss. 2025) derive ceilings but for only 9 datasets, using an *assumed* sigma_E injected as synthetic noise, and do not re-rank a method pool. Landrum & Riniker (JCIM 2024) measure real inter-assay noise but on curation, not on leaderboard normalisation. Ash/Wognum (JCIM 2025) give the comparison protocol but not noise-normalisation. Brown et al. earlier proposed the noise-injection idea.",
+    "gap": "No work (i) estimates per-dataset noise ceilings empirically (ChEMBL replicate pairs for activity sets; literature sigma_E priors for ADMET) across >=15 datasets, (ii) expresses each method's score as a fraction-of-ceiling-closed metric, and (iii) tests, with the Ash paired/effect-size protocol, whether the method *ranking* and the claimed 'practically significant' gaps survive normalisation. The testable claim 'most reported ADMET/cliff method gains lie within the per-dataset noise band' has never been quantified at scale.",
+    "proposed_contribution": "A reproducible protocol + open leaderboard that (1) estimates a per-dataset noise ceiling: for the 30 MoleculeACE ChEMBL targets, pull replicate measurements of the same compound-target from ChEMBL REST to get sigma_E empirically; for TDC ADMET use literature/curation-based sigma_E priors and the NoiseEstimator noise-injection to get a ceiling distribution. (2) Train a fixed pool of ~6 baselines, report raw score AND ceiling-normalised 'fraction of attainable performance'. (3) Apply the Ash protocol (>=10 repeated splits, paired Wilcoxon, Cohen-style effect sizes, practical-significance thresholds) to both raw and normalised scores, reporting how many pairwise method comparisons flip from 'significant' to 'within noise'. Deliver a NoiseEstimator-compatible package and per-dataset ceiling table.",
+    "hypothesis": "H1: After ceiling-normalisation, a large fraction (>50%) of previously 'significant' pairwise method differences on ADMET/MoleculeACE become statistically or practically indistinguishable. H2: Datasets differ enough in ceiling that the *same* absolute RMSE gap is practically significant on some and noise on others, so a single global ranking is misleading.",
+    "nearest_prior_work": [
+     {
+      "citation": "Crusius, Cipcigan, Biggin. Are we fitting data or noise? Faraday Discussions 256 (2025) 304-321.",
+      "doi_or_arxiv": "10.1039/d4fd00091a",
+      "what_it_does": "Derives maximum/realistic performance bounds via label-noise injection on 9 datasets; releases NoiseEstimator. Does not re-rank a method pool or use empirical per-dataset replicate noise at scale.",
+      "verified": true
+     },
+     {
+      "citation": "Landrum, Riniker. Combining IC50 or Ki Values from Different Sources Is a Source of Significant Noise. JCIM 64 (2024) 1560-1567.",
+      "doi_or_arxiv": "10.1021/acs.jcim.4c00049",
+      "what_it_does": "Quantifies real inter-assay noise in ChEMBL using compounds measured in multiple assays; basis for empirical per-dataset sigma_E.",
+      "verified": true
+     },
+     {
+      "citation": "Ash, Wognum et al. Practically Significant Method Comparison Protocols for ML in Small Molecule Drug Discovery. JCIM 65 (2025) 9398-9411.",
+      "doi_or_arxiv": "10.1021/acs.jcim.5c01609",
+      "what_it_does": "Defines the paired, effect-size, repeated-split comparison protocol this work applies on top of normalised scores.",
+      "verified": true
+     }
+    ],
+    "datasets": "TDC ADMET benchmark group (22 datasets, cached) + MoleculeACE (30 ChEMBL activity-cliff sets, cached) = up to 52 datasets; ChEMBL REST for replicate pulls on the 30 activity sets.",
+    "baselines": "Morgan-FP + RF, Morgan-FP + LightGBM, RDKit-descriptor + XGBoost, SVR(Tanimoto), a small CPU message-passing GNN (<=20k mols), and a k-NN memorisation control. All public implementations.",
+    "metrics": "Raw RMSE/MAE/Spearman; ceiling-normalised fraction-of-attainable-performance; count of comparison flips under Ash protocol; bootstrap CIs on the ceiling itself.",
+    "compute_estimate": "~6 baselines x ~50 datasets x >=10 repeats, all CPU tabular/kernel + one tiny GNN: ~8-11 h on 4 cores; ChEMBL replicate pulls are I/O-bound, cache once (~1 h).",
+    "risks": "Replicate counts per compound in ChEMBL may be sparse for some targets (fall back to target-level sigma_E and curation-based priors); ceiling estimate has its own uncertainty (address with bootstrap CIs and sensitivity analysis). Reviewer may want a calibration validation that injected noise matches real replicate noise \u2014 include that check.",
+    "reviewer_objections": "(1) 'Ceilings depend on assumed sigma_E' -> answer with empirical ChEMBL replicate ceilings + sensitivity sweep. (2) 'This just extends Crusius' -> novelty is empirical per-dataset noise + full re-ranking under a rigorous protocol at 5x the dataset count, with the flip-rate as the headline result. (3) 'Negative/tie result' -> that is precisely the defensible contribution JCIM's audience values (evaluation validity)."
+   },
+   {
+    "id": "B",
+    "title": "Leakage-controlled, compute-matched re-evaluation of pairwise/delta learning: when does predicting property *differences* actually beat predicting values?",
+    "problem": "Delta/pairwise models (DeepDelta, DeltaClassifier) report large small-data gains by training on all O(n^2) molecule pairs and predicting property differences. But their evaluation scores every test pair, and nearest-neighbour pairs span the train/test boundary, so claimed gains may be partly an evaluation artefact (implicit augmentation, pair-level leakage) rather than a real modelling advantage. The conditions under which delta genuinely helps are unquantified.",
+    "what_exists": "DeepDelta (J Cheminform 2023) and DeltaClassifier (RSC Med Chem 2024) show delta beats absolute RF/Chemprop on ADMET/potency, especially small data and cliffs. Nelen et al. (2025) show matched pairs are noise-robust, supporting the pairwise premise. No study controls pair-level leakage or matches training compute/pair budget between absolute and delta models.",
+    "gap": "A fair, leakage-audited comparison is missing: (i) absolute vs delta under identical wall-clock/pair budgets, (ii) delta evaluated with and without pairs that cross the split boundary, (iii) decision-quality metrics (correct ranking of analogues within a series) rather than only pair-RMSE, across many datasets. The open question of whether delta's advantage is a modelling gain or an evaluation inflation has not been resolved.",
+    "proposed_contribution": "A protocol that (1) defines three pairing regimes for test evaluation: all-pairs (original), train-anchored-only, and within-test-only; (2) reports how the delta-vs-absolute gap changes across regimes to isolate the augmentation/leakage component; (3) matches compute by capping delta training pairs to the absolute model's budget; (4) adds lead-optimisation decision metrics: within-scaffold-series ranking (Kendall tau), top-k analogue selection accuracy, and sign-of-change accuracy. Delivered across 30 MoleculeACE + selected ADMET regression sets.",
+    "hypothesis": "H1: A measurable fraction of delta's reported RMSE advantage disappears when test pairs are restricted to train-anchored (leakage-controlled) pairing. H2: Delta's residual advantage concentrates in small-data and activity-cliff regimes and in *ranking* decisions, not in global value regression \u2014 i.e. delta is a prioritisation tool, not an accuracy tool.",
+    "nearest_prior_work": [
+     {
+      "citation": "Fralish et al. DeepDelta: predicting ADMET improvements of molecular derivatives. J Cheminform 15 (2023) 101.",
+      "doi_or_arxiv": "10.1186/s13321-023-00769-x",
+      "what_it_does": "Introduces pairwise delta regression; reports gains over Chemprop/RF on small ADMET data. Target of the leakage/compute-matched re-evaluation.",
+      "verified": true
+     },
+     {
+      "citation": "Fralish, Skaluba, Reker. Leveraging bounded datapoints to classify molecular potency improvements. RSC Med Chem 15 (2024) 2474-2482.",
+      "doi_or_arxiv": "10.1039/d4md00325j",
+      "what_it_does": "DeltaClassifier: pairwise classification of potency change that also exploits censored data; strong baseline and motivates decision metrics.",
+      "verified": true
+     },
+     {
+      "citation": "Nelen et al. Matched pairs demonstrate robustness against inter-assay variability. J Cheminform 17 (2025).",
+      "doi_or_arxiv": "10.1186/s13321-025-00956-y",
+      "what_it_does": "Shows pairwise/matched differences are less noisy than single-compound labels; supports the pairwise premise and informs the noise analysis.",
+      "verified": true
+     }
+    ],
+    "datasets": "MoleculeACE 30 ChEMBL activity-cliff sets (cached) + ~10 TDC ADMET regression sets (cached) = ~40 datasets.",
+    "baselines": "Absolute: Morgan-FP RF / LightGBM. Delta: DeepDelta-style pairwise MLP (CPU) and pairwise LightGBM on concatenated/difference features. Memorisation/1-NN pair control. DeltaClassifier for the sign-of-change task.",
+    "metrics": "Pair-RMSE under three pairing regimes; delta-vs-absolute gap decomposition; within-series Kendall tau; top-k analogue hit rate; sign accuracy; all under >=5 repeated splits with paired tests (Ash protocol).",
+    "compute_estimate": "Pairwise training is O(n^2) in pairs but datasets are <=~3k compounds, so capped pair sampling keeps it tractable: ~40 datasets x 3 models x 5 repeats ~ 9-12 h on 4 cores.",
+    "risks": "O(n^2) pairs can blow memory on larger sets -> cap/sample pairs (also needed for compute-matching). Defining 'series' for ranking needs MMP/scaffold grouping (use RDKit MMPA). Risk that delta still wins cleanly -> still publishable as the first leakage-audited, decision-framed characterisation of *when* it wins.",
+    "reviewer_objections": "(1) 'DeepDelta already validated' -> we audit its evaluation, not re-propose it; the pairing-regime decomposition is new. (2) 'Pair sampling changes results' -> report sensitivity to pair budget. (3) 'Why CPU MLP not Chemprop' -> compute parity is the point; we match budgets explicitly."
+   },
+   {
+    "id": "C",
+    "title": "Does censoring-aware training help or hurt across splits? A multi-dataset, split-stratified resolution of the Tobit controversy",
+    "problem": "A quarter of ChEMBL potency labels are qualified/censored (>, <). Pipelines often silently drop them or treat them as exact. Whether censoring-aware (Tobit/survival) training improves regression and uncertainty is actively contradicted in the literature, with no multi-dataset, split-stratified arbitration.",
+    "what_exists": "Svensson et al. (AILS 2025) adapt ensembles/Bayesian/GP with a Tobit likelihood and report better UQ when using censored labels. A NeurIPS 2026 submission reports Tobit *hurts* naive regression (+0.108 log units worse) on identical linear-IC50 rows across 156 targets. DeltaClassifier (RSC Med Chem 2024) exploits bounded points for classification. Mervin's Probabilistic RF (J Cheminform 2021, 10.1186/s13321-021-00539-7) handles experimental uncertainty near thresholds.",
+    "gap": "The contradiction is unresolved because the two camps use different tasks (UQ vs point regression), scales (pIC50 vs linear IC50), and split schemes. No study varies the censored fraction, the split (random/scaffold/SIMPD-temporal), and the downstream objective (point accuracy vs calibrated UQ vs decision ranking) together across >=15 datasets with real relation fields.",
+    "proposed_contribution": "Pull relation-field-aware datasets from ChEMBL REST for ~15-20 targets spanning low-to-high censored fraction. Compare four label policies: drop-censored, impute-at-threshold, Tobit/censored-likelihood regression (LightGBM with a censored objective or a CPU Gaussian/ensemble Tobit), and DeltaClassifier-style pairwise sign. Stratify by split (random, scaffold, SIMPD temporal where available) and by censored fraction. Report when each policy wins on point accuracy, calibration/coverage, and decision ranking. Produce a decision chart: 'given censored fraction f and split type, use policy X'.",
+    "hypothesis": "H1: Tobit helps calibration/UQ and decision ranking but not necessarily point RMSE, reconciling the two camps (task-dependent). H2: The benefit of keeping censored labels grows with censored fraction and under temporal/scaffold splits (where extrapolation makes bounds informative) and vanishes under random splits.",
+    "nearest_prior_work": [
+     {
+      "citation": "Svensson et al. Enhancing uncertainty quantification in drug discovery with censored regression labels. Artif. Intell. Life Sci. (2025).",
+      "doi_or_arxiv": "10.1016/j.ailsci.2025.100128",
+      "what_it_does": "Tobit-based censored-label modelling improves UQ; releases UQ4DD. One pole of the controversy.",
+      "verified": true
+     },
+     {
+      "citation": "Fralish, Skaluba, Reker. Leveraging bounded datapoints to classify molecular potency improvements. RSC Med Chem 15 (2024) 2474-2482.",
+      "doi_or_arxiv": "10.1039/d4md00325j",
+      "what_it_does": "Uses bounded/censored points in a pairwise classification framing; provides the decision-ranking baseline.",
+      "verified": true
+     },
+     {
+      "citation": "NeurIPS 2026 submission: ChEMBL censored-label census (Tobit hurts naive regression on linear-IC50 rows).",
+      "doi_or_arxiv": "neurips.cc/virtual/2026/161093",
+      "what_it_does": "Contrarian pole reporting Tobit degrades point regression; motivates the split/task-stratified arbitration. Not peer-reviewed; abstract only.",
+      "verified": false
+     }
+    ],
+    "datasets": "~15-20 ChEMBL targets selected to span censored fractions (via ChEMBL REST, relation field retained); overlap with MoleculeACE targets where possible; SIMPD temporal splits (99 ChEMBL sets, J Cheminform 2023) for the temporal arm.",
+    "baselines": "Drop-censored RF/LightGBM; threshold-imputed; Tobit-objective LightGBM / censored ensemble; DeltaClassifier; Probabilistic RF.",
+    "metrics": "RMSE/MAE on exact-label test points; calibration (ECE, conformal coverage); decision ranking (Kendall tau, top-k); stratified by censored fraction and split; Ash paired protocol.",
+    "compute_estimate": "~18 datasets x 5 policies x 3 splits x 5 repeats, CPU tabular + Tobit likelihoods: ~10-13 h on 4 cores; ChEMBL pulls cached once.",
+    "risks": "Overlaps a NeurIPS 2026 census in topic -> differentiate sharply by the split x task x censored-fraction stratification and the actionable decision chart (not a census). Tobit implementations on CPU for gradient boosting need a custom censored loss (feasible in LightGBM custom objective). Relation-field curation is fiddly -> follow Landrum/Riniker curation code.",
+    "reviewer_objections": "(1) 'Already being censused' -> our contribution is the controlled arbitration and a usage rule, not a prevalence count. (2) 'Tobit on trees is nonstandard' -> validate the custom censored objective against the known Svensson GP results on a shared target. (3) 'Which split is realistic?' -> that is the finding: the answer depends on the split."
+   },
+   {
+    "id": "D",
+    "title": "A pairwise, leakage-audited activity-cliff metric: fixing how MoleculeACE scores what is fundamentally a pair problem",
+    "problem": "Activity cliffs are defined on *pairs* of similar molecules with large potency differences, yet MoleculeACE scores them with per-compound RMSE_cliff (a compound is flagged if it belongs to any cliff). This conflates which pair is mispredicted, ignores whether the model gets the *direction* and *magnitude* of the cliff, and the official splits may place near-duplicate cliff partners on both sides, leaking the answer.",
+    "what_exists": "MoleculeACE (van Tilborg et al., JCIM 2022) benchmarks 30 targets with per-compound RMSE_cliff and binary cliff membership. GraphCliff (arXiv 2511.03170, 2025) and others still report per-compound RMSE_cliff on the official split. LIT-PCBA audits (arXiv 2507.21404) show near-duplicate leakage inflates other benchmarks. No one has audited MoleculeACE splits for cliff-partner leakage or replaced the metric with a pairwise one.",
+    "gap": "Missing: (i) a near-duplicate/cliff-partner leakage audit of MoleculeACE's official splits (are both members of a cliff pair separated across train/test, and how often is a test cliff compound's partner in train?), and (ii) a pairwise cliff metric that scores direction + magnitude of each cliff pair (cliff-pair ranking AUC, sign accuracy, delta-magnitude error) rather than per-compound RMSE. The field evaluates a pair phenomenon with a point metric on possibly-leaky splits.",
+    "proposed_contribution": "(1) Enumerate all cliff pairs per MoleculeACE dataset via RDKit (fingerprint/scaffold/SMILES similarity >=0.9 and >10x potency), audit how official train/test splits distribute pair members and compute per-dataset partner-leakage rate. (2) Define pairwise cliff metrics: cliff-pair sign accuracy, cliff-pair ranking (does the model order the pair correctly), and delta-magnitude MAE. (3) Re-benchmark the standard method pool under (a) official vs (b) a cliff-pair-disjoint split, reporting how rankings and absolute cliff performance change; include a 1-NN memorisation control to expose leakage. Release the pairwise metric + cliff-disjoint splits.",
+    "hypothesis": "H1: MoleculeACE official splits leak cliff partners for a non-trivial fraction of test cliffs, and a parameter-free 1-NN model achieves deceptively strong RMSE_cliff because of it. H2: Under the pairwise, leakage-controlled protocol, apparent method differences on cliffs shrink and the per-compound RMSE_cliff ranking does not match the pairwise-ranking ranking, so the current metric misranks methods for the task practitioners care about.",
+    "nearest_prior_work": [
+     {
+      "citation": "van Tilborg, Alenicheva, Grisoni. Exposing the Limitations of Molecular Machine Learning with Activity Cliffs. (MoleculeACE).",
+      "doi_or_arxiv": "10.26434/chemrxiv-2022-mfq52",
+      "what_it_does": "Introduces 30-target cliff benchmark and per-compound RMSE_cliff; the object of this re-evaluation. Published version in JCIM 2022 (DOI 10.1021/acs.jcim.2c01073, unverified here).",
+      "verified": false
+     },
+     {
+      "citation": "Data Leakage and Redundancy in the LIT-PCBA Benchmark.",
+      "doi_or_arxiv": "arXiv:2507.21404",
+      "what_it_does": "Shows near-duplicate leakage inflates a VS benchmark and a parameter-free memoriser matches SOTA; methodological template for the cliff-partner leakage audit.",
+      "verified": false
+     },
+     {
+      "citation": "GraphCliff: Short-Long Range Gating for Modeling Critical Activity Changes.",
+      "doi_or_arxiv": "arXiv:2511.03170",
+      "what_it_does": "Recent (2025) method still using MoleculeACE official split + per-compound RMSE_cliff; representative of the practice this work corrects.",
+      "verified": false
+     }
+    ],
+    "datasets": "MoleculeACE 30 ChEMBL activity-cliff datasets (cached locally), all with official splits.",
+    "baselines": "Morgan-FP RF/LightGBM/SVR, small CPU GNN, and a 1-NN / scaffold-lookup memorisation control to surface leakage (as in LIT-PCBA audit).",
+    "metrics": "Partner-leakage rate per dataset; cliff-pair sign accuracy; cliff-pair ranking AUC; delta-magnitude MAE; per-compound RMSE_cliff (for comparison); method-ranking concordance between old and new metrics; Ash paired protocol over repeats.",
+    "compute_estimate": "30 small datasets (<=~3k mols) x ~5 baselines x >=5 repeats, FP/tabular + one tiny GNN: ~5-7 h on 4 cores. Pair enumeration is cheap with RDKit.",
+    "risks": "Cliff-pair-disjoint splitting can shrink training data on small datasets -> report data-size controls and use repeated splits. If leakage turns out minimal, the pairwise-metric misranking result still stands as the contribution. MoleculeACE published JCIM DOI must be verified before submission.",
+    "reviewer_objections": "(1) 'MoleculeACE already says use cliff metrics' -> yes, per-compound; we show that is the wrong granularity and audit the splits, which they did not. (2) 'Leakage audit is incremental' -> pairing the audit with a corrected metric and a re-ranking that changes conclusions is the substance. (3) 'Only 30 datasets, all one family' -> 30 is strong multi-dataset power and matches the benchmark's own scope."
+   },
+   {
+    "id": "E",
+    "title": "Calibration is the missing leaderboard axis: conformal coverage under scaffold, cluster, and SIMPD-temporal splits as a first-class, noise-referenced benchmark",
+    "problem": "Leaderboards rank by point accuracy, but deployed models need calibrated uncertainty for triage decisions. Standard conformal prediction assumes exchangeability, which realistic chemical splits (scaffold, cluster, temporal) violate, silently destroying coverage. No multi-dataset benchmark reports coverage as a headline axis alongside accuracy, nor references the coverage target to the dataset's noise ceiling.",
+    "what_exists": "CoDrug (arXiv 2310.12033) shows unweighted conformal under-covers badly under scaffold/fingerprint splits (e.g. 0.34 vs 0.80 target) and density-weighting helps; class-conditional/Mondrian fixes (arXiv 2607.06605) and covariate-shift reweighting (KMM-CP, arXiv 2603.26415) partly recover it. These are mostly single/few-dataset, mostly classification, and not tied to noise ceilings or SIMPD temporal splits.",
+    "gap": "Missing: a >=15-dataset regression benchmark that (i) reports conformal coverage and interval efficiency under four splits (random, scaffold, Butina-cluster, SIMPD-temporal), (ii) tests practical CPU-cheap fixes (Mondrian/normalised/Mahalanobis-weighted conformal), and (iii) references the interval width to the per-dataset noise ceiling so that 'well-calibrated' is judged against irreducible noise, not an arbitrary target. Coverage has never been promoted to a leaderboard axis for ADMET regression under temporal splits.",
+    "proposed_contribution": "Add calibration as a reported axis: for TDC ADMET regression + MoleculeACE, compute split-conformal coverage and mean interval width under four splits, compare standard vs normalised vs Mahalanobis/KMM-weighted conformal, and report a 'calibration-under-shift' score. Tie interval width to the noise ceiling (shared with candidate A) so over-wide intervals on low-noise data and under-coverage on shifted splits are both visible. Deliver per-dataset coverage tables and a reusable CPU conformal wrapper.",
+    "hypothesis": "H1: Under scaffold/cluster/SIMPD splits, marginal conformal under-covers on a majority of datasets; the drop correlates with train/test distribution distance. H2: A cheap normalised/weighted conformal recovers most of the coverage gap at modest interval-width cost, and ranking methods by accuracy alone does not predict their calibration ranking (so calibration adds non-redundant information to the leaderboard).",
+    "nearest_prior_work": [
+     {
+      "citation": "CoDrug: Conformal Drug Property Prediction with Density Estimation under Covariate Shift.",
+      "doi_or_arxiv": "arXiv:2310.12033",
+      "what_it_does": "Shows conformal under-coverage under scaffold/fingerprint splits and a density-weighted fix; few datasets, not noise-referenced, not SIMPD-temporal.",
+      "verified": false
+     },
+     {
+      "citation": "Landrum et al. SIMPD: simulated time splits for validating ML approaches. J Cheminform 15 (2023) 119.",
+      "doi_or_arxiv": "10.1186/s13321-023-00787-9",
+      "what_it_does": "Provides realistic simulated-temporal splits (99 ChEMBL datasets) used as the distribution-shift arm.",
+      "verified": true
+     },
+     {
+      "citation": "Ash, Wognum et al. Practically Significant Method Comparison Protocols. JCIM 65 (2025) 9398-9411.",
+      "doi_or_arxiv": "10.1021/acs.jcim.5c01609",
+      "what_it_does": "Comparison protocol applied to coverage/efficiency across repeats and datasets.",
+      "verified": true
+     }
+    ],
+    "datasets": "TDC ADMET regression subsets (~10-12, cached) + MoleculeACE 30 (cached) + SIMPD 99 ChEMBL temporal sets (public, J Cheminform 2023) -> easily >=15, with a temporal arm.",
+    "baselines": "LightGBM/RF point models wrapped in: standard split-conformal, normalised conformal (difficulty-scaled), Mondrian/class-conditional (for binarised tasks), and a Mahalanobis/density-weighted conformal; k-NN residual control.",
+    "metrics": "Empirical coverage vs target (1-alpha), mean/median interval width, coverage gap vs distribution distance, width-vs-noise-ceiling ratio, Ash paired comparison of calibration scores across methods.",
+    "compute_estimate": "Conformal is a cheap wrapper over trained point models: ~15-40 datasets x 4 splits x 4 conformal variants x 5 repeats, CPU: ~9-12 h on 4 cores (SIMPD arm can be subsampled to keep within budget).",
+    "risks": "The conformal-under-shift space is becoming crowded (several 2026 arXiv preprints) -> differentiate by the multi-dataset regression scope, SIMPD-temporal arm, the noise-ceiling referencing, and the 'calibration as leaderboard axis' framing rather than a new conformal algorithm. SIMPD download/curation effort -> use the released repo directly.",
+    "reviewer_objections": "(1) 'Conformal under shift is known' -> we do not claim a new method; we make coverage a reported, noise-referenced benchmark axis at scale with realistic temporal splits. (2) 'Weighted conformal already exists' -> we test the cheapest fixes as baselines and quantify the accuracy-vs-calibration ranking mismatch. (3) overlap with A -> share the noise-ceiling estimate but the deliverable (calibration axis) is distinct."
+   }
+  ],
+  "already_done": [
+   {
+    "idea": "Deriving per-dataset ML performance ceilings from experimental error by noise injection (9 datasets) and releasing a tool for it.",
+    "citation": "Crusius, Cipcigan, Biggin. Are we fitting data or noise? Faraday Discussions 256 (2025) 304-321; NoiseEstimator package.",
+    "doi_or_arxiv": "10.1039/d4fd00091a"
+   },
+   {
+    "idea": "Quantifying that combining IC50/Ki across assays/sources injects large, curation-dependent noise in ChEMBL.",
+    "citation": "Landrum, Riniker. Combining IC50 or Ki Values from Different Sources Is a Source of Significant Noise. JCIM 64 (2024) 1560-1567.",
+    "doi_or_arxiv": "10.1021/acs.jcim.4c00049"
+   },
+   {
+    "idea": "Establishing the standard rigorous method-comparison protocol (repeated splits, paired tests, effect sizes, practical significance) for small-molecule ML - do NOT re-propose a protocol; adopt this one.",
+    "citation": "Ash, Wognum et al. Practically Significant Method Comparison Protocols for ML in Small Molecule Drug Discovery. JCIM 65 (2025) 9398-9411.",
+    "doi_or_arxiv": "10.1021/acs.jcim.5c01609"
+   },
+   {
+    "idea": "Introducing the 30-target activity-cliff benchmark and arguing for cliff-specific (per-compound RMSE_cliff) evaluation.",
+    "citation": "van Tilborg, Alenicheva, Grisoni. Exposing the Limitations of Molecular Machine Learning with Activity Cliffs (MoleculeACE), JCIM 2022.",
+    "doi_or_arxiv": "10.26434/chemrxiv-2022-mfq52"
+   },
+   {
+    "idea": "Pairwise/delta regression (DeepDelta) and pairwise classification of potency change exploiting bounded datapoints (DeltaClassifier) - already demonstrated; the open question is evaluation validity/compute-fairness, not the method.",
+    "citation": "Fralish et al. DeepDelta, J Cheminform 15 (2023) 101; Fralish, Skaluba, Reker, RSC Med Chem 15 (2024) 2474-2482.",
+    "doi_or_arxiv": "10.1186/s13321-023-00769-x ; 10.1039/d4md00325j"
+   },
+   {
+    "idea": "Tobit/censored-label modelling to improve uncertainty quantification in drug discovery (UQ4DD).",
+    "citation": "Svensson et al. Enhancing uncertainty quantification in drug discovery with censored regression labels. Artif. Intell. Life Sci. (2025).",
+    "doi_or_arxiv": "10.1016/j.ailsci.2025.100128"
+   },
+   {
+    "idea": "Simulated temporal (time-split) validation sets for public ChEMBL data via a genetic algorithm (SIMPD, 99 datasets).",
+    "citation": "Landrum et al. SIMPD: an algorithm for generating simulated time splits. J Cheminform 15 (2023) 119.",
+    "doi_or_arxiv": "10.1186/s13321-023-00787-9"
+   },
+   {
+    "idea": "Near-duplicate/leakage audit of a specific virtual-screening benchmark showing a parameter-free memoriser matches SOTA.",
+    "citation": "Data Leakage and Redundancy in the LIT-PCBA Benchmark (2025).",
+    "doi_or_arxiv": "arXiv:2507.21404"
+   },
+   {
+    "idea": "Conformal prediction under covariate shift for drug property prediction with density/kernel reweighting fixes - a bare 'conformal under scaffold split' paper is taken; differentiate by scale + noise-referencing + temporal splits.",
+    "citation": "CoDrug: Conformal Drug Property Prediction with Density Estimation under Covariate Shift; KMM-CP (2026).",
+    "doi_or_arxiv": "arXiv:2310.12033 ; arXiv:2603.26415"
+   },
+   {
+    "idea": "A standalone census of how many ChEMBL potency labels are censored / how many scaffold-split test molecules have ChEMBL near-duplicates (appearing at NeurIPS 2026) - avoid framing any proposal as a prevalence census.",
+    "citation": "NeurIPS 2026 submissions: ChEMBL censored-label census; ADMET leakage/Tanimoto census. Not peer-reviewed; abstracts only.",
+    "doi_or_arxiv": "neurips.cc/virtual/2026/161093 ; neurips.cc/virtual/2026/172578"
+   }
+  ]
+ },
+ {
+  "ranking": [
+   {
+    "id": "D",
+    "title": "A pairwise, leakage-audited activity-cliff metric: fixing how MoleculeACE scores what is fundamentally a pair problem",
+    "verdict": "KEEP",
+    "closest_prior_art_found": "MoleculeACE: van Tilborg et al., JCIM 2022, 10.1021/acs.jcim.2c01073 (chemRxiv 10.26434/chemrxiv-2022-mfq52, both verified) defines per-compound RMSE_cliff. Dablander et al., 'Exploring QSAR models for activity-cliff prediction', J Cheminform 2023, 10.1186/s13321-023-00708-w (VERIFIED) does pair-based cliff *prediction* but not a leakage audit of the benchmark splits or a replacement metric. LIT-PCBA leakage template arXiv:2507.21404 (UNVERIFIED) and GraphCliff arXiv:2511.03170 (UNVERIFIED) exist but neither audits MoleculeACE. Targeted searches returned NO existing MoleculeACE cliff-partner leakage audit or pairwise cliff metric. Gap is real.",
+    "novelty": 4,
+    "feasibility_cpu": 5,
+    "evidence_strength": 4,
+    "jcim_fit": 5,
+    "positive_result_likelihood": 5,
+    "depth_for_full_article": 4,
+    "rationale": "Strongest survivor. Self-contained (30 cached MoleculeACE sets, no external assumptions), cheapest (~5-7h CPU), corrects a highly-cited JCIM benchmark, and is double-hypothesised so it cannot produce a pure null: either partner-leakage exists (headline 1) OR the pairwise metric re-ranks methods vs per-compound RMSE_cliff (headline 2). A parameter-free 1-NN memoriser is almost guaranteed to expose any leakage. Defensible on a tie by construction because the paper IS an evaluation-validity contribution, matching JCIM's stated priorities (Ash 2025). 30 single-family datasets give genuine multi-dataset statistical power.",
+    "sharpened_design": "METHOD: (1) Enumerate all cliff pairs per dataset with RDKit (ECFP/scaffold/SMILES sim >=0.9 AND >10x potency, mirroring MoleculeACE's own definition). (2) Audit official 80/20 splits: per-dataset partner-leakage rate = fraction of test cliff compounds whose cliff partner is in train; and a stronger 'near-duplicate' rate (sim>=0.95). (3) Define pairwise cliff metrics on test cliff pairs: sign-of-change accuracy, cliff-pair ranking accuracy (does the model order the pair correctly), delta-magnitude MAE. (4) Build cliff-pair-disjoint splits (both members of every cliff pair forced to the same side) and re-benchmark the pool under official vs disjoint splits. RQs: (RQ1) What is the partner-leakage rate across the 30 sets, and does a 1-NN/scaffold-lookup memoriser achieve deceptively strong RMSE_cliff under official splits? -> leakage audit experiment. (RQ2) Does per-compound RMSE_cliff ranking of the method pool agree with the pairwise-ranking ranking (Kendall tau between rankings)? -> metric-concordance experiment. (RQ3) How much does cliff-pair-disjoint splitting shrink apparent method gaps on cliffs, controlling for reduced training size? -> split-comparison with data-size controls. (RQ4) Does the memoriser control's advantage track the per-dataset leakage rate? -> regression of memoriser-gap on leakage rate. DATASETS: all 30 MoleculeACE ChEMBL sets. BASELINES: Morgan-FP RF / LightGBM / SVR(Tanimoto), one small CPU GNN, 1-NN and scaffold-lookup memorisation controls. ABLATIONS: similarity threshold (0.9/0.95), potency-fold cutoff (10x/100x), FP vs scaffold vs SMILES partner definition, split seed variability. STATS: >=10 repeated splits, paired Wilcoxon with Cohen-style effect sizes and practical-significance thresholds per Ash 2025 (10.1021/acs.jcim.5c01609, VERIFIED); report win/tie/loss and ranking-concordance CIs via bootstrap. DELIVERABLE: open pairwise-cliff metric package + cliff-disjoint splits.",
+    "evidence_strength_note": ""
+   },
+   {
+    "id": "A",
+    "title": "Noise-ceiling-normalised leaderboards: how much of the molecular-ML ranking survives when you divide out irreducible label noise?",
+    "verdict": "KEEP",
+    "closest_prior_art_found": "Crusius, Cipcigan & Biggin, Faraday Discuss. 2025, 10.1039/d4fd00091a (VERIFIED) derives ceilings via noise injection on 9 datasets, releases NoiseEstimator, but does NOT use empirical per-dataset replicate noise at scale nor re-rank a method pool. Landrum & Riniker, JCIM 2024, 10.1021/acs.jcim.4c00049 (VERIFIED) quantifies real inter-assay ChEMBL noise (basis for empirical sigma_E). Ash et al. JCIM 2025 10.1021/acs.jcim.5c01609 (VERIFIED) supplies the protocol. No work combines empirical per-dataset ceilings + full re-ranking + flip-rate across >=15 sets.",
+    "novelty": 4,
+    "feasibility_cpu": 4,
+    "evidence_strength": 4,
+    "jcim_fit": 5,
+    "positive_result_likelihood": 5,
+    "depth_for_full_article": 4,
+    "rationale": "Close second. Concrete quantitative headline (fraction of 'significant' pairwise gaps that collapse to 'within noise' after ceiling-normalisation) that is virtually guaranteed to be non-trivial. Excellent JCIM fit, CPU-feasible, defensible on a tie. Weaker than D only on dependency risk: ChEMBL replicate sparsity for some targets and the ceiling estimate's own uncertainty create a verification burden, and a reviewer will say it 'extends Crusius.' Mitigated by empirical replicate ceilings + bootstrap CIs + a calibration check that injected noise matches real replicate variance.",
+    "sharpened_design": "METHOD: (1) Per-dataset ceiling estimation: for 30 MoleculeACE targets, pull ChEMBL REST replicate measurements of the same compound-target to get empirical sigma_E; for TDC ADMET use Landrum/Riniker-style curation priors + NoiseEstimator injection to get a ceiling distribution with bootstrap CIs. (2) Train a fixed pool of ~6 baselines; report raw score AND ceiling-normalised 'fraction-of-attainable-performance'. (3) Apply Ash protocol to BOTH raw and normalised scores; headline = count of pairwise comparisons that flip from 'significant' to 'within noise'. RQs: (RQ1) Empirical per-dataset ceiling and its CI across >=15 sets -> replicate-pull + injection experiment. (RQ2) What fraction of previously-significant pairwise method differences become indistinguishable after normalisation? -> flip-rate experiment. (RQ3) Does the same absolute RMSE gap flip practical-significance verdict across datasets of differing ceiling? -> cross-dataset effect-size experiment. (RQ4) Do injected-noise ceilings agree with empirical replicate ceilings on the subset where both exist? -> validation experiment. DATASETS: TDC ADMET group (22) + MoleculeACE (30) = up to 52. BASELINES: Morgan-FP+RF, Morgan-FP+LightGBM, RDKit-desc+XGBoost, SVR(Tanimoto), small CPU MPNN (<=20k), k-NN control. ABLATIONS: sigma_E source (empirical vs prior vs injection), replicate-count threshold, target-level vs compound-level sigma_E fallback. STATS: >=10 repeats, paired Wilcoxon + effect sizes (Ash 2025), bootstrap CIs on the ceiling itself and on the flip-rate. COMPUTE: ~8-11h on 4 cores; cache ChEMBL pulls once.",
+    "evidence_strength_note": ""
+   },
+   {
+    "id": "C",
+    "title": "Does censoring-aware training help or hurt across splits? A multi-dataset, split-stratified resolution of the Tobit controversy",
+    "verdict": "RISKY",
+    "closest_prior_art_found": "Svensson et al., AILS 2025, 10.1016/j.ailsci.2025.100128 (VERIFIED) = Tobit helps UQ. NeurIPS 2026 census neurips.cc/virtual/2026/161093 (abstract, UNVERIFIED peer review) = Tobit HURTS point RMSE by 0.108 log units on 156 targets, 'treating bounds as exact saved accuracy.' CensorADMET chemRxiv 10.26434/chemrxiv.15006239 Jul 2026 (VERIFIED exists) already does censored-ADMET training with a tunable deficit budget under scaffold/assay-provenance shift. Fralish DeltaClassifier RSC Med Chem 2024 10.1039/d4md00325j (VERIFIED). The space is crowding fast.",
+    "novelty": 3,
+    "feasibility_cpu": 3,
+    "evidence_strength": 4,
+    "jcim_fit": 4,
+    "positive_result_likelihood": 4,
+    "depth_for_full_article": 4,
+    "rationale": "The contradiction is real and the split x task x censored-fraction arbitration is a clean, likely-publishable reconciliation ('Tobit helps UQ/ranking, not point RMSE; benefit grows with censoring fraction and under temporal/scaffold splits'). Downgraded to RISKY because CensorADMET + the NeurIPS census now occupy much of this territory, and a custom censored LightGBM objective carries implementation/validation risk. Differentiate via the actionable decision chart and split-stratification, validate the custom Tobit objective against Svensson's published GP numbers on a shared target.",
+    "sharpened_design": "METHOD: pull relation-field-aware ChEMBL sets (~15-20 targets spanning 10-55% censoring); compare 4 label policies (drop-censored, impute-at-threshold, Tobit/censored-likelihood LightGBM, DeltaClassifier sign) x 3 splits (random, scaffold, SIMPD temporal via 10.1186/s13321-023-00787-9 VERIFIED). RQs: (RQ1) Does Tobit help calibration/coverage but not point RMSE? -> task-stratified experiment. (RQ2) Does the benefit of keeping censored labels grow with censored fraction? -> fraction-stratified experiment. (RQ3) Does it grow under temporal/scaffold vs random splits? -> split-stratified experiment. (RQ4) Does the custom tree Tobit objective reproduce Svensson GP results on a shared target? -> validation experiment. METRICS: RMSE/MAE on exact-label test points, ECE + conformal coverage, Kendall tau + top-k ranking; Ash paired protocol. COMPUTE ~10-13h.",
+    "evidence_strength_note": ""
+   },
+   {
+    "id": "C1",
+    "title": "Censoring-aware conformal prediction for molecular activity: valid intervals when calibration labels are qualified (>/<)",
+    "verdict": "RISKY",
+    "closest_prior_art_found": "Liu, de Paula & Tamer, arXiv:2501.10117 (VERIFIED) 'Prediction Sets and Conformal Inference with Interval Outcomes' is a GENERAL conformal method for left/right/interval-censored outcomes that builds nonconformity scores from interval bounds under fixed bracketing AND random censoring -- this substantially anticipates the proposed 'partial-order/interval-score' construction. Choi arXiv:2607.02173 (VERIFIED) does two-sided Tobit censored conformal via weighted calibration. arXiv:2408.16381 'Uncertainty quantification for intervals' (VERIFIED) does conformal predictive regions for interval-censored targets. Gui/Barber arXiv:2211.01227, Cand\u00e8s arXiv:2103.09763 (both VERIFIED). NeurIPS census (161093) reports bounds-as-exact does not hurt RMSE.",
+    "novelty": 3,
+    "feasibility_cpu": 4,
+    "evidence_strength": 3,
+    "jcim_fit": 4,
+    "positive_result_likelihood": 3,
+    "depth_for_full_article": 4,
+    "rationale": "The scout rated this top-tier, but verification shows the core methodological idea (conformal scoring from one-sided/interval bounds) is largely published in the general statistics literature (2501.10117, 2607.02173, 2408.16381). What remains is the MOLECULAR instantiation + benchmark + the decision-relevant one-sided-lower-bound framing -- an application paper, not new theory. Still plausibly publishable in JCIM as a benchmark if framed honestly as 'applying and comparing interval-score conformal to real assay censoring,' but novelty and positive-result likelihood are capped because the general method already guarantees coverage; the contribution reduces to showing drop/impute baselines break and the known fix works. Not the recommendation.",
+    "sharpened_design": "If pursued: instantiate interval-score split-conformal (per 2501.10117) on one-sided type-I assay censoring, emphasise the decision-relevant lower-predictive-bound-for-actives quantity and the exact-partial-order scoring that avoids IPCW; semi-synthetic censoring sweep (0/10/25/40%) on TDC ADMET + MoleculeNet for ground-truth coverage, ChEMBL native qualifiers for realism. Baselines: drop-censored, impute-at-threshold, impute-Tobit-mean, bound-as-exact, survival-transplant LPB. RQs tie to: coverage vs censoring fraction, interval width/efficiency, fraction of finite usable lower bounds, decision metric (true actives whose LPB clears a cutoff). Position strictly as benchmark + decision-quality, not novel conformal theory.",
+    "evidence_strength_note": ""
+   },
+   {
+    "id": "E",
+    "title": "Calibration as a leaderboard axis: conformal coverage under scaffold, cluster, and SIMPD-temporal splits, noise-referenced",
+    "verdict": "RISKY",
+    "closest_prior_art_found": "CoDrug arXiv:2310.12033 (real) shows conformal under-coverage under scaffold/fingerprint splits + density fix; KMM-CP arXiv:2603.26415; Tursunbadalov arXiv:2607.06605 (VERIFIED) class-conditional fix; NeurIPS 2025 'CP for Molecular Properties under Label Shift' (neurips.cc/virtual/2025/125228). SIMPD 10.1186/s13321-023-00787-9 (VERIFIED), Ash 2025 (VERIFIED). The conformal-under-shift space is crowded.",
+    "novelty": 3,
+    "feasibility_cpu": 4,
+    "evidence_strength": 3,
+    "jcim_fit": 4,
+    "positive_result_likelihood": 4,
+    "depth_for_full_article": 3,
+    "rationale": "Feasible and well-scoped but the weakest of the benchmark-axis trio because 'conformal under shift' is heavily published. Its differentiators -- SIMPD temporal arm, noise-referenced interval width (shared with A), and the 'calibration as a reported leaderboard axis' framing -- are real but incremental. Overlaps A on the noise ceiling and C3 on the UQ-decision question. Better folded as a section of A than run standalone.",
+    "sharpened_design": "If merged with A: add a calibration axis reporting split-conformal coverage + interval width under 4 splits (random/scaffold/Butina/SIMPD-temporal) for LightGBM/RF wrapped in standard/normalised/Mondrian/density-weighted conformal; reference width to the per-dataset noise ceiling from A; headline = accuracy ranking does not predict calibration ranking. RQs: coverage-gap vs train/test distance; cheap-fix recovery; accuracy-vs-calibration ranking mismatch. Ash paired protocol.",
+    "evidence_strength_note": ""
+   },
+   {
+    "id": "C2",
+    "title": "Conformal hit-selection with FDR control that uses, rather than discards, censored calibration labels",
+    "verdict": "RISKY",
+    "closest_prior_art_found": "Bai et al., JCIM 2025, 10.1021/acs.jcim.5c01633 (VERIFIED) = conformal selection, exact labels. Sesia & Svetnik arXiv:2512.18118 (VERIFIED) 'Distribution-Free Selection of Low-Risk Oncology Patients' = conformal selection with FDR via conformal p-values under right-censoring (IPCW); arXiv:2505.04568 conformal survival bands with FDR. Jin & Cand\u00e8s arXiv:2210.01408, 2307.09291 (VERIFIED). The 'conformal selection + FDR + censoring' combination is already demonstrated in survival.",
+    "novelty": 3,
+    "feasibility_cpu": 4,
+    "evidence_strength": 3,
+    "jcim_fit": 4,
+    "positive_result_likelihood": 3,
+    "depth_for_full_article": 3,
+    "rationale": "More novel-looking than C1 but similarly anticipated: Sesia & Svetnik 2512.18118 already do FDR-controlled conformal selection under censoring. The molecular type-I adaptation (threshold-known one-sided labels, no IPCW needed) is a genuine but narrow simplification. Overlaps C1 conceptually; likely stronger as a second experiment inside a censoring paper than standalone. Also exposed to Srivastava & Kassetty arXiv:2611.01512's finding that scaffold-provenance calibration can break conformal-selection FDR.",
+    "sharpened_design": "If pursued: censoring-robust conformal p-values where a '>X' active with X>=c is a certain-positive tightening the p-value; prove FDR via conservative-score exchangeability; drop-in extension of Bai 2025. Semi-synthetic FDR/power curves + ChEMBL qualifiers. Must demonstrate calibration-provenance robustness (scaffold splits) alongside censoring handling, or it looks fragile.",
+    "evidence_strength_note": ""
+   },
+   {
+    "id": "C3",
+    "title": "Does any uncertainty signal improve molecular decisions over point-ranking? A 15+ dataset practical-significance audit",
+    "verdict": "RISKY",
+    "closest_prior_art_found": "Srivastava & Kassetty, arXiv:2611.01512 (VERIFIED, Nov 2026) = the 2-dataset/1-model result. Ash 2025 (VERIFIED) protocol. Morger Sci Rep 2022 10.1038/s41598-022-09309-3. MUBen arXiv:2306.10060. No large-scale protocol-grade decision-quality-vs-ranking audit exists.",
+    "novelty": 3,
+    "feasibility_cpu": 4,
+    "evidence_strength": 3,
+    "jcim_fit": 4,
+    "positive_result_likelihood": 3,
+    "depth_for_full_article": 3,
+    "rationale": "Valuable evaluation-validity question and CPU-feasible, but risks being read as 'just scaling Srivastava' and risks a largely negative/confirmatory result JCIM reviewers may find thin without a constructive deliverable. The decision-rule output ('when UQ helps, when ranking suffices') is the needed differentiator. Positive-result likelihood is only moderate because the most likely finding is 'UQ rarely beats ranking,' which is publishable but softer than D's or A's concrete quantitative headline.",
+    "sharpened_design": "If pursued: >=15 datasets x >=3 model families x 3 calibration-provenance regimes (random/scaffold/temporal); measure realised coverage/FDR vs nominal and whether gating/abstaining on each UQ signal (CP width, Venn-ABERS, ensemble variance, kNN-AD) beats point-ranking on precision@budget/BEDROC/enrichment, with Ash effect sizes and win/tie/loss vs the ranking null. Deliverable: decision-rule + reusable CPU benchmark. Pre-register to avoid scope creep.",
+    "evidence_strength_note": ""
+   },
+   {
+    "id": "B",
+    "title": "Leakage-controlled, compute-matched re-evaluation of pairwise/delta learning",
+    "verdict": "RISKY",
+    "closest_prior_art_found": "DeepDelta J Cheminform 2023 10.1186/s13321-023-00769-x (VERIFIED) -- crucially, its own design already pairs molecules AFTER CV splits so 'every molecule occurs in train-pairs OR test-pairs, not both,' which pre-addresses the strongest leakage claim. DeltaClassifier 10.1039/d4md00325j (VERIFIED). Nelen J Cheminform 2025 10.1186/s13321-025-00956-y (VERIFIED). SQRL arXiv:2501.09103 (VERIFIED) already shows similarity-thresholded pairing matters. CliffSplit arXiv:2605.17265 (VERIFIED) cliff-aware evaluation.",
+    "novelty": 3,
+    "feasibility_cpu": 4,
+    "evidence_strength": 3,
+    "jcim_fit": 3,
+    "positive_result_likelihood": 3,
+    "depth_for_full_article": 3,
+    "rationale": "The headline leakage premise is partly defused by DeepDelta's published split design (molecules already separated across train/test pairs), so the train-anchored pairing regime is not actually how DeepDelta evaluates -- the leakage decomposition may find little. The surviving contributions (compute-matched budgets, decision/ranking metrics, SQRL-style pairing sensitivity) are legitimate but incremental, and SQRL/CliffSplit already probe adjacent questions. Lower JCIM distinctiveness than D.",
+    "sharpened_design": "If pursued: three test-pairing regimes (all-pairs/train-anchored/within-test) to isolate augmentation vs leakage; cap delta training pairs to the absolute model's compute budget; add lead-op decision metrics (within-series Kendall tau, top-k analogue accuracy, sign accuracy) across 30 MoleculeACE + ~10 TDC regression sets; Ash paired protocol. Frame as 'when does pairwise help' characterisation, not a takedown.",
+    "evidence_strength_note": ""
+   },
+   {
+    "id": "C4",
+    "title": "Coverage for unseen chemotypes: hierarchical/Mondrian conformal prediction with new-group guarantees over scaffold clusters",
+    "verdict": "RISKY",
+    "closest_prior_art_found": "Lee, Barber & Willett arXiv:2306.06342 (VERIFIED) hierarchical-exchangeability new-group coverage theory. Dunn/Wasserman/Ramdas arXiv:1809.07441. Rakhshaninejad arXiv:2505.18890 (cluster-conditioned CP for DTI, SEEN groups). CoDrug arXiv:2310.12033, KMM-CP arXiv:2603.26415 (scaffold covariate-shift CP). No scaffold-cluster instantiation of hierarchical new-group CP found.",
+    "novelty": 3,
+    "feasibility_cpu": 4,
+    "evidence_strength": 3,
+    "jcim_fit": 3,
+    "positive_result_likelihood": 3,
+    "depth_for_full_article": 3,
+    "rationale": "The new-group guarantee is a real distinction from covariate-shift CP, and the scaffold-cluster instantiation is genuinely unfilled. But the likely empirical outcome -- hierarchical new-group intervals are valid but very wide, needing many clusters -- caps practical appeal, and the space reads as 'yet another CP-under-shift' paper. Needs a demonstrable usable operating point to clear review.",
+    "sharpened_design": "If pursued: Bemis-Murcko/Butina clusters as exchangeable groups; split hierarchical CP calibrated at group level for held-out-cluster coverage; compare marginal/within-group-Mondrian/covariate-shift-weighted/hierarchical; characterise width-vs-validity and minimum cluster count for nominal new-group coverage. >=15 TDC/MoleculeNet + MoleculeACE sets. Report where scaffold-cluster exchangeability holds.",
+    "evidence_strength_note": ""
+   },
+   {
+    "id": "C5",
+    "title": "Conditional-coverage recovery at activity cliffs via roughness/AD-conditioned Mondrian conformal prediction",
+    "verdict": "KILL",
+    "closest_prior_art_found": "Research Square rs-10071162 (UNVERIFIED; search indicates a single high-school-author supplement -- treat as weak/unreviewed) already proposes neighbour-roughness + roughness-conditioned CP on all 30 MoleculeACE targets with the same coverage-stabilisation result. MoleculeACE 10.1021/acs.jcim.2c01073 (VERIFIED). Or\u0161oli\u0107 dAD 10.1093/bioinformatics/btad465, Hosni 10.1021/acsomega.5c11875, Tursunbadalov arXiv:2607.06605 (VERIFIED). Srivastava arXiv:2611.01512 (VERIFIED) suggests abstention/gating gains over ranking are often cosmetic.",
+    "novelty": 2,
+    "feasibility_cpu": 5,
+    "evidence_strength": 2,
+    "jcim_fit": 3,
+    "positive_result_likelihood": 2,
+    "depth_for_full_article": 2,
+    "rationale": "Kill. The core idea is already laid out in an existing (if unverified) preprint that this would formalise and extend -- high scoop risk and the formalisation (Mondrian-on-roughness = group-conditional coverage) is a modest wrapper on known machinery. Narrow scope (cliffs only), and Srivastava's negative result makes the decision-benefit likely cosmetic (coverage traded for width with no downstream gain). Would require independently reproducing the base claim before any contribution, and even then the ceiling is low. If the cliff theme is wanted, D is the far stronger way to own activity-cliff evaluation.",
+    "sharpened_design": "",
+    "evidence_strength_note": ""
+   }
+  ],
+  "recommendation": "PURSUE D: the pairwise, leakage-audited activity-cliff metric for MoleculeACE. It is the single best risk-adjusted bet: fully self-contained (30 cached datasets, no external noise-ceiling assumptions or custom losses), cheapest to run (~5-7h on 4 cores, well inside budget), targets a verified gap (no MoleculeACE cliff-partner leakage audit or pairwise cliff metric exists in the literature), corrects a highly-cited JCIM benchmark on its home turf, and is structurally defensible even if accuracy ties because the contribution is evaluation validity (exactly JCIM's stated priority per Ash 2025). It is double-hypothesised so it cannot collapse to a pure null: either MoleculeACE's official splits leak cliff partners (a 1-NN/scaffold-lookup memoriser control will expose this almost by construction) OR the pairwise sign/ranking/delta-magnitude metric re-ranks the method pool relative to per-compound RMSE_cliff. Either outcome is a publishable headline, and 30 single-family datasets deliver real multi-dataset statistical power. Runner-up is A (noise-ceiling re-ranking), equally strong on JCIM fit and headline impact but carrying more dependency risk (ChEMBL replicate sparsity, ceiling-estimate uncertainty, and a 'this extends Crusius' objection); if D's leakage audit comes back thin, A is the fallback, and the two share a noise-ceiling estimation module so some work transfers.\\n\\nWHAT WOULD MAKE D FAIL: if (a) partner-leakage across the 30 sets turns out negligible (MoleculeACE's spectral-cluster-then-cliff-stratify splitting may already separate most cliff partners) AND (b) the pairwise metric yields essentially the same method ranking as RMSE_cliff, then both headlines evaporate and the paper becomes a weak confirmatory null. Secondary failure mode: cliff-pair-disjoint re-splitting shrinks the already-small training sets so much that apparent method differences vanish for trivial data-size reasons rather than leakage, confounding RQ3. Mitigations: pre-register both hypotheses and the 1-NN memoriser control (which surfaces leakage even at low rates); run the metric-concordance experiment (RQ2) independently of the leakage experiment so the paper stands on either leg; and include explicit training-set-size controls plus repeated-split variance in RQ3. Avoid over-claiming a universal leakage problem -- frame as an audit + a corrected, task-matched metric, and verify the MoleculeACE JCIM DOI (10.1021/acs.jcim.2c01073; the Crossref lookup returned only the SI record 10.1021/acs.jcim.2c01073.s001 and the chemRxiv preprint 10.26434/chemrxiv-2022-mfq52, both verified) before submission."
+ }
+]
