@@ -1,0 +1,35 @@
+{
+ "pre_empted_directions": [
+  {
+   "id": "C1 conformal-under-censored-calibration",
+   "killer": "Sesia & Svetnik, 'Conformal Prediction for Regression with Clipped Outcomes', arXiv:2607.20736 (Jul 2026): new nonconformity score + finite-sample coverage guarantee when calibration outcomes are clipped at known fixed thresholds; addresses conditional coverage. Svetnik = Merck cheminformatics statistician.",
+   "verdict": "ABANDON core method"
+  },
+  {
+   "id": "C2 conformal-selection-under-censored",
+   "note": "Conformal selection space exploding in 2025 (Jin-Candes, Bai 2025 JCIM 10.1021/acs.jcim.5c01633, ACS 2507.15825, MCCS 2510.08075, Multivariate 2505.00917, OptCS 2411.17983). Censored+selection specifically open but highest pre-emption velocity of all.",
+   "verdict": "AVOID (pre-emption risk)"
+  },
+  {
+   "id": "D moleculeace-pairwise-cliff-leakage",
+   "killer": "Cuccarese arXiv:2604.07560 (Apr 2026, 25M MMPs, 50 targets, shows simple baselines beat ML = evaluation inflation); ACNet (400K MMP cliff benchmark); ACGCN (MMP GCN); GraphCliff 2511.03170 (claims MoleculeACE split prevents leakage by construction).",
+   "verdict": "ABANDON"
+  },
+  {
+   "id": "P2 class-conditional conformal imbalanced screening",
+   "killer": "Tursunbadalov arXiv:2607.06605 (2026): marginal conformal under-covers minority class in virtual screening, class-conditional/Mondrian fix.",
+   "verdict": "ABANDON"
+  },
+  {
+   "id": "delta assay-aware data combination",
+   "killer": "Chan-Verdonk-Poelking arXiv:2308.09086 (neural processes, assay heterogeneity, systematic offsets); AssayMatch 2511.16087 (MIT, assay selection); PLOS ONE IC50/Ki offset correction.",
+   "verdict": "ABANDON"
+  },
+  {
+   "id": "A noise-ceiling leaderboards",
+   "note": "Overlaps Crusius 10.1039/d4fd00091a and 'Three-Level Noise Floor' JCIM 2026; thin method; moderate pre-emption.",
+   "verdict": "FALLBACK ONLY"
+  }
+ ],
+ "strategic_note": "Molecular UQ/conformal/calibration/selection/cliff/assay-heterogeneity are all saturated 2025-2026. Pivot to lower-pre-emption, method+mechanism, zero-curation, can't-null directions in JCIM scope."
+}
