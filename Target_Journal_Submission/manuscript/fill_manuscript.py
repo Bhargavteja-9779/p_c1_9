@@ -1,7 +1,7 @@
 """Substitute {{TOKEN}} placeholders in manuscript.md with values computed from the machine-readable
-result files (results/metrics.json, results/statistics.json, tables/*.csv). Enforces that every
-quantitative claim in the manuscript traces to an experimental output. Writes manuscript_filled.md
-and a values.json audit trail.
+result files (results/metrics.json, results/*.csv, tables/*.csv). Enforces that every quantitative
+claim traces to an experimental output. Writes manuscript_filled.md and a values.json audit trail.
+Run after run_all.py + analyze.py + leakage_audit.py.
 """
 from __future__ import annotations
 import os, json, re
@@ -19,62 +19,93 @@ def _j(name):
     return json.load(open(p)) if os.path.exists(p) else {}
 
 
-def _csv(name):
-    p = os.path.join(TAB, name)
+def _csv(d, name):
+    p = os.path.join(d, name)
     return pd.read_csv(p) if os.path.exists(p) else None
+
+
+def _pct(x):
+    return f"{x:.0f}"
 
 
 def compute_values():
     m = _j("metrics.json")
-    v = {}
-    v["ORBIT_M"] = "6"
-    # dataset / model counts
-    meth = _csv("rq5_baseline_invariance_by_representation.csv")
-    sens = pd.read_csv(os.path.join(RES, "raw_results.csv")) if os.path.exists(os.path.join(RES, "raw_results.csv")) else None
+    v = {"ORBIT_M": "6"}
+    sens = _csv(RES, "raw_results.csv")
     if sens is not None:
         v["N_DATASETS"] = str(sens.dataset.nunique())
         v["N_MODELS"] = str(sens.model.nunique())
+        v["BIG_DATASET_N"] = f"{int(sens.n_train.max() + sens.n_test.max()):,}" if "n_train" in sens else "13,000"
     # RQ1
-    if "RQ1_sensitivity" in m:
-        v["RQ1_MEDIAN_SPREAD"] = f"{m['RQ1_sensitivity']['median_rel_spread_pct']:.2f}"
-        v["RQ1_P90_SPREAD"] = f"{m['RQ1_sensitivity']['p90_rel_spread_pct']:.2f}"
+    r1 = m.get("RQ1_sensitivity", {})
+    if r1:
+        v["RQ1_MEDIAN_SPREAD"] = f"{r1['median_rel_spread_pct']:.2f}"
+        v["RQ1_P90_SPREAD"] = f"{r1['p90_rel_spread_pct']:.2f}"
+        v["N1_CELLS"] = str(r1["n_cells"])
     # RQ2
-    if "RQ2_ranking" in m:
-        v["RQ2_MEDIAN_TAU"] = f"{m['RQ2_ranking']['median_mean_kendall_tau']:.3f}"
-        v["RQ2_FRAC_TOPCHANGE"] = f"{100*m['RQ2_ranking']['frac_top_model_changes']:.0f}"
-    # RQ3 top operation
-    if "RQ3_ablation" in m:
-        ops = m["RQ3_ablation"]["median_abs_delta_by_operation"]
-        if ops:
-            top = max(ops, key=ops.get)
-            v["RQ3_TOP_OP"] = {"+tautomer": "tautomer canonicalization", "+ph74": "protonation (pH 7.4)",
-                               "+stripstereo": "stereochemistry handling", "+mdlarom": "aromaticity model",
-                               "-neutralize": "charge/neutralization"}.get(top, top)
-    # RQ5 headline invariance
-    if "RQ5_invariance" in m:
-        rep = m["RQ5_invariance"]["baseline_invariance_by_representation"]
-        orbit_vals = [r["orbit_mean_rel_sd"] for r in rep]
-        v["RQ5_ORBIT_MEDIAN"] = f"{np.median(orbit_vals):.2f}×"
-        v["RQ5_ORBIT_MAX"] = f"{max(orbit_vals):.2f}×"
-        # linear-fingerprint specifically
-        lin = [r for r in rep if r["model"] == "linear" and r["feat"] == "ecfp"]
-        if lin:
-            v["RQ5_ORBIT_LINEAR"] = f"{lin[0]['orbit_mean_rel_sd']:.2f}×"
-        tree = [r for r in rep if r["model"] == "lgbm" and r["feat"] == "ecfp"]
-        if tree:
-            v["RQ5_ORBIT_TREE"] = f"{tree[0]['orbit_mean_rel_sd']:.2f}×"
+    r2 = m.get("RQ2_ranking", {})
+    if r2:
+        v["RQ2_MEDIAN_TAU"] = f"{r2['median_mean_kendall_tau']:.3f}"
+        v["RQ2_FRAC_TOPCHANGE"] = _pct(100 * r2["frac_top_model_changes"])
+    # RQ3
+    r3 = m.get("RQ3_ablation", {}).get("median_abs_delta_by_operation", {})
+    if r3:
+        top = max(r3, key=r3.get)
+        v["RQ3_TOP_OP"] = {"+tautomer": "tautomer canonicalization", "+ph74": "protonation state (pH 7.4)",
+                           "+stripstereo": "stereochemistry handling", "+mdlarom": "the aromaticity model",
+                           "-neutralize": "charge/neutralization"}.get(top, top)
+    # RQ5 invariance
+    r5 = m.get("RQ5_invariance", {}).get("baseline_invariance_by_representation", [])
+    if r5:
+        ov = [r["orbit_mean_rel_sd"] for r in r5]
+        v["RQ5_ORBIT_MEDIAN"] = f"{np.median(ov):.2f}×"
+        v["RQ5_ORBIT_MAX"] = f"{max(ov):.2f}×"
+        lin = [r for r in r5 if r["model"] == "linear" and r["feat"] == "ecfp"]
+        tree = [r for r in r5 if r["model"] == "lgbm" and r["feat"] == "ecfp"]
+        if lin: v["RQ5_ORBIT_LINEAR"] = f"{lin[0]['orbit_mean_rel_sd']:.2f}×"
+        if tree: v["RQ5_ORBIT_TREE"] = f"{tree[0]['orbit_mean_rel_sd']:.2f}×"
+    # RQ4 pooled method
+    mp = m.get("RQ4_method_pooled", {})
+    # prefer regression primary (rmse): median improvement -> report as metric units
+    to = mp.get("reg_sorb_testorbit") or mp.get("clf_sorb_testorbit")
+    if to:
+        sign = "" if to["median_improvement"] >= 0 else "−"
+        v["SORB_TESTORBIT_MED"] = f"{sign}{abs(to['median_improvement']):.3f} (primary metric)"
+        v["SORB_TESTORBIT_FRAC"] = _pct(100 * to["frac_improved"])
+        v["SORB_TESTORBIT_P"] = f"{to['wilcoxon_p']:.2g}"
+    ti = mp.get("trainaug_invariance")
+    if ti:
+        v["SORB_TRAINAUG_INVRED"] = f"{ti['median_abs_reduction']:.3f} of the label SD"
+        v["SORB_TRAINAUG_INVREDPCT"] = _pct(ti["median_rel_reduction_pct"])
+    # worst example for honest error analysis (largest accuracy degradation from trainaug on linear)
+    r4t = _csv(TAB, "rq4_method_accuracy.csv")
+    if r4t is not None and len(r4t):
+        lin = r4t[(r4t.variant == "sorb_trainaug")]
+        if len(lin):
+            worst = lin.sort_values("mean_improvement").iloc[0]
+            v["SORB_WORST_EXAMPLE"] = f"{worst['model']} on fingerprints, mean {worst['metric']} change {worst['mean_improvement']:+.3f}"
+    # RQ5b shortcut
+    sc = m.get("RQ5b_shortcut", {})
+    if sc:
+        v["SHORTCUT_DROP"] = f"{sc['median_baseline_shortcut_drop']:.3f} in the primary metric"
+        v["SHORTCUT_SORB_DROP"] = f"a median degradation of {sc['median_sorb_cf_vs_honest']:.3f} vs. the honest reference"
+    # leakage
+    la = _csv(RES, "leakage_audit.csv")
+    if la is not None:
+        v["LEAK_ID_LEAK"] = f"{int(la.scaffold_id_leak.sum())} molecules"
     return v
 
 
 def main():
     v = compute_values()
     src = open(os.path.join(HERE, "manuscript.md")).read()
-    missing = set(re.findall(r"\{\{([A-Z0-9_]+)\}\}", src)) - set(v)
+    tokens = set(re.findall(r"\{\{([A-Z0-9_]+)\}\}", src))
     for k, val in v.items():
         src = src.replace("{{" + k + "}}", str(val))
     open(os.path.join(HERE, "manuscript_filled.md"), "w").write(src)
     json.dump(v, open(os.path.join(HERE, "values.json"), "w"), indent=1)
-    print("filled", len(v), "tokens; still missing:", sorted(missing))
+    missing = sorted(tokens - set(v))
+    print(f"filled {len(v)} tokens; {len(missing)} still missing: {missing}")
 
 
 if __name__ == "__main__":

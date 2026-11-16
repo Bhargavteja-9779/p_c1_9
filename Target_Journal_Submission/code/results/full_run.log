@@ -51,3 +51,9 @@ RUN {'mode': 'full', 'nproc': 4, 'device': 'cpu', 'protonation_backend': 'dimorp
   precompute 49/55: tdc:dili (3s)
   precompute 50/55: tdc:herg (3s)
   precompute 51/55: tdc:hia_hou (3s)
+  precompute 52/55: tdc:pgp_broccatelli (4s)
+  precompute 53/55: tdc:cyp2c9_veith (4s)
+  precompute 54/55: tdc:cyp2d6_veith (4s)
+  precompute 55/55: tdc:cyp3a4_veith (4s)
+[E1/E2 sensitivity grid]
+  sens 20/990 (30s)

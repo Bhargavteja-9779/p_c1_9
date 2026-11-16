@@ -156,6 +156,52 @@ def rq5_invariance(meth):
     return df, {"baseline_invariance_by_representation": inv_head.to_dict("records")}
 
 
+
+def rq5b_shortcut(sc):
+    """Semi-synthetic shortcut: baseline exploits standardization; SORB resists."""
+    rows = []
+    for (model, feat, task), g in sc.groupby(["model", "feat", "task"]):
+        gd = g.groupby("dataset").mean(numeric_only=True)
+        rows.append({"model": model, "feat": feat, "task": task, "n_datasets": len(gd),
+                     "median_baseline_shortcut_drop": float(gd.baseline_shortcut_drop.median()),
+                     "median_baseline_cf_vs_honest": float(gd.baseline_cf_vs_honest.median()),
+                     "median_sorb_cf_vs_honest": float(gd.sorb_cf_vs_honest.median())})
+    df = pd.DataFrame(rows); df.to_csv(os.path.join(TAB, "rq5b_shortcut.csv"), index=False)
+    pooled = sc.groupby("dataset").mean(numeric_only=True)
+    return df, {"median_baseline_shortcut_drop": float(pooled.baseline_shortcut_drop.median()),
+                "median_sorb_cf_vs_honest": float(pooled.sorb_cf_vs_honest.median()),
+                "median_baseline_cf_vs_honest": float(pooled.baseline_cf_vs_honest.median()),
+                "n_datasets": int(len(pooled))}
+
+
+def method_pooled(meth):
+    """Pooled (over model x feat x dataset) accuracy effect per SORB variant, and train-aug invariance
+    reduction. Positive improvement = better; lower_better handled per task."""
+    out = {}
+    for task in meth.task.unique():
+        g = meth[meth.task == task]; metric = PRIMARY[task]; lower = LOWER_BETTER[metric]
+        base = g[g.method == "baseline"].groupby(["dataset", "model", "feat"])[metric].mean()
+        for v in ["sorb_trainaug", "sorb_testorbit", "sorb_full"]:
+            vv = g[g.method == v].groupby(["dataset", "model", "feat"])[metric].mean()
+            d = (base - vv).dropna() if lower else (vv - base).dropna()  # +improvement
+            if len(d):
+                w = paired_wilcoxon(vv.loc[d.index].values, base.loc[d.index].values)
+                out[f"{task}_{v}"] = {"median_improvement": float(d.median()),
+                                      "frac_improved": float((d > 0).mean()),
+                                      "wilcoxon_p": float(w["p"]), "n": int(len(d))}
+    # train-aug invariance reduction (orbit SD), pooled
+    b = meth[meth.method == "baseline"].groupby(["dataset", "model", "feat"]).orbit_mean_rel_sd.mean()
+    t = meth[meth.method == "sorb_trainaug"].groupby(["dataset", "model", "feat"]).orbit_mean_rel_sd.mean()
+    j = pd.concat([b.rename("b"), t.rename("t")], axis=1).dropna()
+    if len(j):
+        red = (j.b - j.t)
+        out["trainaug_invariance"] = {"baseline_median": float(j.b.median()), "trainaug_median": float(j.t.median()),
+                                      "median_abs_reduction": float(red.median()),
+                                      "median_rel_reduction_pct": float(100 * (red / j.b.replace(0, np.nan)).median()),
+                                      "frac_reduced": float((red > 0).mean())}
+    return out
+
+
 def main():
     metrics, statistics = {}, {}
     sens = _load("raw_results.csv")
@@ -170,6 +216,10 @@ def main():
         dfm, _ = rq4_method(meth); statistics["RQ4_method_table"] = dfm.to_dict("records")
         dfi, metrics["RQ5_invariance"] = rq5_invariance(meth)
         statistics["RQ5_invariance_table"] = dfi.to_dict("records")
+        metrics["RQ4_method_pooled"] = method_pooled(meth)
+    sc = _load("shortcut_results.csv")
+    if sc is not None:
+        _, metrics["RQ5b_shortcut"] = rq5b_shortcut(sc)
     json.dump(metrics, open(os.path.join(RES, "metrics.json"), "w"), indent=1, default=float)
     json.dump(statistics, open(os.path.join(RES, "statistics.json"), "w"), indent=1, default=float)
     print(json.dumps(metrics, indent=1, default=float)[:3000])
