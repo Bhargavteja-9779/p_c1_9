@@ -1,23 +1,11 @@
 RUN {'mode': 'full', 'nproc': 4, 'device': 'cpu', 'protonation_backend': 'dimorphite_dl', 'n_datasets': 55, 'orbit_cfg': {'max_tautomers': 3, 'include_ph74': True, 'include_neutral': True, 'include_stripstereo': True, 'include_mdlarom': True, 'max_members': 6}}
 [precompute caches]
-  precompute 1/55: tdc:caco2_wang (31s)
-  precompute 2/55: tdc:ppbr_az (37s)
-  precompute 3/55: tdc:lipophilicity_astrazeneca (90s)
-  precompute 4/55: tdc:half_life_obach (140s)
-  precompute 5/55: tdc:clearance_hepatocyte_az (157s)
-  precompute 6/55: tdc:clearance_microsome_az (190s)
-  precompute 7/55: molnet:esol (198s)
-  precompute 8/55: molnet:freesolv (201s)
-Traceback (most recent call last):
-  File "/home/user/p_c1_9/Target_Journal_Submission/code/run_all.py", line 162, in <module>
-    main()
-    ~~~~^^
-  File "/home/user/p_c1_9/Target_Journal_Submission/code/run_all.py", line 139, in main
-    precompute(cfg, args.nproc)
-    ~~~~~~~~~~^^^^^^^^^^^^^^^^^
-  File "/home/user/p_c1_9/Target_Journal_Submission/code/run_all.py", line 70, in precompute
-    for i, name in enumerate(pool.imap_unordered(_precompute_one, jobs), 1):
-                   ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/local/lib/python3.13/multiprocessing/pool.py", line 873, in next
-    raise value
-multiprocessing.pool.MaybeEncodingError: Error sending result: '<multiprocessing.pool.ExceptionWithTraceback object at 0x7f31190ab620>'. Reason: 'PicklingError("Can't pickle <class 'Boost.Python.ArgumentError'>: import of module 'Boost.Python' failed")'
+  precompute 1/55: tdc:caco2_wang (0s)
+  precompute 2/55: tdc:ppbr_az (0s)
+  precompute 3/55: tdc:half_life_obach (0s)
+  precompute 4/55: tdc:clearance_hepatocyte_az (0s)
+  precompute 5/55: tdc:lipophilicity_astrazeneca (0s)
+  precompute 6/55: tdc:clearance_microsome_az (1s)
+  precompute 7/55: molnet:esol (1s)
+  precompute 8/55: molnet:freesolv (1s)
+  precompute 9/55: tdc:vdss_lombardo (52s)
