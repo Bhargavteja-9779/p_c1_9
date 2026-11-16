@@ -31,6 +31,13 @@ except Exception:  # pragma: no cover
 _LFC = rdMolStandardize.LargestFragmentChooser()
 _UNCHARGER = rdMolStandardize.Uncharger()
 _TE = rdMolStandardize.TautomerEnumerator()
+# bound enumeration so flexible molecules do not explode the runtime; we keep only the top-scored
+# few tautomers anyway, and RDKit surfaces high-scoring forms early.
+try:
+    _TE.SetMaxTautomers(64)
+    _TE.SetMaxTransforms(80)
+except Exception:
+    pass
 
 _AROM_MODELS = {
     "rdkit": Chem.AromaticityModel.AROMATICITY_RDKIT,
