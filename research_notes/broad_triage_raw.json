@@ -1,0 +1,591 @@
+[
+ {
+  "direction_id": "FP-COLLISION",
+  "searches_run": [
+   "WebSearch: hash collisions folded Morgan fingerprint ECFP effect QSAR property prediction",
+   "WebSearch: bit collisions ECFP folded fingerprint molecular similarity impact",
+   "WebSearch: fingerprint folding bit collision mitigation count fingerprint QSAR 2024",
+   "WebFetch: arxiv.org/abs/2511.17078 (Hash Collisions in Molecular Fingerprints)",
+   "WebSearch: Huber Pollmann count fingerprints bit collisions frequency folding benchmark 2025",
+   "WebSearch: molecular fingerprint hashing collision rate benchmark ML property prediction multiple datasets effect size",
+   "WebSearch: collision-aware molecular featurization fingerprint unfolded sparse descriptor QSAR benchmark 2025 2026",
+   "Crossref: Sort & Slice DOI verification",
+   "Crossref: Count your bits DOI verification"
+  ],
+  "closest_prior_art": [
+   {
+    "citation": "Virany, W. & Tripp, A. Hash Collisions in Molecular Fingerprints: Effects on Property Prediction and Bayesian Optimization. arXiv:2511.17078 (NeurIPS 2025 AI4Science workshop), 2025.",
+    "doi_or_arxiv": "arXiv:2511.17078",
+    "year": 2025,
+    "what_it_does": "Directly quantifies the effect of hash collisions in folded fingerprints by comparing exact (collision-free), hash-compressed, and Sort&Slice fixed-length encodings at bit sizes 512/1024/2048/4096 on 5 DOCKSTRING property-prediction targets with Gaussian-process models and Bayesian optimization; finds exact fingerprints give a small-but-consistent accuracy gain with no significant BO benefit, and collisions inflate similarity.",
+    "overlap": "Near-total title and scope overlap with the assigned direction: quantifies collision impact on QSAR/property prediction AND on similarity, across bit widths, and benchmarks collision-free encodings. This IS the assigned hard-check question, answered ~1 year before the task date.",
+    "verified": true
+   },
+   {
+    "citation": "Dablander, M. et al. Sort & Slice: a simple and superior alternative to hash-based folding for extended-connectivity fingerprints. Journal of Cheminformatics 16, 135 (2024).",
+    "doi_or_arxiv": "10.1186/s13321-024-00932-y",
+    "year": 2024,
+    "what_it_does": "Proposes a collision-free substructure-pooling method (keep top-L most prevalent ECFP substructures instead of hashing) and benchmarks it across multiple property-prediction datasets, models, split schemes, and ECFP settings, recommending it replace hash-based folding as the default.",
+    "overlap": "Directly supplies the 'collision-mitigating featurization/method, benchmarked across datasets' that the direction asks to invent. Published, extensively ablated, in a top cheminformatics venue.",
+    "verified": true
+   },
+   {
+    "citation": "Huber, F. & Pollmann, S. Count your bits: fingerprint benchmarking to assess broad chemical space representation. Journal of Cheminformatics (2026); bioRxiv 2025.06.16.659994.",
+    "doi_or_arxiv": "10.1186/s13321-026-01245-y (bioRxiv 10.1101/2025.06.16.659994)",
+    "year": 2026,
+    "what_it_does": "Systematically benchmarks 2D fingerprints (circular/path/distance, binary and count), quantifies that folding-induced bit collisions hurt high-occupancy fingerprints (RDKit, MAP4) far more than commonly assumed, and proposes a collision-mitigating 'frequency-folding' method plus percentile normalization and IDF weighting.",
+    "overlap": "Quantifies collision impact at scale on similarity/retrieval AND proposes a collision-mitigating fixed-length featurization. Covers both prongs of the direction in the similarity/representation setting.",
+    "verified": true
+   },
+   {
+    "citation": "Gutlein, M. & Kramer, S. Filtered circular fingerprints improve either prediction or runtime performance while retaining interpretability. Journal of Cheminformatics 8, 60 (2016).",
+    "doi_or_arxiv": "10.1186/s13321-016-0173-z",
+    "year": 2016,
+    "what_it_does": "Builds (Q)SAR models from supervised-filtered unfolded circular-fingerprint fragments instead of folded ones, showing collision-free supervised selection matches or beats folding while staying interpretable.",
+    "overlap": "Older precedent establishing that avoiding folding collisions via unfolded/filtered features helps QSAR; pre-dates and undercuts any 'collisions hurt, so avoid folding' framing.",
+    "verified": true
+   }
+  ],
+  "novelty_after_search": "KILLED",
+  "is_a_method_with_ablations": true,
+  "cannot_collapse_to_null": false,
+  "cpu_feasible": true,
+  "needs_heavy_curation": false,
+  "has_semisynthetic_groundtruth_design": false,
+  "jcim_fit_1to5": 4,
+  "preemption_velocity": "HIGH",
+  "multidataset_power": "High data availability (TDC 22, MoleculeACE 30, MoleculeNet) and CPU-feasible with LightGBM/RF, so a many-dataset collision-isolation study is technically easy. But power does not rescue novelty: Sort & Slice already ran the multi-dataset, multi-model, multi-split benchmark and recommended replacing folding, so a larger TDC/MoleculeACE sweep would read as replication-at-scale, not a new finding.",
+  "defensible_delta": "None survives. The assigned direction's title is essentially identical to Virany & Tripp (arXiv:2511.17078, Nov 2025), which quantifies collision impact on property prediction, similarity, and Bayesian optimization across bit widths and benchmarks collision-free encodings. The mitigation prong is already published twice: Sort & Slice (J. Cheminf 2024, collision-free pooling, heavily ablated across datasets/models/splits) and Count your bits' frequency-folding (J. Cheminf 2026). A hostile reviewer would correctly call any 'collision-aware featurization benchmarked across datasets' incremental to these. The only unclaimed scraps (a semi-synthetic injected-collision ground-truth design; a TDC/MoleculeACE-scale CPU replication; collision effects specifically on activity-cliff/MoleculeACE tasks) are either confirmatory-at-scale or risk collapsing to a null because the established effect size is 'small yet consistent' with no significant downstream BO benefit.",
+  "overall_score_1to10": 2,
+  "verdict": "ABANDON"
+ },
+ {
+  "direction_id": "STD-ROBUST",
+  "searches_run": [
+   "molecular standardization tautomer canonicalization effect on QSAR property prediction benchmark",
+   "impact of chemical structure preprocessing on machine learning model performance cheminformatics 2024",
+   "standardization invariant molecular representation augmentation tautomer ensemble property prediction robust",
+   "protonation state pH salt stripping effect molecular fingerprint machine learning activity prediction",
+   "systematic evaluation data curation standardization choices reproducibility model ranking multiple molecular benchmarks 2025",
+   "aromaticity perception kekulization RDKit OpenEye discrepancy molecular descriptor reproducibility prediction",
+   "tautomer invariant neural network consistency loss molecular property prediction 2024 2025",
+   "tautomer standardization ablation MoleculeNet ADMET benchmark RDKit cleaning effect AUC RMSE across datasets",
+   "test-time augmentation tautomer ensemble inference molecular property prediction robustness standardization choice",
+   "comparison standardization protocols ChEMBL QSAR effect model performance different toolkits benchmark study",
+   "WebFetch arXiv 2505.07139 abstract scope verification"
+  ],
+  "closest_prior_art": [
+   {
+    "citation": "Kikuchi, Yoshikai, Nemoto, Furuhama, Yamada, Kusuhara, Mizuno. Molecular notation can act as a shortcut in AI benchmark evaluation. arXiv 2025.",
+    "doi_or_arxiv": "arXiv:2505.07139",
+    "year": 2025,
+    "what_it_does": "Shows across 6 benchmarks that SMILES NOTATION (string canonicalization/permutation) correlates with labels and acts as a shortcut; 58.7% of identity-preserving pairs used different strings; tests notation-balanced training which cuts prediction differences but sometimes lowers accuracy; recommends reporting consistency under identity-preserving input changes.",
+    "overlap": "STRONGEST conceptual competitor: same shortcut/invariance framing and same train-balancing remedy. BUT operates only on the SMILES string axis (explicitly NOT tautomer/protonation/salt/stereo/aromaticity). Chemical-graph standardization is a distinct, uncovered axis. This paper also pre-empts the 'standardization as shortcut' narrative, so STD-ROBUST must be positioned against it explicitly.",
+    "verified": true
+   },
+   {
+    "citation": "Foundation Models for Discovery and Exploration in Chemical Space. arXiv 2025.",
+    "doi_or_arxiv": "arXiv:2510.18900",
+    "year": 2025,
+    "what_it_does": "Measures robustness as coefficient of variation of predictions across SMILES permutations; finds canonical-only fine-tuning is not invariant while random-permutation augmentation improves robustness without hurting accuracy.",
+    "overlap": "Augmentation-for-invariance mechanism, but again on SMILES-permutation axis, not chemical standardization operations. Establishes the method template the STD-ROBUST robust-method would reuse, weakening the method-side novelty.",
+    "verified": false
+   },
+   {
+    "citation": "Nature Communications Chemistry, tautomer-augmented training for property prediction. 2021.",
+    "doi_or_arxiv": "10.1038/s42004-021-00528-9",
+    "year": 2021,
+    "what_it_does": "Includes all potential tautomers of each compound as training augmentation to improve predictions.",
+    "overlap": "Closest to the tautomer-ensemble/augmentation METHOD, but single-task and not framed as a systematic standardization-robustness study or multi-dataset ranking-stability analysis; no provable-invariant protocol.",
+    "verified": false
+   },
+   {
+    "citation": "QSAR-ready standardization workflow (KNIME). Journal of Cheminformatics 2024.",
+    "doi_or_arxiv": "10.1186/s13321-024-00814-3",
+    "year": 2024,
+    "what_it_does": "Open workflow handling tautomers, salts, functional-group representation, aromatization; argues failure to standardize harms prediction and reproducibility.",
+    "overlap": "Guidance/tooling for standardization itself; asserts but does NOT systematically quantify downstream sensitivity across many benchmarks, and provides no robust-modeling method. Leaves the measurement+method gap open.",
+    "verified": false
+   },
+   {
+    "citation": "Narrative review of chemical data curation (structural + experimental). Journal of Cheminformatics 2026.",
+    "doi_or_arxiv": "10.1186/s13321-026-01174-w",
+    "year": 2026,
+    "what_it_does": "Reviews standardization and QSAR-ready workflows (salts, tautomers, stereochemistry, aromatization) and argues cleaning can beat adding data.",
+    "overlap": "Review, not a method or quantitative multi-dataset ablation. Signals HIGH activity around this topic (pre-emption risk) but does not itself close the gap.",
+    "verified": false
+   }
+  ],
+  "novelty_after_search": "PARTIAL_OVERLAP",
+  "is_a_method_with_ablations": true,
+  "cannot_collapse_to_null": true,
+  "cpu_feasible": true,
+  "needs_heavy_curation": false,
+  "has_semisynthetic_groundtruth_design": true,
+  "multidataset_power": "Strong. Cached TDC ADMET (22) + MoleculeACE (30 ChEMBL regression) + MoleculeNet ESOL/FreeSolv/Lipophilicity = ~55 datasets. Supports paired per-dataset deltas, Wilcoxon/Friedman + critical-difference diagrams over models, and Kendall-tau/rank-instability of model leaderboards across standardization pipelines. The reproducibility/ranking-stability metric is measurable even where mean accuracy is unchanged, giving power the accuracy-only framing lacks.",
+  "jcim_fit_1to5": 5,
+  "preemption_velocity": "HIGH",
+  "defensible_delta": "The surviving, defensible contribution is NOT \"standardization changes accuracy\" (adjacent work suggests mean accuracy is often stable, i.e. null risk) and NOT the SMILES-notation shortcut (owned by Kikuchi 2505.07139). It is the combination: (1) first multi-dataset (~55) quantification of how CHEMICAL-GRAPH standardization choices \u2014 tautomer canonical form, protonation/pH state, salt-stripping policy, stereo handling, aromaticity model \u2014 destabilize MODEL RANKING and cross-pipeline REPRODUCIBILITY (not just per-model error), distinct from string-notation variance; plus (2) a standardization-orbit-robust method: train-time augmentation over the standardization orbit + test-time standardization-ensemble aggregation + an optional consistency regularizer, benchmarked against a 'canonicalize-once' baseline, with a semi-synthetic ground-truth design (same label assigned to the full standardization orbit) that measures prediction spread and rank-swap rate so the result cannot collapse to null. A hostile reviewer can still call either half incremental; it survives only if positioned tightly on the graph-level axis and the ranking-reproducibility deliverable, explicitly differentiated from Kikuchi and from SMILES-permutation augmentation.",
+  "sharpest_design": "METHOD: (a) Define a standardization orbit per molecule by varying 5 operations with RDKit rdMolStandardize (tautomer: none/canonical/enumerated; protonation: as-drawn vs pH7.4 via Dimorphite-DL; salt strip on/off; stereo keep/strip; aromaticity model default vs MDL/Daylight). (b) Robust estimator: ECFP4/RDKit-FP + LightGBM/XGBoost/sklearn trained with orbit augmentation; at inference average predictions over sampled orbit members (test-time standardization ensemble); optional variance-penalty consistency loss for the tiny-CPU-net variant. RQ1: how much do standardization choices move absolute performance per dataset (paired Wilcoxon over 55 sets)? RQ2: do they reorder model leaderboards (Kendall-tau and rank-swap rate of model rankings across pipelines; Friedman + Nemenyi CD diagram) \u2014 the headline, avoids null. RQ3: does orbit-augmentation+test-time-ensemble reduce prediction variance across the orbit vs canonicalize-once, without accuracy loss (paired delta, bootstrap CIs)? RQ4: semi-synthetic ground truth \u2014 assign each orbit the same label, inject controlled standardization disagreement, measure recovered invariance and spurious-correlation (shortcut) exploitation a la Kikuchi but on graph ops. RQ5: which operation dominates instability (ablate operations one at a time; tautomer vs protonation vs aromaticity). DATASETS: TDC ADMET 22, MoleculeACE 30, MoleculeNet ESOL/FreeSolv/Lipophilicity. BASELINES: canonicalize-once (RDKit default), MolVS, random-SMILES augmentation (to prove graph-orbit beats string-orbit), no-standardization. ABLATIONS: orbit size, train- vs test-time augmentation, consistency-loss weight, per-operation. METRICS: ROC-AUC/RMSE, cross-pipeline rank-swap rate, prediction CV across orbit, Kendall-tau of leaderboards. STATISTICS: paired Wilcoxon, Friedman+Nemenyi, bootstrap CIs, Benjamini-Hochberg across datasets.",
+  "overall_score_1to10": 6,
+  "verdict": "PURSUE_WITH_CHANGES"
+ },
+ {
+  "direction_id": "CONTROLS-AUDIT",
+  "searches_run": [
+   "trivial baselines competitive molecular property prediction benchmarks audit",
+   "y-scrambling permutation test significance molecular ML benchmark nearest neighbor Tanimoto",
+   "pretrained molecular embeddings ECFP baseline negligible improvement 25 datasets statistical testing",
+   "negative controls machine learning drug discovery data leakage baselines evaluation protocol checklist",
+   "Position AI drug discovery models do not learn misaligned baselines diagnose failure modes 2026",
+   "activity cliffs MoleculeACE nearest neighbor baseline beats deep learning QSAR",
+   "scaffold frequency majority class dummy baseline ADMET TDC audit many datasets",
+   "controls-first / control baseline evaluation protocol software molecular property prediction permutation test per dataset",
+   "molecular ML benchmarks overestimate performance trivial baseline gap audit reproducibility 2025-2026 dummy classifier",
+   "JCIM method comparison baseline evaluation best practices negative control permutation 2026 (Ash et al.)"
+  ],
+  "closest_prior_art": [
+   {
+    "citation": "Anonymous/venue listing, 'Position: AI for Drug Discovery Models Often Do Not Learn as Expected and How to Diagnose These Failure Modes', ICML 2026 / NeurIPS 2026",
+    "doi_or_arxiv": "ICML2026 id 72088 / NeurIPS2026 id 156449 (arXiv ID NOT confirmed; 2604.26498 is a different paper)",
+    "what_it_does": "Position paper proposing the systematic use of 'misaligned baselines' (reductionist-information, heavily-perturbed-input, or heuristic models) as a diagnostic: if such a baseline is competitive, the main model is not learning meaningful chemistry/biology. Surveys case studies across AIDD branches.",
+    "overlap": "VERY HIGH conceptual overlap. This is essentially the 'controls-first' thesis in prose form: trivial/misaligned baselines diagnose non-meaningful gains. It does NOT deliver a quantitative cross-benchmark audit, the 4 specific trivial controls, a per-dataset permutation test, or a packaged tool.",
+    "year": 2026,
+    "verified": false
+   },
+   {
+    "citation": "Praski, Adamczyk, Czech, 'Benchmarking Pretrained Molecular Embedding Models For Molecular Representation Learning'",
+    "doi_or_arxiv": "arXiv:2508.06199 (v4, Feb 2026)",
+    "what_it_does": "25 pretrained models x 25 datasets with a hierarchical Bayesian test; finds nearly all neural models give negligible/no improvement over an ECFP fingerprint baseline (on 5/25 datasets no neural model beats ECFP). Code released.",
+    "overlap": "HIGH on the 'multi-dataset statistical audit showing claimed gains are not meaningful' axis, but the control is ECFP (a legitimate strong model), NOT the trivial controls (global mean, 1-NN Tanimoto, y-scramble, scaffold-frequency). Does not report a permutation test or a trivial-baseline-gap metric.",
+    "year": 2026,
+    "verified": true
+   },
+   {
+    "citation": "Ash, Wognum, Rodriguez-Perez et al., 'Practically Significant Method Comparison Protocols for Machine Learning in Small Molecule Drug Discovery', J. Chem. Inf. Model. 65(18):9398-9411",
+    "doi_or_arxiv": "10.1021/acs.jcim.5c01609 (chemrxiv 672a91bd7be152b1d01a926b)",
+    "what_it_does": "Guideline/protocol paper (IN THE TARGET JOURNAL) recommending 5x5 repeated CV, Tukey HSD with multiple-testing correction, effect-size and decision-relevant metrics, with annotated examples and an open-source tool (polaris-method-comparison).",
+    "overlap": "HIGH on the 'controls-first evaluation protocol/tool in JCIM' half. Directly preempts the protocol+software deliverable. Does NOT center trivial/negative controls or a permutation significance test as the organizing principle, and does not do a cross-benchmark audit of where controls win.",
+    "year": 2025,
+    "verified": true
+   },
+   {
+    "citation": "SieveStack, 'Data Leakage and Redundancy in the LIT-PCBA Benchmark'",
+    "doi_or_arxiv": "arXiv:2507.21404",
+    "what_it_does": "Audits one virtual-screening benchmark; a trivial parameter-free memorization baseline matches/beats published deep-learning and 3D-similarity models due to scaffold memorization/leakage. Code at github.com/sievestack/LIT-PCBA-audit.",
+    "overlap": "MEDIUM. Demonstrates the core claim (trivial baseline beats published ML) but on a SINGLE benchmark, not a cross-benchmark audit, and no permutation-test protocol/tool.",
+    "year": 2025,
+    "verified": true
+   },
+   {
+    "citation": "van Tilborg, Alenicheva, Grisoni, 'Exposing the Limitations of Molecular Machine Learning with Activity Cliffs' (MoleculeACE), J. Chem. Inf. Model. 62(23):5938-5951",
+    "doi_or_arxiv": "10.1021/acs.jcim.2c01073",
+    "what_it_does": "Curates 30 ChEMBL regression sets; ECFP+classical ML consistently outperform deep learning, especially on activity cliffs / low data.",
+    "overlap": "MEDIUM. Establishes classical/simple baselines beating DL on one of our cached dataset collections; implicitly favorable to 1-NN-style arguments but does not frame trivial controls, permutation tests, or a cross-benchmark gap audit.",
+    "year": 2022,
+    "verified": true
+   },
+   {
+    "citation": "Guo & Ding, scale-vs-compact ADMET/toxicity/bioactivity benchmark",
+    "doi_or_arxiv": "arXiv:2604.26498 (v3)",
+    "what_it_does": "26 endpoints, 165k records, random/scaffold/structure-separated 5-fold CV; classical ML wins the largest share (47.4%) of best entries; uses paired bootstrap, not permutation tests; no trivial-control audit.",
+    "overlap": "MEDIUM-LOW. Reinforces 'scale does not beat compact classical models' but reports no trivial controls, no permutation test, no tool.",
+    "year": 2026,
+    "verified": true
+   },
+   {
+    "citation": "Deng et al., 'A systematic study of key elements underlying molecular property prediction', Nature Communications 14:6395",
+    "doi_or_arxiv": "10.1038/s41467-023-41948-6",
+    "what_it_does": "Finds traditional ML + molecular representations remain state-of-the-art; flags lack of standardized reporting and statistical testing.",
+    "overlap": "LOW-MEDIUM. Background support for 'claimed gains fragile', not a trivial-control audit or protocol.",
+    "year": 2023,
+    "verified": true
+   }
+  ],
+  "novelty_after_search": "PARTIAL_OVERLAP",
+  "is_a_method_with_ablations": true,
+  "cannot_collapse_to_null": true,
+  "cpu_feasible": true,
+  "needs_heavy_curation": false,
+  "has_semisynthetic_groundtruth_design": true,
+  "multidataset_power": "Strong. Cached TDC ADMET (22) + MoleculeACE (30) + MoleculeNet ESOL/FreeSolv/Lipophilicity (3) = 55 datasets, spanning regression and classification, enough to estimate 'fraction of benchmarks where a trivial control is non-inferior to published SOTA' with bootstrap CIs and to stratify by task type, dataset size, and split (random vs scaffold). Published SOTA numbers available from TDC leaderboards and MoleculeACE, avoiding costly re-training.",
+  "jcim_fit_1to5": 4,
+  "preemption_velocity": "HIGH",
+  "defensible_delta": "No single published work delivers the exact artifact: a quantitative, reproducible CROSS-BENCHMARK audit that runs four specific trivial CONTROLS (global-mean/majority predictor, 1-NN by Tanimoto, y-scramble/label-permutation, scaffold-frequency lookup) against published model numbers on 50+ standard molecular benchmarks, reports a per-dataset 'trivial-baseline gap' plus a per-dataset permutation/label-permutation significance test, and ships this as a packaged 'controls-first' report tool. The concept is already published as prose (ICML/NeurIPS 2026 'misaligned baselines' position paper) and the general statistical-comparison protocol+tool is already in JCIM (Ash et al. 2025), while per-benchmark demonstrations exist (LIT-PCBA, MoleculeACE). The surviving delta is therefore operational/quantitative, not conceptual: the headline number ('on X% of standard benchmarks a trivial control is statistically non-inferior to the published best') and the drop-in tool with a permutation null. This is real but narrow and a hostile reviewer can fairly call the framing incremental to the position paper + Ash protocol unless the semi-synthetic ground-truth calibration and the specific trivial-control taxonomy are made the central, novel contribution.",
+  "sharpest_design": "Reframe from 'critique' to a calibrated METHOD so it cannot be dismissed as incremental.\n\nMethod: 'Controls-First' = (a) a fixed battery of 4 trivial controls (global mean/majority; 1-NN Tanimoto on ECFP4; y-scramble ensemble; scaffold-frequency lookup), (b) a per-dataset significance layer with two nulls (label-permutation null for 'did the model beat chance' and a paired bootstrap/approximate-permutation test for 'did the published model beat the strongest trivial control'), (c) a single reported statistic, the Trivial-Control Gap (TCG) = published-SOTA metric minus best-trivial-control metric, with its CI and significance flag, (d) a pip-installable report.\n\nRQ1 (headline audit): On what fraction of 55 cached benchmarks (TDC ADMET 22 + MoleculeACE 30 + MoleculeNet 3) is the best trivial control statistically non-inferior to the published best model? Experiment: compute TCG per dataset vs TDC-leaderboard / MoleculeACE published numbers; report fraction with 95% bootstrap CI, stratified by task type, size, and split.\nRQ2 (which control, which failure mode): Ablate the 4 controls -- which trivial control wins where, and does winning correlate with leakage signatures (train/test Tanimoto duplicate rate, empty-scaffold fraction, single-assay provenance)? Experiment: logistic regression of 'control wins' on dataset descriptors.\nRQ3 (calibration / ground truth -- the anti-null, anti-critique move): Build semi-synthetic datasets with KNOWN signal strength -- take a real dataset, interpolate labels between the true property and a fully y-scrambled version (signal fraction 0..1), plus inject controlled leakage (duplicate a tunable fraction of test into train). Show the permutation test's false-positive rate at signal=0 and power curve as signal grows, and that TCG recovers the injected leakage level. This validates the tool and makes it a method with measurable operating characteristics, not an opinion.\nRQ4 (protocol value): Does adding the controls-first permutation layer change published conclusions? Re-run a handful of recent 'SOTA' claims through the tool and count how many survive.\nRQ5 (significance-test ablation): permutation/label-permutation vs paired t vs 5x5 CV + Tukey HSD (Ash et al.) vs hierarchical Bayesian -- agreement/disagreement in verdicts, to position relative to the existing JCIM protocol rather than against it.\n\nDatasets: TDC ADMET (22), MoleculeACE (30), MoleculeNet ESOL/FreeSolv/Lipophilicity; semi-synthetic variants derived from these.\nBaselines/controls: the 4 trivial controls + ECFP4+LightGBM/RF as a 'strong but cheap' reference; published numbers from leaderboards.\nMetrics: TCG, non-inferiority rate, permutation p per dataset, calibration FPR/power, leakage-recovery error.\nStatistics: label-permutation null (1000+ shuffles), paired bootstrap, Benjamini-Hochberg across datasets; report effect sizes not just p.\nCPU: all controls + LightGBM/RF on fingerprints fit in 4 cores; no re-training of heavy DL needed (use published numbers), tiny CPU nets only if a DL reference is wanted.\nMandatory differentiation section: explicitly cite the 'misaligned baselines' position paper (we operationalize it quantitatively with a calibrated null) and Ash et al. 2025 (we add a trivial-control-centric, permutation-based, leakage-aware layer and a cross-benchmark audit, complementary to their general comparison protocol).",
+  "overall_score_1to10": 5,
+  "verdict": "PURSUE_WITH_CHANGES"
+ },
+ {
+  "direction_id": "LEAKAGE-XBENCH",
+  "searches_run": [
+   "train test leakage near-duplicate molecular benchmarks MoleculeNet audit corrected splits",
+   "data leakage molecular property prediction benchmarks duplicate conflicting labels 2024 2025",
+   "systematic multi-benchmark molecular dataset leakage audit corrected leaderboard deduplication tool TDC MoleculeACE",
+   "LIT-PCBA data leakage audit arXiv 2507.21404 molecular benchmark contamination",
+   "BenchAudit Schuh Sieber molecular benchmark auditing ChemRxiv label conflicts leakage leaderboard",
+   "molecular benchmark exact duplicate conflicting labels deduplication performance inflation corrected splits tool 2025 2026",
+   "MoleculeACE activity cliffs benchmark duplicate leakage audit cross-benchmark re-splitting",
+   "Crossref DOI 10.1039/d6sc01799a verification",
+   "pypi benchaudit tool page fetch"
+  ],
+  "closest_prior_art": [
+   {
+    "citation": "Schuh, M. G.; Daniluk, A.; Sieber, S. A. Auditing widely used biomolecular benchmarks reveals systematic data inconsistencies. Chemical Science, 2026.",
+    "doi_or_arxiv": "10.1039/d6sc01799a",
+    "year": 2026,
+    "what_it_does": "Audits 51 benchmark configurations across Polaris, Therapeutics Data Commons (TDC), MoleculeNet, and DTI sets for train/test leakage (nearest-neighbor similarity; DTI mean NN sim 0.779 vs Polaris 0.494) AND identical molecules carrying contradictory labels. Uses SEMI-SYNTHETIC flaw injection (adds leaked test molecules and contradictory labels on purpose, retrains) to quantify performance inflation, and recomputes leaderboards on alternative test sets showing the top-ranked model frequently changes. Ships open-source BenchAudit tool (PyPI, v2.1 Jun 2026) that standardizes SMILES, flags exact train leaks, near-train analogues (ECFP/Tanimoto), same-scaffold overlap, and label conflicts, plus a 'clean'/rank-fragility leaderboard mode.",
+    "overlap": "This IS the assigned direction, executed and published across MoleculeNet+TDC (two of the three named benchmarks): cross-benchmark leakage quantification + intra-dataset conflicting-label duplicates + performance inflation (via the exact semi-synthetic ground-truth design the task proposes) + corrected leaderboard + open-source tool. Covered in Chemistry World news. Near-total preemption.",
+    "verified": true
+   },
+   {
+    "citation": "Huang, A.; Knight, I. S.; Naprienko, S. Data Leakage and Redundancy in the LIT-PCBA Benchmark. arXiv, 2025 (v2 Aug 2025).",
+    "doi_or_arxiv": "arXiv:2507.21404",
+    "year": 2025,
+    "what_it_does": "Single-benchmark audit of LIT-PCBA: 2D-identical ligands within/across splits (2,491 inactives shared train/val), analog leakage into query set, >80% near-duplicate queries (Tanimoto >=0.9); a zero-parameter memorization baseline matches/beats SOTA, showing leakage-driven inflation. Code at github.com/sievestack/LIT-PCBA-audit.",
+    "overlap": "Same leakage-inflation + trivial-baseline thesis, and the explicit comparator the task cites. Single benchmark, no corrected multi-benchmark leaderboard, but establishes the method and framing.",
+    "verified": true
+   },
+   {
+    "citation": "Steshin, S. Lo-Hi: Practical ML Drug Discovery Benchmark. NeurIPS 2023.",
+    "doi_or_arxiv": "arXiv:2310.06399",
+    "year": 2023,
+    "what_it_does": "Quantifies train/test Tanimoto neighbor leakage in MoleculeNet splits (e.g., 76% of ESOL random-split test molecules have a train neighbor >0.4; 56% for HIV scaffold split) and proposes leakage-controlled Lo (Hit Identification) splits.",
+    "overlap": "Directly measures near-duplicate train/test leakage in MoleculeNet and provides leakage-aware splitting, covering the 're-splitting' half of the proposed tool.",
+    "verified": true
+   },
+   {
+    "citation": "Joeres, R. et al. DataSAIL: data splitting against information leakage (and addendum). Nature Communications, 2025.",
+    "doi_or_arxiv": "10.1038/s41467-025-XXXXX (unconfirmed exact DOI)",
+    "year": 2025,
+    "what_it_does": "General leakage-aware splitting tool that computes scaled leakage scores and produces low-leakage splits; addendum benchmarks against MoleculeNet recommended splits (BBBP, Tox21, ToxCast, SIDER, ClinTox) showing lower leakage.",
+    "overlap": "Provides the leakage-aware re-splitting tooling and MoleculeNet leakage comparison the direction proposes to build.",
+    "verified": false
+   },
+   {
+    "citation": "Huckvale, E.; Moseley, H. N. B. A cautionary tale about properly vetting datasets used in supervised learning predicting metabolic pathway involvement. PLoS ONE, 2024.",
+    "doi_or_arxiv": "10.1371/journal.pone.0299583 (unconfirmed exact DOI)",
+    "year": 2024,
+    "what_it_does": "Shows ~25% duplicate entries in a KEGG-SMILES dataset inflate cross-validation; k-fold performance drops after deduplication.",
+    "overlap": "Concrete duplicate-driven inflation + dedup-corrected evaluation, same mechanism on a chemistry dataset.",
+    "verified": false
+   }
+  ],
+  "novelty_after_search": "KILLED",
+  "is_a_method_with_ablations": false,
+  "cannot_collapse_to_null": true,
+  "cpu_feasible": true,
+  "needs_heavy_curation": false,
+  "has_semisynthetic_groundtruth_design": true,
+  "jcim_fit_1to5": 4,
+  "preemption_velocity": "HIGH",
+  "multidataset_power": "Strong in principle (cached TDC 22 + MoleculeACE 30 + MoleculeNet gives >50 datasets for well-powered inflation statistics), but this power is irrelevant because the core result is already published: BenchAudit itself spans 51 benchmark configs across Polaris/TDC/MoleculeNet/DTI with the semi-synthetic injection design, so additional datasets only replicate an existing finding.",
+  "defensible_delta": "Almost nothing survives. The headline claim set \u2014 cross-benchmark quantification of train/test near-duplicate leakage AND intra-dataset exact-duplicate-with-conflicting-labels across MoleculeNet+TDC, the resulting performance inflation measured via semi-synthetic flaw injection, and a corrected leaderboard with an open-source tool \u2014 is exactly what Schuh, Daniluk & Sieber published in Chem. Sci. 2026 (BenchAudit, DOI 10.1039/d6sc01799a), down to the same semi-synthetic ground-truth methodology this direction would use to avoid a null. The only residual, non-trivial-to-defend gaps are: (1) MoleculeACE is not in BenchAudit's covered set \u2014 but MoleculeACE is already curated for duplicates and purpose-built to be leakage-aware around activity cliffs (van Tilborg 2022), and LIT-PCBA/Lo-Hi/DataSAIL cover the adjacent audit+resplit space; (2) BenchAudit outputs rank-fragility rather than publishing new deduplicated split files, so one could ship actually-corrected downloadable splits \u2014 but that is an engineering deliverable, not a scientific contribution, and Lo-Hi/DataSAIL already provide leakage-controlled splitters. A hostile reviewer would correctly call any version of this incremental/confirmatory relative to a same-year Chemical Science paper plus an arXiv LIT-PCBA audit, especially given that EDT-Former and Mol-LLaMA independently report the deduplication effect on MoleculeNet/TDC property tasks is often negligible on real data.",
+  "overall_score_1to10": 2,
+  "verdict": "ABANDON",
+  "sharpest_design": "If forced to salvage (not recommended as a standalone JCIM paper): narrow to the one sub-benchmark BenchAudit omitted \u2014 a leakage + conflicting-label audit of MoleculeACE's 30 ChEMBL regression sets specifically through the activity-cliff lens (does the pairwise-similarity cliff construction itself create analog leakage across the official train/test split, and do duplicate SMILES with conflicting pIC50 within/across targets inflate reported cliff-prediction RMSE?), paired with deduplicated/leakage-controlled re-splits and a semi-synthetic injection calibration. RQ1: measure exact-duplicate-with-conflicting-label rate and cross-split Tanimoto-NN leakage per target (fingerprints + sklearn NearestNeighbors, CPU-trivial). RQ2: semi-synthetic injection to calibrate inflation vs leakage dose on MoleculeACE using LightGBM/XGBoost on ECFP. RQ3: corrected leaderboard delta for published cliff models after dedup/re-split. Datasets: MoleculeACE (cached) primary; TDC/MoleculeNet only as external-validity replication explicitly citing BenchAudit. Baselines: random/scaffold/leakage-controlled splits; memorization baseline. Metrics: RMSE/cliff-RMSE, rank-change, bootstrap CIs. HOWEVER: this is a thin, likely-confirmatory extension of a Chem Sci 2026 result in a HIGH-velocity area (NeurIPS 2026 entries, Chemistry World coverage) and risks being scooped on MoleculeACE before submission; recommend reallocating effort rather than pursuing."
+ },
+ {
+  "direction_id": "IMBALANCE-DECISION",
+  "searches_run": [
+   "class imbalance molecular property prediction calibration decision quality multi-dataset 2024",
+   "imbalanced classification SMOTE class weights threshold moving calibration cheminformatics ADMET",
+   "calibration ADMET classifiers TDC benchmark reliability decision threshold cost-sensitive 2025",
+   "imbalance handling effect on probability calibration semi-synthetic sweep benchmark classification",
+   "harm of class imbalance corrections risk prediction calibration van den Goorbergh logistic regression",
+   "Balancing the Scales SMOTE class weights threshold calibration 30 datasets imbalanced binary classification",
+   "resampling oversampling effect calibration QSAR toxicity molecular classification probability reliability decision",
+   "Crossref DOI verification for van den Goorbergh 2022 and Carriero 2024/2025"
+  ],
+  "closest_prior_art": [
+   {
+    "citation": "van den Goorbergh R, van Smeden M, Timmerman D, Van Calster B. The harm of class imbalance corrections for risk prediction models: illustration and simulation using logistic regression. JAMIA 2022.",
+    "doi_or_arxiv": "10.1093/jamia/ocac093",
+    "year": 2022,
+    "what_it_does": "Monte-Carlo simulation + ovarian-cancer case study showing undersampling/oversampling/SMOTE strongly overestimate minority-class probabilities (wreck calibration) without improving AUROC; threshold shifting achieves the same sensitivity/specificity gains without the calibration damage.",
+    "overlap": "This IS the mechanism and the recommendation the assigned direction proposes to 'discover' (resampling harms calibration; threshold moving/calibrated decisions are cleaner). Only the domain (logistic regression, clinical) differs.",
+    "verified": true
+   },
+   {
+    "citation": "Carriero A, Luijken K, de Hond A, Moons KGM, Van Calster B, van Smeden M. The Harms of Class Imbalance Corrections for Machine Learning Based Prediction Models: A Simulation Study. Statistics in Medicine 2025 (arXiv:2404.19494).",
+    "doi_or_arxiv": "10.1002/sim.10320",
+    "year": 2025,
+    "what_it_does": "Extends the 2022 finding across many ML algorithms (RF, XGBoost, SVM, NN): uncorrected models have equal/better calibration; imbalance-correction-induced risk overestimation is not always fixable by post-hoc recalibration.",
+    "overlap": "Directly covers the ML-algorithm, multi-method generalization the direction wants, including tree ensembles usable on CPU. Removes the 'nobody tested this beyond logistic regression' defense.",
+    "verified": true
+   },
+   {
+    "citation": "Abdelhamid M, Desai A. Balancing the Scales: A Comprehensive Study on Tackling Class Imbalance in Binary Classification. arXiv 2024.",
+    "doi_or_arxiv": "arXiv:2409.19751",
+    "year": 2024,
+    "what_it_does": "15 models x 30 imbalanced datasets (9,000 experiments) comparing SMOTE vs class-weight tuning vs decision-threshold calibration vs baseline; finds threshold calibration most consistent and SMOTE gives the least-calibrated probabilities.",
+    "overlap": "Nearly the exact multi-dataset method matrix (SMOTE / class weights / threshold moving) with a calibration conclusion. Non-molecular, but the methodological study is done.",
+    "verified": true
+   },
+   {
+    "citation": "The Hidden Cost of Resampling: How Imbalance Correction Degrades Probability Calibration in Tree Ensembles. arXiv 2026.",
+    "doi_or_arxiv": "arXiv:2606.29720",
+    "year": 2026,
+    "what_it_does": "SMOTE / random over/under-sampling / class-weight control across 5 datasets at imbalance ratios 1.9-70 on two tree ensembles; quantifies calibration degradation vs imbalance ratio (SMOTE penalty small, undersampling severe at extreme ratios).",
+    "overlap": "Covers the imbalance-ratio SWEEP + calibration + CPU tree-ensemble piece that the proposed semi-synthetic sweep targets. Same mechanism, same model class.",
+    "verified": false
+   },
+   {
+    "citation": "Tipping the Balance: Impact of Class Imbalance Correction on the Performance of Clinical Risk Prediction Models. arXiv 2026.",
+    "doi_or_arxiv": "arXiv:2603.00208",
+    "year": 2026,
+    "what_it_does": "Multi-task clinical study: resampling raises Brier score and shifts calibration intercept/slope; corrections degrade calibration without discrimination gain.",
+    "overlap": "Reinforces the calibration-degradation finding on real tasks; shows the space is being actively re-confirmed in 2026.",
+    "verified": false
+   },
+   {
+    "citation": "Calibrated Uncertainty Quantification on TDC ADMET: What Can Be Resolved Across 22 Datasets? NeurIPS 2026.",
+    "doi_or_arxiv": "neurips.cc/virtual/2026/162348",
+    "year": 2026,
+    "what_it_does": "Multi-dataset calibration/UQ study on the exact TDC ADMET 22 datasets, Brier score, LightGBM baselines, and the statistical-power argument that single-dataset conclusions mislead.",
+    "overlap": "Occupies the molecular/ADMET + calibration + multi-dataset + CPU-model niche the direction claims as its home turf, and makes the identical multi-dataset-power argument (though for UQ methods, not imbalance handling).",
+    "verified": false
+   },
+   {
+    "citation": "When Single-Dataset Conclusions Fail: A 45-Task Study of Threshold Tuning and Resampling for Imbalanced Classification. arXiv 2026.",
+    "doi_or_arxiv": "arXiv:2608.16147",
+    "year": 2026,
+    "what_it_does": "45-task multi-dataset study of threshold tuning vs resampling, warning against selecting thresholds on fitting data and pointing to cross-validated threshold selection.",
+    "overlap": "The multi-dataset threshold-vs-resampling protocol with the statistical-power framing is exactly the assigned study design, minus the molecular data.",
+    "verified": false
+   }
+  ],
+  "novelty_after_search": "PARTIAL_OVERLAP",
+  "is_a_method_with_ablations": true,
+  "cannot_collapse_to_null": true,
+  "cpu_feasible": true,
+  "needs_heavy_curation": false,
+  "has_semisynthetic_groundtruth_design": true,
+  "multidataset_power": "Strong on paper (TDC ADMET 22 cached classification tasks, many imbalanced; MoleculeNet; semi-synthetic sweep adds controlled replication), but statistical power works AGAINST the project: with this much power the near-certain result is a tight confirmation of the established general-ML finding (resampling harms calibration; threshold-moving + post-hoc calibration dominate), which is a low-novelty outcome rather than a discovery. Power only helps if the pivot (prior-shift under scaffold split) produces a result that departs from the iid prior art.",
+  "jcim_fit_1to5": 3,
+  "preemption_velocity": "HIGH",
+  "defensible_delta": "As literally scoped, almost nothing survives: the mechanism (imbalance corrections distort the training prior, shifting the predicted-probability scale and wrecking calibration while threshold moving on calibrated probabilities is the clean fix) is fully established and independently re-confirmed in 2022-2026 (van den Goorbergh JAMIA 2022; Carriero Stat Med 2025; Balancing the Scales 2024; three 2026 preprints), and the TDC ADMET multi-dataset calibration niche is already occupied (NeurIPS 2026). A molecular replication would be called incremental by any hostile reviewer. The ONLY genuinely unclaimed sliver is molecular-distribution-specific: all prior work uses iid/random splits, where the test prior equals the train prior. Under scaffold or temporal splits (the molecular norm), the deployment prior differs from the training prior (joint covariate + label shift), which breaks the train-prior-based threshold-moving prescription that prior art endorses. A defensible delta would be: a mechanism-grounded demonstration, with a semi-synthetic Morgan-fingerprint-conditioned sweep that independently controls train-prior, test-prior, and covariate shift, that the clean iid advice MISLEADS on scaffold-split ADMET deployment, plus a concrete adaptive protocol (target-prior estimation a la Saerens/Lipton label-shift + calibrated threshold) that recovers decision quality (net benefit / cost-sensitive utility) where fixed threshold moving fails. That is the narrow, ablatable, non-incremental contribution; the generic 'compare imbalance handlers for calibration' study is dead.",
+  "sharpest_design": "PIVOT to decision quality under prior/covariate shift (scaffold split), the one molecular-distinctive the iid prior art cannot have answered. Method: (1) fingerprints (Morgan 2048 + RDKit descriptors) + LightGBM/logistic baselines; (2) factor the pipeline into ablatable stages: imbalance handler {none, class weights, SMOTE/SMOTEENN, random under/over} x probability calibration {none, Platt, isotonic, beta} x decision rule {argmax 0.5, train-prior threshold moving, target-prior-adaptive threshold via Saerens EM / BBSE label-shift estimate, cost-sensitive Bayes-optimal}. RQ1: on scaffold-split TDC ADMET, do resampling methods degrade calibration (ECE, Brier decomposition) relative to class weights, as in iid prior art? -> TDC ADMET 22 classification tasks, scaffold vs random split, paired per-task. RQ2: does train-prior threshold moving (the prior-art recommendation) lose decision quality under scaffold-induced prior shift, and does target-prior-adaptive thresholding recover it? -> semi-synthetic sweep: resample each dataset to independently set train prior pi_tr in {0.5..0.02} and test prior pi_te decoupled, giving Bayes-optimal decisions as ground truth; measure regret of each decision rule vs Bayes-optimal net benefit. RQ3: does the iid conclusion (avoid SMOTE for calibration) hold at molecular extreme imbalance + small n + fingerprint sparsity, or does scaffold overlap change it? RQ4: a single recommended protocol (calibrate on untouched out-of-resampling data + label-shift-adaptive cost-sensitive threshold) vs each baseline. RQ5: how much of any molecular effect is covariate shift vs label shift (decompose via the semi-synthetic design). Datasets: TDC ADMET (CYP inhibition, hERG, Ames, BBB, Pgp, DILI, etc.), MoleculeNet (Tox21, BBBP). Baselines: the exact prior-art prescriptions (van den Goorbergh 'do nothing', Balancing-the-Scales threshold calibration) as the methods to beat. Metrics: ECE/MCE, Brier + Murphy decomposition, calibration slope/intercept, net benefit / decision-curve analysis at endpoint-specific cost ratios, regret vs Bayes-optimal (semi-synthetic). Stats: paired Wilcoxon across tasks, Bayesian hierarchical model over datasets, critical-difference diagrams, bootstrap CIs on per-task deltas. Ablations: remove calibration stage, remove prior-adaptation, iid vs scaffold split (the key contrast that isolates the novel claim), sweep imbalance ratio. If RQ2/RQ3 show no departure from iid prior art, the honest outcome is a confirmatory note, not a JCIM method -> that is the abandonment trigger.",
+  "overall_score_1to10": 4,
+  "verdict": "PURSUE_WITH_CHANGES"
+ },
+ {
+  "direction_id": "REGR-EVAL-ROBUST",
+  "searches_run": [
+   "robust evaluation metric model selection molecular property prediction regression RMSE outliers",
+   "decision-aligned evaluation ranking metric hyperparameter selection QSAR regression benchmark",
+   "Ash practical significance protocol molecular machine learning model comparison 2025 JCIM",
+   "benchmark evaluation best practices molecular machine learning statistical significance metric choice conclusions",
+   "model selection criterion changes conclusions regression metric Spearman Kendall RMSE molecular activity prediction",
+   "heavy-tailed error distribution robust loss hyperparameter tuning cheminformatics bioactivity regression",
+   "sum of ranking differences model selection chemometrics comparison metrics",
+   "which metric to optimize validation RMSE MAE pIC50 model selection picks worse ranking downstream screening 2024 2025",
+   "metric disagreement model ranking flips molecular property benchmark robust statistics evaluation many datasets 2024 2025",
+   "Crossref/arXiv verification of Ash 10.1021/acs.jcim.5c01609 and Watson 1807.08926"
+  ],
+  "closest_prior_art": [
+   {
+    "citation": "Ash J.R., Wognum C., Rodriguez-Perez R., Aldeghi M., Cheng A., Clevert D.-A., Engkvist O., Fang C., Price D., Hughes-Oliver J., Walters W.P. Practically Significant Method Comparison Protocols for Machine Learning in Small Molecule Drug Discovery. J. Chem. Inf. Model. 2025, 65(18), 9398-9411.",
+    "doi_or_arxiv": "10.1021/acs.jcim.5c01609",
+    "what_it_does": "JCIM perspective giving protocols for statistically AND practically significant method comparison in small-molecule ML: repeated splits/CV, significance testing, practical-significance thresholds, domain-appropriate metrics, with open-source tools.",
+    "overlap": "This is the named baseline and the direct competitor. It already establishes the 'statistical significance != practical significance' and 'metric choice matters' framing and ships tooling. The assigned direction must prove a delta BEYOND it (robust heavy-tail estimators + SELECTION/tuning criterion as the lever, not just final comparison).",
+    "year": 2025,
+    "verified": true
+   },
+   {
+    "citation": "Watson O.P., Cortes-Ciriano I., Watson J.A. A decision theoretic approach to model evaluation in computational drug discovery. arXiv:1807.08926.",
+    "doi_or_arxiv": "arXiv:1807.08926",
+    "what_it_does": "Argues out-of-sample model evaluation should use loss functions reflecting the drug-discovery decision; proposes rank-based loss functions, shows they give considerably different results from MSE and favor more constrained models (ridge, SVR).",
+    "overlap": "Highest conceptual overlap with the core claim 'RMSE disagrees with ranking/decision metrics and can select a worse model.' Already demonstrates MSE-vs-rank-loss divergence and model-choice consequence. Key gaps it leaves: evaluation only (not a SELECTION/hyperparameter-tuning protocol), few datasets, no robust heavy-tail estimator, no semi-synthetic ground truth, no practical-significance testing.",
+    "year": 2018,
+    "verified": true
+   },
+   {
+    "citation": "Spiegel J., Senderowitz H. Deriving and evaluating QSAR models with a virtual screening (enrichment)-aware metric.",
+    "doi_or_arxiv": "unverified-no-DOI-retrieved",
+    "what_it_does": "Proposes that QSAR models for virtual screening be both trained and evaluated with a VS-aware (enrichment-based) metric rather than R2/Q2/MAE; finds favorable R2/Q2 does not predict VS performance.",
+    "overlap": "Overlaps the 'optimize the decision metric, not RMSE' thesis and the 'decision-aligned selection' idea, but targets classification-style enrichment for screening, not heavy-tailed continuous regression RMSE robustness.",
+    "year": 2020,
+    "verified": false
+   },
+   {
+    "citation": "Heberger K. et al. Sum of ranking differences (SRD) for method/model discrimination; and tuning-parameter / variable-selection identification via SRD.",
+    "doi_or_arxiv": "10.1002/cem.1320 (approx; unconfirmed exact)",
+    "what_it_does": "Chemometrics methodology that selects/compares models and tuning parameters by rank agreement with a reference (or the average as golden standard), validated against random-rank comparison.",
+    "overlap": "Establishes rank-agreement-based model AND hyperparameter selection as prior art, undercutting pure novelty of 'rank-based selection.' Not molecular-regression-specific, not about heavy-tailed RMSE robustness, and predates the modern benchmarks.",
+    "year": 2010,
+    "verified": false
+   },
+   {
+    "citation": "Pernot P. and related UQ-evaluation work: calibration/ranking metrics (NLL, Spearman) disagree on which uncertainty estimates are better.",
+    "doi_or_arxiv": "unverified-no-DOI-retrieved",
+    "what_it_does": "Shows common evaluation metrics do not necessarily agree on which model/UQ estimate is best, and that Spearman can swing widely (0.05 vs 0.65) with test-set design.",
+    "overlap": "Supports the 'metrics disagree and rankings flip' premise and the instability-of-rank-metrics caution (a risk to the direction's robustness claims), but is about uncertainty quantification, not regression model selection.",
+    "year": 2023,
+    "verified": false
+   }
+  ],
+  "novelty_after_search": "PARTIAL_OVERLAP",
+  "is_a_method_with_ablations": true,
+  "cannot_collapse_to_null": true,
+  "cpu_feasible": true,
+  "needs_heavy_curation": false,
+  "has_semisynthetic_groundtruth_design": true,
+  "jcim_fit_1to5": 4,
+  "preemption_velocity": "HIGH",
+  "multidataset_power": "Strong and immediately available: 40+ cached regression sets (TDC ADMET regression endpoints, MoleculeACE 30 ChEMBL pIC50 sets which are explicitly heavy-tailed/cliff-rich, MoleculeNet ESOL/FreeSolv/Lipophilicity). Enables non-parametric multi-dataset testing (Wilcoxon/Friedman + Nemenyi, Bayesian ROPE) over criteria, exactly the statistical machinery Ash and the 2026 surveys recommend. More than enough datasets for power; the binding risk is effect SIZE (criterion flips may be small/rare), not sample count.",
+  "defensible_delta": "A model-and-hyperparameter SELECTION protocol (not just a reporting/evaluation checklist) for heavy-tailed molecular regression, built from two swappable, ablatable levers: (1) a robust, outlier-downweighted estimator of generalization error (e.g. trimmed/Winsorized or Huberized validation loss) in place of raw validation RMSE, and (2) a decision-aligned target (top-k/enrichment or rank correlation) as the tuning objective. The defensible core is the CONTROLLED PROOF that RMSE-based selection demonstrably and reproducibly picks the decision-worse model under known heavy-tail contamination: a semi-synthetic ground-truth design that injects calibrated tail outliers/label noise into real cached datasets so the decision-optimal model is known, then measures how often each selection criterion recovers it. This escapes the 'does metric choice matter? sometimes' null that a pure benchmark would hit, and separates the contribution from Watson 2018 (evaluation only, no selection, no robust estimator, no ground truth) and Ash 2025 (comparison/practical-significance, not the selection criterion as the tuned lever). The honest risk a hostile reviewer will press: without the semi-synthetic controlled arm and a quantified 'flip rate with practical-significance gating,' this reads as Watson+Ash recombined.",
+  "sharpest_design": "METHOD: ROBUST-SELECT protocol = choose model/HPs by a robust, decision-aligned validation score instead of RMSE. Two orthogonal, ablatable components: (A) robustness estimator R in {raw-RMSE(baseline), MAE/median-AE, trimmed-RMSE(10/20%), Huber-validation, Winsorized}; (B) decision target D in {none, Spearman/Kendall rank, top-10% enrichment/regret}. Aggregate across CV repeats; gate 'wins' with Ash practical-significance thresholds.\\nRQ1 (controlled ground truth, kills null): On real cached datasets, inject calibrated heavy-tail contamination (mixture of Gaussian tails / simulated assay censoring) so the decision-optimal model among a fixed model zoo is KNOWN. EXPERIMENT: measure recovery rate of the decision-optimal model by each selection criterion vs contamination level; show RMSE-selection recovery degrades while robust/decision-aligned selection holds. Datasets: MoleculeNet ESOL/FreeSolv/Lipophilicity + sampled ChEMBL sets.\\nRQ2 (real-data prevalence): Across 40+ cached sets (TDC ADMET regression, MoleculeACE 30, MoleculeNet), how often does switching the selection criterion change the chosen model/HP, and how often does that change the decision-metric winner at Ash practical-significance? EXPERIMENT: criterion-swap flip-rate matrix + Friedman/Nemenyi over datasets.\\nRQ3 (ablation of the two levers): isolate robustness-only vs decision-target-only vs both; EXPERIMENT: factorial over {A}x{B} reporting decision-metric regret.\\nRQ4 (does tail-ness predict benefit?): EXPERIMENT: regress per-dataset benefit of ROBUST-SELECT on measured tail indices (kurtosis, outlier fraction, cliff density from MoleculeACE) to give a usage rule.\\nRQ5 (cost): does robust selection increase variance/overfitting of selection? EXPERIMENT: nested-CV stability of the selected model across seeds.\\nMODEL ZOO (CPU): ECFP/RDKit descriptors + Ridge, SVR, RandomForest, LightGBM/XGBoost, tiny MLP. BASELINES: RMSE-selection (status quo), Watson-style rank-loss evaluation, Ash comparison protocol as the significance layer. METRICS: decision-metric regret, flip-rate, ground-truth recovery rate, top-k enrichment, rank correlation. STATISTICS: repeated nested CV, Wilcoxon/Friedman+Nemenyi across datasets, Bayesian ROPE, Ash practical-significance gating, bootstrap CIs.",
+  "overall_score_1to10": 6,
+  "verdict": "PURSUE_WITH_CHANGES"
+ },
+ {
+  "direction_id": "SIM-ERROR-AD",
+  "searches_run": [
+   "applicability domain molecular property prediction similarity training set error ranking benchmark 2024",
+   "uncertainty quantification molecular regression distance to training set benchmark scaffold split 2023 2024",
+   "non-conformal applicability domain abstention selective prediction QSAR regression error detection 2025",
+   "confidence estimation reliability prediction molecular machine learning local density Tanimoto nearest neighbor error correlation",
+   "UNIQUE library uncertainty quantification molecular property prediction AstraZeneca benchmark distance training set",
+   "large scale benchmark applicability domain methods regression error detection ranking many ChEMBL datasets 2025 2026",
+   "selective prediction reject option molecular regression abstention error-based applicability domain scaffold shift benchmark",
+   "confidence-error curve error ranking metric uncertainty molecular property prediction spearman residual area under rejection curve benchmark",
+   "Svensson Mervin Engkvist applicability domain uncertainty conformal regression QSAR comparison 2024 2025",
+   "WebFetch arXiv:2411.00920 abstract"
+  ],
+  "closest_prior_art": [
+   {
+    "citation": "Khurshid, Loganathan, Duvinage. Comparative Evaluation of Applicability Domain Definition Methods for Regression Models. arXiv 2024.",
+    "doi_or_arxiv": "arXiv:2411.00920",
+    "what_it_does": "Benchmarks 8 applicability-domain detection techniques across 7 regression models on 5 datasets; core test is whether AD values track prediction error; proposes a Bayesian-NN AD.",
+    "overlap": "Nearly the whole proposed benchmark: AD methods (incl. similarity-based) ranked by how well they track regression error. Main gap is scale (5 datasets) and no scaffold-shift-as-primary-axis.",
+    "year": 2024,
+    "verified": true
+   },
+   {
+    "citation": "Hirschfeld, Swanson, Yang, Barzilay, Coley. Uncertainty Quantification Using Neural Networks for Molecular Property Prediction. JCIM 2020.",
+    "doi_or_arxiv": "arXiv:2005.10036 / 10.1021/acs.jcim.0c00502",
+    "what_it_does": "Benchmarks distance-to-training-NN (k=8 Tanimoto), ensemble, mean-variance and union UQ for molecular regression; evaluates error ranking (Spearman/confidence curves).",
+    "overlap": "Directly benchmarks non-conformal distance-based AD as an error-ranking signal and concludes no method consistently ranks errors best -- i.e., the likely null is already published.",
+    "year": 2020,
+    "verified": false
+   },
+   {
+    "citation": "Lanini et al. UNIQUE (UNcertaInty QUantification bEnchmarking) library; Parrondo, Lanini, Rodriguez-Perez, JCIM 2026 (UQ under data shift).",
+    "doi_or_arxiv": "UNIQUE github / JCIM 2026 (DOI unconfirmed)",
+    "what_it_does": "Benchmarks UQ metrics including non-conformal kNN distances (Manhattan/Euclidean) and KDE local density plus variance, scored by ranking, calibration and scoring rules; 2026 study tests them under data shift.",
+    "overlap": "Explicitly benchmarks non-conformal similarity/density AD signals for regression error with ranking metrics, from a group actively publishing in JCIM; captures most of the proposed delta.",
+    "year": 2026,
+    "verified": false
+   },
+   {
+    "citation": "Hosni, Gillet, Marchese Robinson. Explicit applicability domain calculations can help determine when uncertainty estimates are less reliable. ACS Omega 2026.",
+    "doi_or_arxiv": "ACS Omega 2026 (DOI unconfirmed; received Nov 2025)",
+    "what_it_does": "Uses a structural-similarity-only kNN applicability domain (nUNC) under scaffold/cluster/temporal splits to flag when predictions/uncertainties are unreliable, paired with aggregated conformal prediction.",
+    "overlap": "Non-conformal similarity AD as a reliability/abstention signal specifically under scaffold shift -- the exact scaffold-shift angle claimed as the differentiator.",
+    "year": 2026,
+    "verified": false
+   },
+   {
+    "citation": "JCIM comparison of UQ evaluation metrics (error-based calibration vs NLL/Spearman). Journal of Cheminformatics 2023.",
+    "doi_or_arxiv": "10.1186/s13321-023-00790-0",
+    "what_it_does": "Argues Spearman/NLL carry little information and vary drastically with test-set design; recommends error-based calibration; sets evaluation best practice for UQ error ranking.",
+    "overlap": "Pre-empts the evaluation methodology the direction would rely on and warns that error-ranking metrics are test-set-dependent, undermining a clean multi-dataset ranking claim.",
+    "year": 2023,
+    "verified": true
+   }
+  ],
+  "novelty_after_search": "KILLED",
+  "is_a_method_with_ablations": true,
+  "cannot_collapse_to_null": false,
+  "cpu_feasible": true,
+  "needs_heavy_curation": false,
+  "has_semisynthetic_groundtruth_design": false,
+  "jcim_fit_1to5": 4,
+  "preemption_velocity": "HIGH",
+  "multidataset_power": "Strong on paper (TDC ADMET 22 + MoleculeACE 30 + MoleculeNet 3 = ~55 regression sets gives ample N for paired tests), and this scale is the ONLY real differentiator vs the 5-dataset arXiv:2411.00920. But statistical power does not buy novelty: a larger-N rerun of an existing comparison remains an incremental benchmark, and the likely headline result ('no single non-conformal similarity signal dominates; roughly on par with conformal') is already the published conclusion of Hirschfeld 2020, so more datasets mostly sharpen a null that is not new.",
+  "defensible_delta": "Essentially none survives. Every component is standard and recently benchmarked: similarity/density AD signals as error-ranking reliability (Hirschfeld 2020, UNIQUE/Lanini, Liu-Wallqvist), multi-model/multi-method AD-vs-error benchmarking (arXiv:2411.00920), and non-conformal similarity AD under scaffold shift (Hosni/Marchese-Robinson ACS Omega 2026). The thinnest possible residual is 'the same comparison at ~55 cached datasets with a unified abstention/error-ranking protocol and scaffold-shift as the primary stress axis,' but a hostile reviewer correctly calls that an incremental scale-up of 2411.00920 + Hosni 2026 with no new mechanism, and the 2023 JCIM metric critique undercuts even the ranking headline.",
+  "overall_score_1to10": 3,
+  "verdict": "ABANDON"
+ },
+ {
+  "direction_id": "DESCR-SCALING",
+  "searches_run": [
+   "feature scaling normalization effect molecular property prediction model comparison descriptors",
+   "unscaled descriptors cripple distance kernel models fair comparison cheminformatics benchmark",
+   "preprocessing choices confound benchmark QSAR random forest versus neural network scaling 2024",
+   "standardization descriptors impact tree-based versus linear models molecular property prediction evaluation protocol",
+   "feature scaling impact machine learning regression classification arXiv 2506.08274 scope",
+   "fair model comparison protocol molecular machine learning benchmarking pitfalls data leakage 2023 2024 2025",
+   "descriptor preprocessing choices unfair baselines QSAR leaderboard trees invariant scaling SVM kNN confound",
+   "normalization molecular descriptors effect kNN SVM Gaussian process QSAR regression benchmark",
+   "best practices molecular machine learning evaluation JCIM reproducibility feature scaling preprocessing 2024 2025",
+   "scaling method changes model ranking leaderboard confound distance-based models molecular benchmark quantified",
+   "autoscaling Pareto scaling data pretreatment chemometrics QSAR effect multivariate models comparison",
+   "semi-synthetic ground truth benchmark feature scaling confound controlled experiment molecular descriptors fair protocol"
+  ],
+  "closest_prior_art": [
+   {
+    "citation": "Pinheiro, J.M.H. et al. The Impact of Feature Scaling in Machine Learning: Effects on Regression and Classification Tasks (IEEE Access / arXiv). 2025.",
+    "doi_or_arxiv": "arXiv:2506.08274",
+    "what_it_does": "Systematic grid of 12 scaling techniques (incl. min-max, z-score, quantile, VAST, Pareto) x 14 ML algorithms x 16 UCI datasets for regression+classification; finds tree/ensemble models (RF, GBM) robust to scaling while distance/kernel/linear/NN models are highly sensitive, and that a bad scaler can be worse than no scaling.",
+    "overlap": "This is essentially the general-domain version of the ENTIRE DESCR-SCALING hypothesis: it already quantifies, systematically and model-by-model, that scaling cripples distance/kernel/linear models but not trees. Only the molecular-descriptor framing and leaderboard-audit are absent. Directly undercuts novelty of the core claim.",
+    "year": 2025,
+    "verified": true
+   },
+   {
+    "citation": "BenchML: an extensible pipelining framework for benchmarking representations in chemistry/ML. arXiv.",
+    "doi_or_arxiv": "arXiv:2112.02287",
+    "what_it_does": "A molecular-ML benchmarking framework that explicitly names scaling/kernel-normalization as choices a fair benchmark must declare, flags fitting StandardScaler on the full matrix before the train/test loop as test-leakage, and warns that non-identical splits bias cross-model comparisons.",
+    "overlap": "Pre-empts the 'fair-comparison protocol' deliverable in the exact molecular domain: fit scalers in-fold, identical splits, declare scaling. The scaling confound is already identified as a benchmark hazard here.",
+    "year": 2021,
+    "verified": true
+   },
+   {
+    "citation": "Why Deep Models Often Cannot Beat Non-deep Counterparts on Molecular Property Prediction. arXiv.",
+    "doi_or_arxiv": "arXiv:2306.17702",
+    "what_it_does": "Shows tree models (XGB/RF) top-rank on molecular descriptor tasks and are robust to feature transforms, while performance collapses under orthogonal feature mixing; deep/other models far more sensitive to feature-space transformation.",
+    "overlap": "Establishes the tree-invariance-vs-sensitivity mechanism central to DESCR-SCALING in molecular property prediction, though for rotations rather than per-feature scaling.",
+    "year": 2023,
+    "verified": true
+   },
+   {
+    "citation": "Varmuza, K. & Filzmoser, P. Adjusted Pareto scaling (tunable exponent between no-scaling and autoscaling). Journal of Chemometrics, 2024.",
+    "doi_or_arxiv": "NOT_RETRIEVED (TU Wien repositum PDF only; DOI unconfirmed)",
+    "what_it_does": "Treats autoscaling vs Pareto scaling on chemistry datasets (incl. molecular descriptors) with PLS; concludes best scaling is data-dependent and a heuristic search over scalers is advisable; notes range/VAST scaling can beat Pareto.",
+    "overlap": "Chemometrics tradition already studies scaling choice on descriptor data with model comparison; reduces novelty of 'descriptor scaling matters' and of 'search over scalers'.",
+    "year": 2024,
+    "verified": false
+   },
+   {
+    "citation": "When Do Neural Nets Outperform Boosted Trees on Tabular Data? (NeurIPS). arXiv.",
+    "doi_or_arxiv": "arXiv:2305.02997",
+    "what_it_does": "Benchmarks tabular models; supplementary analysis finds quantile scaling helps simpler models (RF, MLP) but barely affects the strongest models; argues preprocessing choices confound algorithm comparisons so uses one minimal consistent preprocessing.",
+    "overlap": "Confirms the 'preprocessing confounds model comparison' thesis is a known, published concern in the broader tabular-ML community.",
+    "year": 2023,
+    "verified": true
+   },
+   {
+    "citation": "Metabolomics NMR data scaling vs classifier sensitivity study (six pretreatments x four classifiers).",
+    "doi_or_arxiv": "NOT_RETRIEVED (secondary summary only)",
+    "what_it_does": "Finds kNN highly sensitive to scaling/pretreatment choice while RF is largely insensitive; VAST/autoscaling strongest.",
+    "overlap": "Same tree-robust/distance-sensitive finding in an adjacent -omics domain; the phenomenon is long established outside QSAR.",
+    "year": 2016,
+    "verified": false
+   }
+  ],
+  "novelty_after_search": "PARTIAL_OVERLAP",
+  "is_a_method_with_ablations": true,
+  "cannot_collapse_to_null": true,
+  "cpu_feasible": true,
+  "needs_heavy_curation": false,
+  "has_semisynthetic_groundtruth_design": true,
+  "multidataset_power": "Strong on paper: TDC ADMET (22) + MoleculeACE (30 ChEMBL regression) + MoleculeNet ESOL/FreeSolv/Lipophilicity (~55 datasets) gives ample power to test a 'scaling reorders model ranking' claim with per-dataset paired stats (Wilcoxon/Friedman-Nemenyi over datasets). But high power on a foregone-conclusion effect mainly produces tight confidence intervals around a textbook result, not a discovery.",
+  "jcim_fit_1to5": 3,
+  "preemption_velocity": "HIGH",
+  "defensible_delta": "Honest assessment: no delta survives that a hostile reviewer could not call incremental. The central claim (unscaled descriptors cripple distance/kernel/linear models but not trees, confounding comparisons) is textbook scale-(in)variance and is already quantified systematically in general ML by arXiv:2506.08274 (12 scalers x 14 models x 16 datasets, same tree-robust/others-sensitive conclusion), in chemometrics by Varmuza & Filzmoser 2024 and metabolomics scaling studies, and flagged as a molecular-benchmark hazard by BenchML (arXiv:2112.02287, scaling-before-split leakage + identical-split requirement). The only non-duplicated sliver is an *audit* showing that specific published molecular leaderboards (MoleculeNet/TDC) reported unfairly weak distance/linear baselines because of inconsistent preprocessing, packaged with a released leakage-free protocol and a semi-synthetic planted-signal control. That is executable and CPU-cheap, but it is a confirmatory re-instantiation of a known mechanism in a new domain \u2014 incremental by construction, and the effect is a foregone conclusion (it cannot be null, which here is a weakness, not a strength).",
+  "sharpest_design": "If pursued despite the verdict, the only credible reframing is a concrete leaderboard-reordering AUDIT rather than a 'does scaling matter' study. Method: for each of ~55 cached datasets (TDC ADMET, MoleculeACE, MoleculeNet) compute RDKit 2D descriptors + Morgan counts; fit, in-fold only, a scaler grid {none, StandardScaler, MinMax, RobustScaler, QuantileTransformer, Pareto/VAST} x model grid {ridge, kNN, SVR-RBF, GP, LightGBM, RF}; measure how often the *published-style* 'baseline' ranking flips when distance/linear baselines are correctly scaled. RQ1: across datasets, how many published molecular benchmarks would reorder their reported model ranking if baselines were scaled in-fold? (paired Friedman + Nemenyi over datasets). RQ2 (mechanism ablation): is reordering magnitude predicted by descriptor-scale heterogeneity (ratio of feature SDs) and by model family's theoretical scale-variance? RQ3 (semi-synthetic ground truth): plant a known linear signal in a few high-variance descriptors; show unscaled kNN/SVM/ridge fail to recover it while scaled versions and trees do \u2014 proving the confound causally, with a null-free control. RQ4: quantify the leakage delta from fit-before-split vs fit-in-fold scaling. Baselines/ablations: scaler x model grid, descriptor-selection on/off, split type (random/scaffold). Metrics: RMSE/AUROC, rank-flip frequency, critical-difference diagrams. Stats: Wilcoxon signed-rank per pair, Friedman across datasets, BH-FDR across the dataset family. Even executed cleanly, pitch this only as a short 'evaluation best-practices' note, and expect reviewers to cite 2506.08274 and BenchML as prior art.",
+  "overall_score_1to10": 3,
+  "verdict": "ABANDON"
+ }
+]

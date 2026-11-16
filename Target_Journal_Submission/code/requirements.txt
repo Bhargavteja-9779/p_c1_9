@@ -13,3 +13,4 @@ pyyaml==6.0.3
 tqdm
 pytest==9.2.0
 torch==2.15.0  # CPU build; install via: pip install torch --index-url https://download.pytorch.org/whl/cpu
+dimorphite-dl  # pH-based protonation for standardization orbit
