@@ -1,0 +1,205 @@
+{
+ "Journal of Big Data": {
+  "issn": "2196-1115",
+  "articles": 267,
+  "with_dates": 265,
+  "median": 247,
+  "q1": 178.0,
+  "q3": 365.0,
+  "mean": 285.0,
+  "pct_le_60": 1.1,
+  "pct_le_100": 5.3
+ },
+ "Artificial Intelligence Review": {
+  "issn": "0269-2821",
+  "articles": 0,
+  "with_dates": 0
+ },
+ "Data Mining and Knowledge Discovery": {
+  "issn": "1384-5810",
+  "articles": 117,
+  "with_dates": 115,
+  "median": 245,
+  "q1": 157.0,
+  "q3": 373.0,
+  "mean": 313.7,
+  "pct_le_60": 1.7,
+  "pct_le_100": 3.5
+ },
+ "Machine Learning": {
+  "issn": "0885-6125",
+  "articles": 275,
+  "with_dates": 268,
+  "median": 208.0,
+  "q1": 165.0,
+  "q3": 318.75,
+  "mean": 269.0,
+  "pct_le_60": 1.1,
+  "pct_le_100": 6.7
+ },
+ "Complex & Intelligent Systems": {
+  "issn": "2199-4536",
+  "articles": 416,
+  "with_dates": 415,
+  "median": 145,
+  "q1": 99.0,
+  "q3": 220.0,
+  "mean": 187.5,
+  "pct_le_60": 4.3,
+  "pct_le_100": 25.8
+ },
+ "Neural Computing and Applications": {
+  "issn": "0941-0643",
+  "articles": 899,
+  "with_dates": 879,
+  "median": 254,
+  "q1": 173.0,
+  "q3": 360.0,
+  "mean": 294.9,
+  "pct_le_60": 0.5,
+  "pct_le_100": 2.6
+ },
+ "Applied Intelligence": {
+  "issn": "0924-669X",
+  "articles": 581,
+  "with_dates": 566,
+  "median": 234.0,
+  "q1": 166.5,
+  "q3": 332.25,
+  "mean": 276.0,
+  "pct_le_60": 0.9,
+  "pct_le_100": 3.9
+ },
+ "Cognitive Computation": {
+  "issn": "1866-9956",
+  "articles": 140,
+  "with_dates": 140,
+  "median": 273.5,
+  "q1": 169.5,
+  "q3": 434.5,
+  "mean": 329.4,
+  "pct_le_60": 3.6,
+  "pct_le_100": 10.0
+ },
+ "Knowledge and Information Systems": {
+  "issn": "0219-1377",
+  "articles": 316,
+  "with_dates": 316,
+  "median": 290.0,
+  "q1": 189.0,
+  "q3": 415.0,
+  "mean": 329.4,
+  "pct_le_60": 0.9,
+  "pct_le_100": 5.4
+ },
+ "Int J Machine Learning and Cybernetics": {
+  "issn": "1868-8071",
+  "articles": 538,
+  "with_dates": 534,
+  "median": 287.0,
+  "q1": 236.0,
+  "q3": 310.25,
+  "mean": 276.8,
+  "pct_le_60": 0.6,
+  "pct_le_100": 2.2
+ },
+ "Journal of Cheminformatics": {
+  "issn": "1758-2946",
+  "articles": 212,
+  "with_dates": 208,
+  "median": 132.0,
+  "q1": 103.25,
+  "q3": 177.25,
+  "mean": 150.1,
+  "pct_le_60": 2.4,
+  "pct_le_100": 22.6
+ },
+ "Journal of Intelligent Manufacturing": {
+  "issn": "0956-5515",
+  "articles": 295,
+  "with_dates": 291,
+  "median": 160,
+  "q1": 118.0,
+  "q3": 216.0,
+  "mean": 179.6,
+  "pct_le_60": 3.4,
+  "pct_le_100": 18.2
+ },
+ "Machine Intelligence Research": {
+  "issn": "2731-538X",
+  "articles": 86,
+  "with_dates": 78,
+  "median": 136.5,
+  "q1": 93.75,
+  "q3": 177.75,
+  "mean": 143.6,
+  "pct_le_60": 6.4,
+  "pct_le_100": 28.2
+ },
+ "CAAI Transactions on Intelligence Technology": {
+  "issn": "2468-2322",
+  "articles": 123,
+  "with_dates": 123,
+  "median": 160,
+  "q1": 111.0,
+  "q3": 222.0,
+  "mean": 197.5,
+  "pct_le_60": 7.3,
+  "pct_le_100": 18.7
+ },
+ "International Journal of Intelligent Systems": {
+  "issn": "1098-111X",
+  "articles": 143,
+  "with_dates": 143,
+  "median": 161,
+  "q1": 118.0,
+  "q3": 221.0,
+  "mean": 173.3,
+  "pct_le_60": 3.5,
+  "pct_le_100": 12.6
+ },
+ "Connection Science": {
+  "issn": "0954-0091",
+  "articles": 43,
+  "with_dates": 43,
+  "median": 195,
+  "q1": 104.0,
+  "q3": 275.0,
+  "mean": 235.9,
+  "pct_le_60": 0.0,
+  "pct_le_100": 18.6
+ },
+ "Scientific Reports": {
+  "issn": "2045-2322",
+  "articles": 1500,
+  "with_dates": 1483,
+  "median": 136,
+  "q1": 91.0,
+  "q3": 206.0,
+  "mean": 159.9,
+  "pct_le_60": 8.3,
+  "pct_le_100": 30.9
+ },
+ "EPJ Data Science": {
+  "issn": "2193-1127",
+  "articles": 119,
+  "with_dates": 118,
+  "median": 183.5,
+  "q1": 146.5,
+  "q3": 256.25,
+  "mean": 199.8,
+  "pct_le_60": 0.0,
+  "pct_le_100": 7.6
+ },
+ "Statistics and Computing": {
+  "issn": "0960-3174",
+  "articles": 256,
+  "with_dates": 255,
+  "median": 247,
+  "q1": 179.0,
+  "q3": 322.0,
+  "mean": 267.3,
+  "pct_le_60": 0.4,
+  "pct_le_100": 3.1
+ }
+}

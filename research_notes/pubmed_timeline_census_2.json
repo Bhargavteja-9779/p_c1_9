@@ -1,0 +1,222 @@
+{
+ "Environ Sci Technol (ACS)": {
+  "ta": "Environ Sci Technol",
+  "pubmed_articles": 400,
+  "with_dates": 378,
+  "median": 117.5,
+  "q1": 90.75,
+  "q3": 155.0,
+  "mean": 125.0,
+  "pct_le_60": 10.1,
+  "pct_le_100": 35.2
+ },
+ "Water Research (Elsevier)": {
+  "ta": "Water Res",
+  "pubmed_articles": 400,
+  "with_dates": 400,
+  "median": 86.0,
+  "q1": 67.25,
+  "q3": 112.75,
+  "mean": 94.8,
+  "pct_le_60": 16.2,
+  "pct_le_100": 64.8
+ },
+ "J Hazard Mater (Elsevier)": {
+  "ta": "J Hazard Mater",
+  "pubmed_articles": 400,
+  "with_dates": 400,
+  "median": 99.5,
+  "q1": 76.25,
+  "q3": 129.0,
+  "mean": 110.1,
+  "pct_le_60": 8.5,
+  "pct_le_100": 51.5
+ },
+ "Sci Total Environ (Elsevier)": {
+  "ta": "Sci Total Environ",
+  "pubmed_articles": 400,
+  "with_dates": 236,
+  "median": 142.0,
+  "q1": 96.0,
+  "q3": 190.75,
+  "mean": 155.3,
+  "pct_le_60": 7.2,
+  "pct_le_100": 26.3
+ },
+ "Anal Chem (ACS)": {
+  "ta": "Anal Chem",
+  "pubmed_articles": 400,
+  "with_dates": 399,
+  "median": 93,
+  "q1": 73.0,
+  "q3": 128.0,
+  "mean": 105.0,
+  "pct_le_60": 14.0,
+  "pct_le_100": 55.9
+ },
+ "J Med Chem (ACS)": {
+  "ta": "J Med Chem",
+  "pubmed_articles": 400,
+  "with_dates": 391,
+  "median": 104,
+  "q1": 75.0,
+  "q3": 145.0,
+  "mean": 114.0,
+  "pct_le_60": 18.9,
+  "pct_le_100": 46.0
+ },
+ "J Chem Theory Comput (ACS)": {
+  "ta": "J Chem Theory Comput",
+  "pubmed_articles": 400,
+  "with_dates": 337,
+  "median": 78,
+  "q1": 60.5,
+  "q3": 98.0,
+  "mean": 82.2,
+  "pct_le_60": 24.9,
+  "pct_le_100": 76.9
+ },
+ "J Proteome Res (ACS)": {
+  "ta": "J Proteome Res",
+  "pubmed_articles": 400,
+  "with_dates": 198,
+  "median": 128.0,
+  "q1": 95.5,
+  "q3": 176.25,
+  "mean": 139.3,
+  "pct_le_60": 4.0,
+  "pct_le_100": 27.8
+ },
+ "Digital Discovery (RSC)": {
+  "ta": "Digit Discov",
+  "pubmed_articles": 54,
+  "with_dates": 54,
+  "median": 124.0,
+  "q1": 95.5,
+  "q3": 174.25,
+  "mean": 136.2,
+  "pct_le_60": 9.3,
+  "pct_le_100": 29.6
+ },
+ "Chem Sci (RSC)": {
+  "ta": "Chem Sci",
+  "pubmed_articles": 400,
+  "with_dates": 397,
+  "median": 71,
+  "q1": 48.0,
+  "q3": 99.5,
+  "mean": 79.2,
+  "pct_le_60": 37.5,
+  "pct_le_100": 75.6
+ },
+ "ACS Cent Sci": {
+  "ta": "ACS Cent Sci",
+  "pubmed_articles": 130,
+  "with_dates": 130,
+  "median": 90.0,
+  "q1": 67.75,
+  "q3": 111.25,
+  "mean": 92.8,
+  "pct_le_60": 16.9,
+  "pct_le_100": 65.4
+ },
+ "Adv Sci (Wiley)": {
+  "ta": "Adv Sci (Weinh)",
+  "pubmed_articles": 400,
+  "with_dates": 400,
+  "median": 107.5,
+  "q1": 76.25,
+  "q3": 159.0,
+  "mean": 128.6,
+  "pct_le_60": 13.0,
+  "pct_le_100": 43.0
+ },
+ "iScience (Cell)": {
+  "ta": "iScience",
+  "pubmed_articles": 400,
+  "with_dates": 399,
+  "median": 205,
+  "q1": 142.0,
+  "q3": 267.0,
+  "mean": 213.4,
+  "pct_le_60": 2.8,
+  "pct_le_100": 10.3
+ },
+ "Nat Commun": {
+  "ta": "Nat Commun",
+  "pubmed_articles": 400,
+  "with_dates": 399,
+  "median": 255,
+  "q1": 193.0,
+  "q3": 356.0,
+  "mean": 290.7,
+  "pct_le_60": 1.3,
+  "pct_le_100": 3.8
+ },
+ "Anal Chim Acta (Elsevier)": {
+  "ta": "Anal Chim Acta",
+  "pubmed_articles": 400,
+  "with_dates": 400,
+  "median": 60.0,
+  "q1": 43.0,
+  "q3": 80.75,
+  "mean": 65.6,
+  "pct_le_60": 50.2,
+  "pct_le_100": 90.5
+ },
+ "Mol Inform (Wiley)": {
+  "ta": "Mol Inform",
+  "pubmed_articles": 42,
+  "with_dates": 42,
+  "median": 115.0,
+  "q1": 73.5,
+  "q3": 174.75,
+  "mean": 134.3,
+  "pct_le_60": 14.3,
+  "pct_le_100": 40.5
+ },
+ "Bioinformatics (OUP, census)": {
+  "ta": "Bioinformatics",
+  "pubmed_articles": 400,
+  "with_dates": 346,
+  "median": 147.0,
+  "q1": 108.75,
+  "q3": 195.25,
+  "mean": 160.5,
+  "pct_le_60": 9.0,
+  "pct_le_100": 20.2
+ },
+ "J Cheminform (census check)": {
+  "ta": "J Cheminform",
+  "pubmed_articles": 161,
+  "with_dates": 160,
+  "median": 132.0,
+  "q1": 103.5,
+  "q3": 172.75,
+  "mean": 148.0,
+  "pct_le_60": 2.5,
+  "pct_le_100": 22.5
+ },
+ "Comput Biol Chem (Elsevier)": {
+  "ta": "Comput Biol Chem",
+  "pubmed_articles": 400,
+  "with_dates": 400,
+  "median": 98.0,
+  "q1": 69.25,
+  "q3": 140.0,
+  "mean": 111.0,
+  "pct_le_60": 17.5,
+  "pct_le_100": 52.8
+ },
+ "Methods (Elsevier)": {
+  "ta": "Methods",
+  "pubmed_articles": 141,
+  "with_dates": 140,
+  "median": 95.5,
+  "q1": 66.25,
+  "q3": 134.5,
+  "mean": 114.3,
+  "pct_le_60": 17.1,
+  "pct_le_100": 55.7
+ }
+}

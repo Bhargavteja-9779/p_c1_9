@@ -1,0 +1,24 @@
+Neural Networks (Elsevier) {'ta': 'Neural Netw', 'pubmed_articles': 400, 'with_dates': 400, 'median': 222.0, 'q1': 168.0, 'q3': 288.75, 'mean': 238.4, 'pct_le_60': 0.2, 'pct_le_100': 4.5}
+IEEE TNNLS {'ta': 'IEEE Trans Neural Netw Learn Syst', 'pubmed_articles': 400, 'with_dates': 0}
+IEEE Trans Cybernetics {'ta': 'IEEE Trans Cybern', 'pubmed_articles': 400, 'with_dates': 0}
+Computers in Biology and Medicine (Elsevier) {'ta': 'Comput Biol Med', 'pubmed_articles': 400, 'with_dates': 387, 'median': 130, 'q1': 81.0, 'q3': 201.0, 'mean': 167.6, 'pct_le_60': 11.6, 'pct_le_100': 35.9}
+Artificial Intelligence in Medicine (Elsevier) {'ta': 'Artif Intell Med', 'pubmed_articles': 158, 'with_dates': 158, 'median': 280.0, 'q1': 160.0, 'q3': 379.5, 'mean': 285.2, 'pct_le_60': 0.0, 'pct_le_100': 4.4}
+J Biomedical Informatics (Elsevier) {'ta': 'J Biomed Inform', 'pubmed_articles': 145, 'with_dates': 145, 'median': 148, 'q1': 108.5, 'q3': 188.5, 'mean': 152.3, 'pct_le_60': 2.1, 'pct_le_100': 20.0}
+Comput Methods Programs Biomed (Elsevier) {'ta': 'Comput Methods Programs Biomed', 'pubmed_articles': 400, 'with_dates': 400, 'median': 181.5, 'q1': 131.25, 'q3': 233.25, 'mean': 193.5, 'pct_le_60': 0.8, 'pct_le_100': 11.0}
+IEEE J Biomed Health Inform {'ta': 'IEEE J Biomed Health Inform', 'pubmed_articles': 400, 'with_dates': 0}
+JAMIA (OUP) {'ta': 'J Am Med Inform Assoc', 'pubmed_articles': 258, 'with_dates': 254, 'median': 123.0, 'q1': 86.5, 'q3': 167.25, 'mean': 130.9, 'pct_le_60': 13.4, 'pct_le_100': 35.0}
+GigaScience (OUP) {'ta': 'Gigascience', 'pubmed_articles': 110, 'with_dates': 104, 'median': 198.0, 'q1': 137.0, 'q3': 250.75, 'mean': 195.4, 'pct_le_60': 8.7, 'pct_le_100': 14.4}
+NAR Genomics and Bioinformatics (OUP) {'ta': 'NAR Genom Bioinform', 'pubmed_articles': 212, 'with_dates': 212, 'median': 152.0, 'q1': 111.0, 'q3': 199.75, 'mean': 166.6, 'pct_le_60': 3.3, 'pct_le_100': 18.9}
+Bioinformatics Advances (OUP) {'ta': 'Bioinform Adv', 'pubmed_articles': 344, 'with_dates': 343, 'median': 129, 'q1': 97.0, 'q3': 163.0, 'mean': 134.3, 'pct_le_60': 9.3, 'pct_le_100': 27.1}
+J Chem Inf Model (ACS) {'ta': 'J Chem Inf Model', 'pubmed_articles': 400, 'with_dates': 347, 'median': 84, 'q1': 63.0, 'q3': 112.0, 'mean': 90.0, 'pct_le_60': 22.5, 'pct_le_100': 64.0}
+Comput Struct Biotechnol J (Elsevier) {'ta': 'Comput Struct Biotechnol J', 'pubmed_articles': 306, 'with_dates': 306, 'median': 91.5, 'q1': 62.75, 'q3': 119.0, 'mean': 95.8, 'pct_le_60': 22.2, 'pct_le_100': 58.5}
+Patterns (Cell Press) {'ta': 'Patterns (N Y)', 'pubmed_articles': 80, 'with_dates': 79, 'median': 167, 'q1': 136.0, 'q3': 210.0, 'mean': 178.5, 'pct_le_60': 2.5, 'pct_le_100': 6.3}
+npj Digital Medicine {'ta': 'NPJ Digit Med', 'pubmed_articles': 400, 'with_dates': 400, 'median': 186.5, 'q1': 131.25, 'q3': 256.0, 'mean': 200.1, 'pct_le_60': 2.5, 'pct_le_100': 11.2}
+Medical Image Analysis (Elsevier) {'ta': 'Med Image Anal', 'pubmed_articles': 400, 'with_dates': 399, 'median': 228, 'q1': 168.0, 'q3': 315.0, 'mean': 257.5, 'pct_le_60': 0.3, 'pct_le_100': 3.8}
+BMC Bioinformatics {'ta': 'BMC Bioinformatics', 'pubmed_articles': 308, 'with_dates': 308, 'median': 147.0, 'q1': 102.25, 'q3': 221.0, 'mean': 179.6, 'pct_le_60': 5.5, 'pct_le_100': 23.7}
+Brief Bioinform (check) {'ta': 'Brief Bioinform', 'pubmed_articles': 400, 'with_dates': 399, 'median': 124, 'q1': 91.0, 'q3': 170.0, 'mean': 135.4, 'pct_le_60': 8.0, 'pct_le_100': 31.6}
+Bioinformatics (check) {'ta': 'Bioinformatics', 'pubmed_articles': 400, 'with_dates': 346, 'median': 147.0, 'q1': 108.75, 'q3': 195.25, 'mean': 160.5, 'pct_le_60': 9.0, 'pct_le_100': 20.2}
+Neurocomputing (Elsevier) {'ta': 'Neurocomputing', 'pubmed_articles': 7, 'with_dates': 1}
+Pattern Recognition (Elsevier) {'ta': 'Pattern Recognit', 'pubmed_articles': 11, 'with_dates': 0}
+Knowledge-Based Systems {'ta': 'Knowl Based Syst', 'pubmed_articles': 1, 'with_dates': 0}
+Information Sciences {'ta': 'Inf Sci (N Y)', 'pubmed_articles': 2, 'with_dates': 0}
