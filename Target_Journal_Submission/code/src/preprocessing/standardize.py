@@ -43,8 +43,13 @@ def _parse(smiles: str):
     return Chem.MolFromSmiles(smiles)
 
 
-def _to_smiles(mol, isomeric: bool = True) -> str:
-    return Chem.MolToSmiles(mol, canonical=True, isomericSmiles=isomeric)
+def _to_smiles(mol, isomeric: bool = True) -> str | None:
+    if mol is None:
+        return None
+    try:
+        return Chem.MolToSmiles(mol, canonical=True, isomericSmiles=isomeric)
+    except Exception:
+        return None
 
 
 # ---- individual operations -----------------------------------------------------------------
@@ -84,12 +89,15 @@ def op_protonate_ph74(smiles: str) -> str:
     if _dimorphite_protonate is not None:
         try:
             res = _dimorphite_protonate(smiles, ph_min=7.4, ph_max=7.4, pka_precision=1.0)
-            if res:
+            if res and _parse(res[0]) is not None:
                 return res[0]
         except Exception:
             pass
     m = _parse(smiles)
-    return _to_smiles(op_neutralize(m)) if m is not None else smiles
+    if m is None:
+        return smiles
+    out = _to_smiles(op_neutralize(m))
+    return out if out else smiles
 
 
 def tautomer_score(mol) -> float:
@@ -217,28 +225,40 @@ def standardization_orbit(smiles: str, cfg: OrbitConfig | None = None) -> list[s
     cfg = cfg or OrbitConfig()
     base = NAMED_PIPELINES["P_rdkit"].apply(smiles)
     if base is None:
-        return []
+        base = smiles  # fall back to the raw SMILES as the single orbit member
     members: list[str] = [base]
     bmol = _parse(base)
+    if bmol is None:
+        return members
 
     def add(s):
         if s and s not in members:
             members.append(s)
 
+    def safe(fn):
+        """Run a producer returning a SMILES/None, swallowing any RDKit error."""
+        try:
+            return fn()
+        except Exception:
+            return None
+
     # tautomers
-    for s in enumerate_tautomers(bmol, cfg.max_tautomers):
-        add(s)
+    try:
+        for s in enumerate_tautomers(bmol, cfg.max_tautomers):
+            add(s)
+    except Exception:
+        pass
     # protonation / charge
     if cfg.include_ph74:
-        add(op_protonate_ph74(smiles))
+        add(safe(lambda: op_protonate_ph74(smiles)))
     if cfg.include_neutral:
-        add(_to_smiles(op_neutralize(bmol)))
+        add(safe(lambda: _to_smiles(op_neutralize(bmol))))
     # stereo stripped
     if cfg.include_stripstereo:
-        add(_to_smiles(op_strip_stereo(bmol), isomeric=False))
+        add(safe(lambda: _to_smiles(op_strip_stereo(bmol), isomeric=False)))
     # aromaticity model
     if cfg.include_mdlarom:
-        add(_to_smiles(op_set_aromaticity(bmol, "mdl")))
+        add(safe(lambda: _to_smiles(op_set_aromaticity(bmol, "mdl"))))
     return members[: cfg.max_members]
 
 

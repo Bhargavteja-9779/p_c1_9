@@ -37,6 +37,11 @@ def _cell_path(tag: str) -> str:
     return os.path.join(CELLS, hashlib.md5(tag.encode()).hexdigest()[:20] + ".json")
 
 
+def _log_fail(tag, e):
+    with open(os.path.join(LOGS, "failures.log"), "a") as f:
+        f.write(f"{tag}\t{type(e).__name__}\t{str(e)[:200]}\n")
+
+
 def _cached(tag: str):
     p = _cell_path(tag)
     if os.path.exists(p):
@@ -54,12 +59,15 @@ def _save(tag: str, rows):
 # ---- precompute all feature + orbit caches (parallel across datasets, no write races) --------
 def _precompute_one(args):
     spec, pipes = args
-    df = D.load(spec); raw = df.smiles.tolist()
-    for pname in pipes:
-        for feat in ("ecfp", "desc"):
-            features(spec.name, raw, feature_spec_to_pipe(pname), feat)
-    dataset_orbits(spec.name, raw, ORBIT_CFG)
-    return spec.name
+    try:
+        df = D.load(spec); raw = df.smiles.tolist()
+        for pname in pipes:
+            for feat in ("ecfp", "desc"):
+                features(spec.name, raw, feature_spec_to_pipe(pname), feat)
+        dataset_orbits(spec.name, raw, ORBIT_CFG)
+        return spec.name
+    except Exception as e:
+        return f"ERROR:{spec.name}:{type(e).__name__}:{str(e)[:120]}"
 
 
 def precompute(cfg, nproc):
@@ -78,9 +86,11 @@ def _sens_job(args):
     c = _cached(tag)
     if c is not None:
         return c
-    rows = run_cell(spec, pname, seed, models=models, feat="ecfp", split_kind=split)
-    # also descriptor featurization under this pipeline (featurization-sensitivity sub-study)
-    rows += [{**r, "feat": "desc"} for r in run_cell(spec, pname, seed, models=models, feat="desc", split_kind=split)]
+    try:
+        rows = run_cell(spec, pname, seed, models=models, feat="ecfp", split_kind=split)
+        rows += [{**r, "feat": "desc"} for r in run_cell(spec, pname, seed, models=models, feat="desc", split_kind=split)]
+    except Exception as e:
+        _log_fail(tag, e); return []
     _save(tag, rows)
     return rows
 
@@ -91,9 +101,12 @@ def _abl_job(args):
     c = _cached(tag)
     if c is not None:
         return c
-    rows = run_cell(spec, pname, seed, models=models, feat="ecfp", split_kind=split)
-    for r in rows:
-        r["ablation_pipe"] = pname
+    try:
+        rows = run_cell(spec, pname, seed, models=models, feat="ecfp", split_kind=split)
+        for r in rows:
+            r["ablation_pipe"] = pname
+    except Exception as e:
+        _log_fail(tag, e); return []
     _save(tag, rows)
     return rows
 
@@ -104,7 +117,10 @@ def _method_job(args):
     c = _cached(tag)
     if c is not None:
         return c
-    rows = run_method_cell(spec, seed, model_name=model, feat=feat, split_kind=split, orbit_cfg=ORBIT_CFG)
+    try:
+        rows = run_method_cell(spec, seed, model_name=model, feat=feat, split_kind=split, orbit_cfg=ORBIT_CFG)
+    except Exception as e:
+        _log_fail(tag, e); return []
     _save(tag, rows)
     return rows
 

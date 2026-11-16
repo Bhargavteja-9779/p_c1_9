@@ -5,3 +5,19 @@ RUN {'mode': 'full', 'nproc': 4, 'device': 'cpu', 'protonation_backend': 'dimorp
   precompute 3/55: tdc:lipophilicity_astrazeneca (90s)
   precompute 4/55: tdc:half_life_obach (140s)
   precompute 5/55: tdc:clearance_hepatocyte_az (157s)
+  precompute 6/55: tdc:clearance_microsome_az (190s)
+  precompute 7/55: molnet:esol (198s)
+  precompute 8/55: molnet:freesolv (201s)
+Traceback (most recent call last):
+  File "/home/user/p_c1_9/Target_Journal_Submission/code/run_all.py", line 162, in <module>
+    main()
+    ~~~~^^
+  File "/home/user/p_c1_9/Target_Journal_Submission/code/run_all.py", line 139, in main
+    precompute(cfg, args.nproc)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/user/p_c1_9/Target_Journal_Submission/code/run_all.py", line 70, in precompute
+    for i, name in enumerate(pool.imap_unordered(_precompute_one, jobs), 1):
+                   ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/multiprocessing/pool.py", line 873, in next
+    raise value
+multiprocessing.pool.MaybeEncodingError: Error sending result: '<multiprocessing.pool.ExceptionWithTraceback object at 0x7f31190ab620>'. Reason: 'PicklingError("Can't pickle <class 'Boost.Python.ArgumentError'>: import of module 'Boost.Python' failed")'
