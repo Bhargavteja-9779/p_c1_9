@@ -1,6 +1,6 @@
 {
  "mode": "full",
- "nproc": 4,
+ "nproc": 1,
  "device": "cpu",
  "protonation_backend": "dimorphite_dl",
  "n_datasets": 55,

@@ -180,14 +180,23 @@ def main():
     abl = _run_pool(_abl_job, jobs, args.nproc, "abl")
     pd.DataFrame(abl).to_csv(os.path.join(RESULTS, "ablation_results.csv"), index=False)
 
-    print("[E4/E5 method: SORB + invariance]", flush=True)
-    jobs = [(s, seed, m, f, split) for s in specs for seed in cfg["method_seeds"]
+    # method/shortcut: cap to datasets <= METHOD_MAX_N molecules (orbit augmentation on very large
+    # sets is memory-heavy; the largest sets remain in the sensitivity/ablation analyses).
+    METHOD_MAX_N = 6000
+    def _nmol(sp):
+        try:
+            return len(D.load(sp))
+        except Exception:
+            return 10**9
+    method_specs = [s for s in specs if _nmol(s) <= METHOD_MAX_N]
+    print(f"[E4/E5 method: SORB + invariance] on {len(method_specs)}/{len(specs)} datasets (<= {METHOD_MAX_N} mol)", flush=True)
+    jobs = [(s, seed, m, f, split) for s in method_specs for seed in cfg["method_seeds"]
             for m in cfg["method_models"] for f in cfg["method_feats"]]
     meth = _run_pool(_method_job, jobs, args.nproc, "method")
     pd.DataFrame(meth).to_csv(os.path.join(RESULTS, "method_results.csv"), index=False)
 
     print("[E5b semi-synthetic shortcut]", flush=True)
-    jobs = [(s, seed, m, "ecfp", split) for s in specs for seed in cfg["shortcut_seeds"]
+    jobs = [(s, seed, m, "ecfp", split) for s in method_specs for seed in cfg["shortcut_seeds"]
             for m in cfg["shortcut_models"]]
     sc = _run_pool(_shortcut_job, jobs, args.nproc, "shortcut")
     pd.DataFrame(sc).to_csv(os.path.join(RESULTS, "shortcut_results.csv"), index=False)

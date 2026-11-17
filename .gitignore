@@ -5,3 +5,6 @@ data_cache/
 *.ckpt
 *.pt
 .DS_Store
+Target_Journal_Submission/code/results/_cells/
+Target_Journal_Submission/code/results/full_run*.log
+Target_Journal_Submission/code/std_cache/
