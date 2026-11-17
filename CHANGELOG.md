@@ -7,3 +7,4 @@
 - 2026-11-16: TOPIC LOCKED = standardization-induced benchmark instability + SORB method, for JCIM. Research plan pre-registered.
 - 2026-11-16: analysis+figures pipeline; pre-registration amendment (invariance-centric framing) after blinded pilot.
 - 2026-11-16: container restart during precompute (24/55); relaunching checkpointed full run.
+- 2026-11-17: full grid executing (sens ~820/990); state snapshot for restart resilience.
