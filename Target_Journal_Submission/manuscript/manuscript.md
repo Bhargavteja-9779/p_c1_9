@@ -365,7 +365,28 @@ robustness to the *input* presentation is wanted without re-standardizing; and t
 only where a model that has *learned* cross-canonicalizer invariance is needed and its accuracy cost is
 acceptable.
 
-## 7.3 Controlled semi-synthetic validation (RQ5)
+## 7.3 The first-line fix: consistent canonical-tautomer standardization
+A natural objection is that the whole problem is solved by simply standardizing consistently. We confirm
+this is largely true and recommend it as the first line of defense. Because tautomer canonicalization is
+the dominant operation (Section 6.5), a baseline model trained and evaluated with a consistent
+canonical-tautomer pipeline is nearly invariant to how each test molecule is presented: the
+per-prediction orbit SD collapses from {{ORBIT_SD_RAW}} of the label SD (default RDKit cleanup, which
+does not canonicalize tautomers) to {{ORBIT_SD_CANON}} with canonical-tautomer standardization applied
+at both training and inference (median over datasets) — a near-complete, zero-cost remedy for
+input-presentation sensitivity. This is the single most important practical recommendation of this work,
+and it requires no new method.
+
+## 7.4 What consistent canonicalization does not fix: cross-canonicalizer disagreement
+Consistent canonicalization removes variance *within* one pipeline but not *between* pipelines: two
+laboratories that each standardize consistently, but with different (equally valid) canonicalizers,
+still train different models. We quantify this by training two models on two different canonical
+pipelines and measuring their prediction disagreement on a common test set. Baseline models disagree by
+a median of {{XPIPE_BASELINE}} of the label SD; models trained with orbit augmentation (SORB) disagree
+by {{XPIPE_SORB}} — a {{XPIPE_REDUCTION}}% reduction — because augmentation exposes each model to the
+competing canonical forms. This cross-canonicalizer robustness, together with the shortcut resistance
+below, is the residual value of orbit-robust training once consistent canonicalization is in place.
+
+## 7.5 Controlled semi-synthetic validation (RQ5)
 To confirm the mechanism with a known ground truth, we constructed a controlled setting in which the
 standardization state is made artificially predictive of the label (the orbit member presented for a
 molecule is chosen by its target). A standard model trained on this data exploits the standardization

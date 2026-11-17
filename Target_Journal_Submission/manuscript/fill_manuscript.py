@@ -125,6 +125,21 @@ def compute_values():
         pp = sc.get("baseline_vs_sorb_shortcut_wilcoxon_p", None)
         pstr = f", paired Wilcoxon p = {pp:.1g}" if pp is not None else ""
         v["SHORTCUT_SORB_DROP"] = f"a negligible {ssd:+.3f}{pstr}"
+    # revision experiments (cross-pipeline, canonicalize-at-inference, random split) — regression medians
+    rx = _csv(RES, "revision_results.csv")
+    if rx is not None and "xpipe_baseline_med" in rx.columns:
+        rxr = rx[rx.task == "reg"]
+        def med(c):
+            return float(rxr[c].dropna().median()) if c in rxr else None
+        xb, xs = med("xpipe_baseline_med"), med("xpipe_sorb_med")
+        osr, osc = med("orbit_sd_raw"), med("orbit_sd_canon_taut")
+        rnd = med("orbit_sd_random")
+        if xb is not None: v["XPIPE_BASELINE"] = f"{xb:.2f}×"
+        if xs is not None: v["XPIPE_SORB"] = f"{xs:.2f}×"
+        if xb and xs: v["XPIPE_REDUCTION"] = f"{100*(1-xs/xb):.0f}"
+        if osr is not None: v["ORBIT_SD_RAW"] = f"{osr:.2f}×"
+        if osc is not None: v["ORBIT_SD_CANON"] = f"{osc:.3f}×"
+        if rnd is not None: v["RANDOM_SPLIT_SD"] = f"{rnd:.2f}×"
     # leakage
     la = _csv(RES, "leakage_audit.csv")
     if la is not None:
