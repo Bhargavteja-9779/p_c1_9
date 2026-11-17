@@ -1,0 +1,15 @@
+{
+ "mode": "full",
+ "nproc": 2,
+ "device": "cpu",
+ "protonation_backend": "dimorphite_dl",
+ "n_datasets": 55,
+ "orbit_cfg": {
+  "max_tautomers": 3,
+  "include_ph74": true,
+  "include_neutral": true,
+  "include_stripstereo": true,
+  "include_mdlarom": true,
+  "max_members": 6
+ }
+}

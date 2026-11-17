@@ -1,0 +1,5 @@
+model,feat,orbit_mean_rel_sd,pipe_mean_rel_sd
+lgbm,desc,0.0933,0.004
+lgbm,ecfp,0.1278,0.0071
+linear,desc,0.0783,0.0039
+linear,ecfp,0.4713,0.0333

@@ -9,3 +9,4 @@
 - 2026-11-16: container restart during precompute (24/55); relaunching checkpointed full run.
 - 2026-11-17: full grid executing (sens ~820/990); state snapshot for restart resilience.
 - 2026-11-17: full experiment complete; first manuscript assembled (Final_Manuscript.docx), all 26 numeric tokens from machine results.
+- 2026-11-17: Revision complete (honest reframing: canonicalization is the fix, SORB negative result). Final audits, rejection-risk report, READY-FOR-SUBMISSION decision. Package complete.
