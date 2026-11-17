@@ -95,24 +95,32 @@ def run(spec, seed, model_name, feat):
     return out
 
 
+import hashlib, json as _json
+CKPT = os.path.join(RES, "_revcells"); os.makedirs(CKPT, exist_ok=True)
 def _job(a):
+    tag = f"{a[0].name}|{a[1]}|{a[2]}|{a[3]}"
+    cp = os.path.join(CKPT, hashlib.md5(tag.encode()).hexdigest()[:16] + ".json")
+    if os.path.exists(cp):
+        try: return _json.load(open(cp))
+        except Exception: pass
     try:
-        return run(*a)
+        r = run(*a)
     except Exception as e:
-        return {"dataset": a[0].name, "error": f"{type(e).__name__}:{e}"}
+        r = {"dataset": a[0].name, "error": f"{type(e).__name__}:{e}"}
+    _json.dump(r, open(cp, "w")); return r
 
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--nproc", type=int, default=2); args = ap.parse_args()
     specs = [s for s in D.regression_registry() + [D.DatasetSpec(f"tdc:{t}", "tdc", t, "clf") for t in D.TDC_CLF]
              if len(D.load(s)) <= 6000 and s.name != "molnet:lipophilicity"]  # drop duplicate logD benchmark
-    jobs = [(s, seed, m, f) for s in specs for seed in (0, 1, 2) for m in ("lgbm", "linear") for f in ("ecfp", "desc")]
+    jobs = [(s, 0, m, f) for s in specs for m in ("lgbm", "linear") for f in ("ecfp", "desc")]  # seed 0; dataset is the unit
     print(f"revision experiments: {len(jobs)} jobs on {len(specs)} datasets", flush=True)
     rows = []
     with Pool(args.nproc) as pool:
         for i, r in enumerate(pool.imap_unordered(_job, jobs), 1):
             rows.append(r)
-            if i % 40 == 0: print(f"  {i}/{len(jobs)}", flush=True)
+            if i % 20 == 0: print(f"  {i}/{len(jobs)}", flush=True)
     pd.DataFrame(rows).to_csv(os.path.join(RES, "revision_results.csv"), index=False)
     print("DONE", flush=True)
 

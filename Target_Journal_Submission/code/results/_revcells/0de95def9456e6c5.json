@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.03209981322288513, "xpipe_sorb_med": 0.009836195036768913, "orbit_sd_raw": 0.08359689544795154, "orbit_sd_canon_taut": 0.004584921487816992, "orbit_sd_random": 0.0929465559425341, "dataset": "tdc:caco2_wang", "task": "reg", "model": "linear", "feat": "desc", "seed": 0, "label_scale": 0.7752081265416261}

@@ -83,15 +83,21 @@ a mechanistic account of which operations and representations are responsible, a
 2. **A representation-dependent mechanism.** We attribute the violation to specific standardization
    operations (dominated by {{RQ3_TOP_OP}}) and show it is strongly representation-dependent:
    fingerprint-based linear models are the most sensitive and tree ensembles the least (Section 6).
-3. **SORB, a representation-agnostic remedy.** We define a molecule's *standardization orbit* and a
-   method that augments training over it and averages inference across it. Test-time orbit averaging
-   enforces invariance at inference; training augmentation teaches it. We evaluate both with
-   multi-seed, multi-dataset statistics and report honestly where each helps and where it does not
-   (Section 7).
-4. **A controlled validation and an open protocol.** A semi-synthetic experiment with a known
-   invariance ground truth demonstrates that standard models exploit standardization as a shortcut
-   and that SORB resists it. We release code, data instructions, and a reporting checklist for
-   standardization-reproducible molecular modeling (Section 7, 10).
+3. **A simple, effective first-line fix, and the residual problem.** We show that applying one
+   consistent canonical-tautomer standardization at both training and inference collapses the
+   per-prediction sensitivity to near zero at no cost — the single most important practical
+   recommendation — and we isolate what it does *not* fix: cross-canonicalizer disagreement between
+   laboratories, and models that exploit standardization as a shortcut (Section 7).
+4. **An orbit formalization and an honest evaluation of orbit-robust training (SORB).** We cast the
+   established augmentation-plus-test-time-averaging paradigm [@bjerrum2017; @maxsmi2021] onto the
+   chemical-graph standardization orbit, and evaluate it with multi-dataset statistics (Friedman/Nemenyi,
+   multiplicity correction): test-time averaging is accuracy-equivalent and removes input-presentation
+   dependence; training augmentation reduces cross-canonicalizer disagreement and shortcut exploitation
+   at a real accuracy cost. SORB improves reliability, not accuracy, and we report this transparently.
+5. **A controlled validation and an open protocol.** A semi-synthetic experiment with a known invariance
+   ground truth demonstrates that standard models exploit standardization as a shortcut and that
+   orbit-augmented training resists it. We release code, data instructions, figures/tables regenerable
+   from machine-readable outputs, and a reporting checklist (Section 7, 10).
 
 # 2. Related Work
 
@@ -427,11 +433,15 @@ practitioners actually act upon — the predicted potency or ADMET value for a s
 move materially with an arbitrary upstream convention. This is a reliability problem distinct from,
 and additive to, label noise [@landrum2024; @crusius2024] and notation effects on sequence models
 [@kikuchi2025]: it affects every featurization and is driven by the chemical graph. The practical
-implications are concrete. Papers should report their standardization pipeline as part of the
-experimental record, as curation guides already urge for data preparation [@qsarready2024;
-@curationreview2026]; benchmark providers should either fix and document a canonical orbit or release
-orbits; and models used for decision-making should be made invariant, cheaply, by averaging over the
-orbit at inference.
+implications are concrete and, reassuringly, mostly simple. First, apply and *report* one consistent
+canonical-tautomer standardization pipeline to both training and inference inputs; this alone collapses
+the input-presentation sensitivity to near zero (Section 7.3) and should be standard practice, extending
+the long-standing curation guidance [@fourches2010; @qsarready2024; @curationreview2026] with a specific,
+quantified recommendation. Second, because laboratories still differ in *which* canonicalizer they use,
+benchmark providers should document (or release) the exact standardization applied, and models intended
+to be robust across tools can be trained with orbit augmentation, accepting its accuracy cost. Third,
+the shortcut result is a caution for automated pipelines: a model can silently learn to read the
+standardization state rather than the chemistry.
 
 # 11. Limitations
 Several limitations bound our claims. (i) The public benchmarks are already partially standardized,
@@ -453,13 +463,16 @@ define; invariance to operations outside the orbit is not guaranteed.
 
 # 12. Conclusion
 Chemically-equivalent standardization choices leave molecular-property benchmark metrics nearly
-unchanged but make individual predictions materially irreproducible — a silent confounder in a field
-that evaluates by aggregate metrics. We quantified this standardization-invariance violation across
-{{N_DATASETS}} public datasets and {{N_MODELS}} model families, showed it is representation-dependent
-and driven chiefly by {{RQ3_TOP_OP}}, and introduced SORB, a representation-agnostic method that
-enforces invariance at inference (safely and universally) and teaches it during training (for robust
-learners). We release code, data instructions, and a reporting protocol so that molecular-property
-modeling can be made standardization-reproducible.
+unchanged but make individual predictions less reproducible than the aggregate numbers suggest — a
+confounder that is easy to miss because evaluation is aggregate. We quantified this
+standardization-invariance violation across {{N_DATASETS}} public datasets and {{N_MODELS}} model
+families, showed it is representation-dependent and driven chiefly by {{RQ3_TOP_OP}}, and established
+that a single consistent canonical-tautomer pipeline is a simple and near-complete first-line fix for
+input-presentation sensitivity. For the residual gaps it leaves — cross-canonicalizer disagreement and
+shortcut exploitation — we formalized the standardization orbit and evaluated orbit-robust training
+(SORB) honestly: it improves reliability at a real accuracy cost, so it is a targeted tool rather than a
+default. We release code, data, machine-regenerable figures/tables, and a reporting protocol so that
+molecular-property modeling can be made standardization-reproducible.
 
 # Data and Software Availability
 All datasets are public and require no credentials: the Therapeutics Data Commons ADMET benchmark
