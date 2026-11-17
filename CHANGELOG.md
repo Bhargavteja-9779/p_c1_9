@@ -10,3 +10,4 @@
 - 2026-11-17: full grid executing (sens ~820/990); state snapshot for restart resilience.
 - 2026-11-17: full experiment complete; first manuscript assembled (Final_Manuscript.docx), all 26 numeric tokens from machine results.
 - 2026-11-17: Revision complete (honest reframing: canonicalization is the fix, SORB negative result). Final audits, rejection-risk report, READY-FOR-SUBMISSION decision. Package complete.
+- 2026-11-17: PIVOT to AD-conditional conformal prediction (validated strong positive) after standardization paper judged insufficient novelty; 6 pilot validations recorded.
