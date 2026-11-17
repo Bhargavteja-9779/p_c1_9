@@ -209,9 +209,10 @@ def main():
                    f". Nemenyi critical difference (alpha=0.05): {fr['nemenyi_cd']:.2f}.\n")
     frw = m.get("friedman_worstcov_scaffold", {})
     if frw:
-        doc.append(f"\nFor the secondary worst-bin endpoint the ordering is the same (Friedman p = "
-                   f"{frw['p']:.2g}; best: " +
-                   ", ".join(f"{LAB.get(k,k)}" for k, _ in sorted(frw['mean_ranks'].items(), key=lambda x: x[1])[:2]) + ").\n")
+        doc.append(f"\nThe qualitative conclusion is the same for the secondary worst-bin endpoint "
+                   f"(Friedman p = {frw['p']:.2g}; the applicability-domain-conditional methods rank best — " +
+                   ", ".join(f"{LAB.get(k,k)}" for k, _ in sorted(frw['mean_ranks'].items(), key=lambda x: x[1])[:2]) +
+                   " — and marginal and Mondrian-scaffold worst).\n")
 
     # S7 selective prediction: interval width as a novelty signal
     selp = os.path.join(RES, "conformal_selective_results.csv")

@@ -79,7 +79,7 @@ def compute_values():
     v["FAR_CI_LO"] = _pts(farg["ci_lo"]); v["FAR_CI_HI"] = _pts(farg["ci_hi"])
     v["FAR_FRAC"] = f"{100*farg['frac_improved']:.0f}"
     # secondary worst-cov gain
-    v["WORST_GAIN"] = _pts(worstg["median_gain"]); v["WORST_P"] = _p(worstg["wilcoxon_p"])
+    v["WORST_GAIN"] = _pts(worstg["mean_gain"]); v["WORST_P"] = _p(worstg["wilcoxon_p"])
     # scaffold-conditional gap (independent partition)
     if scg:
         v["MARG_SCAFGAP"] = _cov(scg["b_mean"]); v["MOND_SCAFGAP"] = _cov(scg["a_mean"]); v["SCAFGAP_P"] = _p(scg["wilcoxon_p"])

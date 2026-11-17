@@ -26,7 +26,7 @@ learned-difficulty normalized score conditions on the wrong axis (farthest-strat
 **applicability-domain-conditional conformal** wrapper that calibrates separately across strata of a
 molecule's distance to the training set, with a shrinkage variant for sparse strata. It
 raises coverage for the most novel compounds to nominal (farthest-stratum coverage
-{{MARG_FAR_COV}}$\to${{MOND_FAR_COV}}, a {{FAR_GAIN}}-point gain improved on {{FAR_FRAC}}% of datasets;
+{{MARG_FAR_COV}}$\to${{MOND_FAR_COV}}, an {{FAR_GAIN}}-point gain improved on {{FAR_FRAC}}% of datasets;
 paired $p={{FAR_P}}$), at a modest average width cost ({{WIDTH_COST}}%) and while
 preserving marginal coverage; the extra width falls on exactly the novel compounds, turning interval
 width into an honest uncertainty signal usable for abstention. The wrapper is model- and
@@ -262,11 +262,11 @@ the stratified wrapper helps most.
 ## 7.1 The fix
 Calibrating conformal quantiles conditional on the applicability domain (Mondrian-AD) restores coverage
 where it had failed. On our primary endpoint, coverage in the farthest (most novel) stratum rises from
-{{MARG_FAR_COV}} (marginal) to {{MOND_FAR_COV}} (Mondrian-AD) — a {{FAR_GAIN}}-point mean gain to at or
+{{MARG_FAR_COV}} (marginal) to {{MOND_FAR_COV}} (Mondrian-AD) — an {{FAR_GAIN}}-point mean gain to at or
 slightly above the 0.90 target (paired Wilcoxon $p={{FAR_P}}$; 95% CI [{{FAR_CI_LO}}, {{FAR_CI_HI}}]
 points; improved on {{FAR_FRAC}}% of datasets), closing the novel-chemotype gap (Figure @fig-nearfar,
 @fig-profile, @fig-perdataset). The downward-biased worst-stratum coverage also improves,
-{{MARG_WORST_COV}}$\to${{MOND_WORST_COV}} (median gain {{WORST_GAIN}} points, $p={{WORST_P}}$). Marginal
+{{MARG_WORST_COV}}$\to${{MOND_WORST_COV}} (mean gain {{WORST_GAIN}} points, $p={{WORST_P}}$). Marginal
 coverage does not drop; it rises slightly to {{MOND_COV}} (the method becomes marginally conservative).
 Residual under-coverage remains on the hardest small datasets (e.g. FreeSolv, where the farthest stratum
 has few compounds), consistent with the open-top-stratum caveat. The shrinkage variant (smoothed-AD)
@@ -315,7 +315,7 @@ information that is not there — but an uncertainty estimate a practitioner can
 candidates. Here the two approaches differ qualitatively. Standard marginal conformal assigns **every**
 compound the same interval width, so width carries no information about which predictions to trust:
 abstaining on the widest-interval compounds flags novel chemotypes no better than chance (the most novel,
-far-AD compounds make up {{MARG_ABSTAIN_FAR}} of the widest-decile set, essentially the base rate
+far-AD compounds make up {{MARG_ABSTAIN_FAR}} of the widest 30% of intervals, essentially the base rate
 {{ABSTAIN_BASE}}). Mondrian-AD, by contrast, makes interval width track distance to the training set
 (Spearman $\rho={{MOND_WIDTH_RHO}}$ between width and applicability-domain stratum), so width becomes an
 honest novelty flag: the widest intervals are roughly twice enriched for novel compounds
