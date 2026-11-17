@@ -213,32 +213,37 @@ def main():
                    f"{frw['p']:.2g}; best: " +
                    ", ".join(f"{LAB.get(k,k)}" for k, _ in sorted(frw['mean_ranks'].items(), key=lambda x: x[1])[:2]) + ").\n")
 
-    # S7 selective prediction / abstention
+    # S7 selective prediction: interval width as a novelty signal
     selp = os.path.join(RES, "conformal_selective_results.csv")
     if os.path.exists(selp):
-        doc.append("## S7. Selective prediction (abstention by interval width)\n")
-        doc.append("Coverage on the retained set when keeping the narrowest-interval fraction of test "
-                   "compounds (scaffold split, lgbm+ECFP, seed 0, mean over datasets). With Mondrian-AD, "
-                   "interval width is an honest signal — abstaining on wide intervals yields reliably "
-                   "covered retained sets; with marginal conformal it is not.\n\n")
+        from scipy.stats import spearmanr
+        doc.append("## S7. Interval width as a novelty signal (abstention)\n")
+        doc.append("Standard marginal conformal gives every compound the same interval width, so width "
+                   "carries no triage information. Mondrian-AD and smoothed-AD make width track distance to "
+                   "training, so the widest intervals flag novel compounds. Below: the Spearman correlation "
+                   "between interval width and applicability-domain stratum, and the fraction of the widest "
+                   "30% of intervals (the would-be-abstained set) that are far-AD (novel) versus the base "
+                   "rate (scaffold split, lgbm+ECFP, seed 0, mean over datasets).\n\n")
         sd = pd.read_csv(selp)
-        fracs = [0.4, 0.6, 0.8, 1.0]
         rows = []
         for mth in ["marginal", "smoothed_ad", "mondrian_ad"]:
             g = sd[sd.method == mth]
             if not len(g): continue
-            row = {"Method": LAB.get(mth, mth)}
-            for fr_ in fracs:
-                covs = []
-                for ds, gg in g.groupby("dataset"):
-                    gg = gg.sort_values("rel_width"); k = max(1, int(round(fr_*len(gg))))
-                    covs.append(gg.iloc[:k].covered.mean())
-                row[f"{int(fr_*100)}%"] = f"{np.mean(covs):.3f}"
-            rows.append(row)
+            rhos, far_ab, base = [], [], []
+            for ds, gg in g.groupby("dataset"):
+                if gg.rel_width.std() > 1e-9 and gg.stratum.std() > 0:
+                    rhos.append(spearmanr(gg.rel_width, gg.stratum).correlation)
+                k = max(1, int(round(0.3*len(gg))))
+                far_ab.append(gg.sort_values("rel_width", ascending=False).iloc[:k].far.mean()); base.append(gg.far.mean())
+            rho = np.nanmean(rhos) if rhos else float("nan")
+            rows.append({"Method": LAB.get(mth, mth),
+                         "Spearman(width, stratum)": ("n/a (constant width)" if np.isnan(rho) else f"{rho:+.2f}"),
+                         "Far-AD frac in widest 30%": f"{np.mean(far_ab):.3f}",
+                         "Base far-AD rate": f"{np.mean(base):.3f}"})
         sdf = pd.DataFrame(rows)
         h = "| " + " | ".join(sdf.columns) + " |\n|" + "|".join(["---"]*len(sdf.columns)) + "|\n"
         for _, r in sdf.iterrows(): h += "| " + " | ".join(str(r[c]) for c in sdf.columns) + " |\n"
-        doc.append("Retained-set coverage by retention fraction:\n\n" + h + "\n")
+        doc.append(h + "\n")
 
     open(os.path.join(HERE, "conformal_SI.md"), "w").write("\n".join(doc))
     print(f"SI written: {os.path.join(HERE, 'conformal_SI.md')}")

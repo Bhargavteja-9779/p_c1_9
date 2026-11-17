@@ -22,20 +22,27 @@ def _pts(x): return f"{100*x:.1f}"
 def _p(x): return f"{x:.1g}" if x >= 1e-4 else f"{x:.0e}"
 
 
-def _selective_retain(frac=0.70):
-    """Mean (over datasets) coverage on the `frac` narrowest-interval test compounds, per method."""
+def _selective_signal(abstain=0.30):
+    """Is interval width an honest novelty signal? Returns, per method: the far-AD fraction among the
+    `abstain` fraction of widest-interval (would-be-abstained) compounds, the base far-AD rate, and the
+    Spearman correlation between interval width and AD stratum. For marginal (constant width) the
+    correlation is undefined and abstention is no better than the base rate."""
+    from scipy.stats import spearmanr
     p = os.path.join(RES, "conformal_selective_results.csv")
     if not os.path.exists(p):
         return {}
     d = pd.read_csv(p)
     out = {}
     for method, g in d.groupby("method"):
-        covs = []
+        far_ab, base, rhos = [], [], []
         for ds, gg in g.groupby("dataset"):
-            gg = gg.sort_values("rel_width")
-            k = max(1, int(round(frac * len(gg))))
-            covs.append(gg.iloc[:k].covered.mean())
-        out[method] = float(np.mean(covs))
+            n = len(gg); k = max(1, int(round(abstain * n)))
+            widest = gg.sort_values("rel_width", ascending=False).iloc[:k]
+            far_ab.append(widest.far.mean()); base.append(gg.far.mean())
+            if gg.rel_width.std() > 1e-9 and gg.stratum.std() > 0:
+                rhos.append(spearmanr(gg.rel_width, gg.stratum).correlation)
+        out[method] = {"far_abstain": float(np.mean(far_ab)), "base": float(np.mean(base)),
+                       "rho": float(np.nanmean(rhos)) if rhos else float("nan")}
     return out
 
 
@@ -79,11 +86,13 @@ def compute_values():
     # Friedman (far-cov)
     if fried:
         v["FRIEDMAN_P"] = _p(fried["p"]); v["NEMENYI_CD"] = f"{fried['nemenyi_cd']:.2f}"
-    # selective-prediction retention at 70%
-    ret = _selective_retain(0.70)
-    if ret:
-        if "marginal" in ret: v["MARG_RETAIN70"] = _cov(ret["marginal"])
-        if "mondrian_ad" in ret: v["MOND_RETAIN70"] = _cov(ret["mondrian_ad"])
+    # selective-prediction: is interval width an honest novelty signal?
+    sig = _selective_signal(0.30)
+    if sig:
+        if "marginal" in sig:
+            v["MARG_ABSTAIN_FAR"] = _cov(sig["marginal"]["far_abstain"]); v["ABSTAIN_BASE"] = _cov(sig["marginal"]["base"])
+        if "mondrian_ad" in sig:
+            v["MOND_ABSTAIN_FAR"] = _cov(sig["mondrian_ad"]["far_abstain"]); v["MOND_WIDTH_RHO"] = f"{sig['mondrian_ad']['rho']:.2f}"
     # main-text summary table (scaffold)
     hdr = ("| Method | Marginal cov. | Near-AD cov. | **Far-AD cov.** | Worst-bin cov. | Rel. width |\n"
            "|---|---|---|---|---|---|\n")

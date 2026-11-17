@@ -31,9 +31,10 @@ FIGS = [
      "split, mean over datasets. Marginal conformal slopes downward out of domain; the "
      "applicability-domain-conditional methods stay near the nominal 0.90 line."),
     ("fig-selective", "cfig_selective.png",
-     "Selective prediction: coverage on the retained set when keeping the narrowest-interval fraction "
-     "of test compounds. Under Mondrian-AD, interval width is an honest uncertainty signal (abstaining "
-     "on wide intervals yields reliably covered retained sets); under marginal conformal it is not."),
+     "Interval width as a novelty signal: mean relative interval width by applicability-domain stratum "
+     "(familiar to novel). Marginal conformal assigns a constant width (flat line), so width cannot flag "
+     "novel compounds; Mondrian-AD and smoothed-AD widen with novelty, making width an honest triage "
+     "signal."),
 ]
 TBLS = [("tbl-summary", None)]
 

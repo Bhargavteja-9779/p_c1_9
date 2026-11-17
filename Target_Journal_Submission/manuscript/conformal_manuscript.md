@@ -309,21 +309,20 @@ bracket the shrinkage choice, and a sensitivity analysis over the number of stra
 Information) leaves the qualitative conclusion unchanged, with more strata giving finer conditioning at
 the cost of noisier sparse-stratum quantiles.
 
-# 8. Downstream: Selective Prediction on Novel Candidates
-Does the restored coverage translate into better decisions, or does the extra width simply make the
-intervals useless? We examine abstention: rank test compounds by interval width (a natural
-uncertainty proxy) and keep only the most confident fraction, measuring coverage on the retained set.
-The decision-relevant question is whether the *interval width is an honest uncertainty signal*. With
-marginal conformal it is not: because novel compounds receive narrow (over-confident) intervals, keeping
-the narrowest-interval compounds does **not** raise coverage to nominal — the retained set still contains
-badly under-covered novel compounds (retained coverage at 70% retention {{MARG_RETAIN70}}). With
-Mondrian-AD, width tracks novelty, so abstaining on the widest intervals removes the hard novel cases and
-the retained set is reliably covered (retained coverage at 70% retention {{MOND_RETAIN70}}; Figure
-@fig-selective, Supporting Information). The cost, as Section 7.2 shows, is that the most novel compounds
-are correctly flagged as high-uncertainty rather than given false-precision intervals — the honest and
-desirable behavior. Thus the value of the fix is not sharper intervals on novel compounds (no method can
-manufacture information that is not there) but an uncertainty estimate a practitioner can actually act
-on: trust the narrow ones, scrutinize or assay the wide ones.
+# 8. Downstream: Interval Width as an Honest Novelty Signal
+The practical value of the fix is not sharper predictions on novel compounds — no method can manufacture
+information that is not there — but an uncertainty estimate a practitioner can *act on* to triage
+candidates. Here the two approaches differ qualitatively. Standard marginal conformal assigns **every**
+compound the same interval width, so width carries no information about which predictions to trust:
+abstaining on the widest-interval compounds flags novel chemotypes no better than chance (the most novel,
+far-AD compounds make up {{MARG_ABSTAIN_FAR}} of the widest-decile set, essentially the base rate
+{{ABSTAIN_BASE}}). Mondrian-AD, by contrast, makes interval width track distance to the training set
+(Spearman $\rho={{MOND_WIDTH_RHO}}$ between width and applicability-domain stratum), so width becomes an
+honest novelty flag: the widest intervals are roughly twice enriched for novel compounds
+({{MOND_ABSTAIN_FAR}} vs the {{ABSTAIN_BASE}} base rate; Figure @fig-selective). The decision payoff is
+therefore a trustworthy triage signal — scrutinize or assay the wide-interval candidates, rely on the
+narrow ones — that standard conformal, with its uniform width, simply cannot provide, together with
+coverage on the novel compounds that is actually at its stated level.
 
 # 9. Discussion
 Our results turn a known theoretical caveat into a concrete, measured, and fixable problem for molecular

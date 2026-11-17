@@ -69,26 +69,19 @@ def fig_profile(path):
 
 
 def fig_selective(path):
-    """Abstention curve: coverage on the retained (narrowest-interval) fraction."""
+    """Does interval width track novelty? Mean relative interval width by AD stratum, per method.
+    Marginal conformal is flat (width carries no triage signal); AD-conditional width rises with novelty."""
     if not os.path.exists(path):
         return
     d = pd.read_csv(path)
-    fracs = np.linspace(0.3, 1.0, 8)
     fig, ax = plt.subplots(figsize=(6.5, 4.2))
     for mth in [m for m in ["marginal", "smoothed_ad", "mondrian_ad"] if m in d.method.unique()]:
-        g = d[d.method == mth]
-        ys = []
-        for fr in fracs:
-            covs = []
-            for ds, gg in g.groupby("dataset"):
-                gg = gg.sort_values("rel_width"); k = max(1, int(round(fr * len(gg))))
-                covs.append(gg.iloc[:k].covered.mean())
-            ys.append(np.mean(covs))
-        ax.plot(100 * fracs, ys, marker="o", color=CB.get(mth, "#333"), label=LAB.get(mth, mth), lw=1.8)
-    ax.axhline(0.9, color="k", ls="--", lw=1, label="nominal 0.90")
-    ax.set_xlabel("retention (%) — keep narrowest-interval compounds"); ax.set_ylabel("coverage on retained set")
-    ax.set_title("Selective prediction: is interval width an honest signal?")
-    ax.legend(fontsize=8, loc="lower right")
+        g = d[d.method == mth].groupby("stratum").rel_width.mean()
+        ax.plot(g.index + 1, g.values, marker="o", color=CB.get(mth, "#333"), label=LAB.get(mth, mth), lw=1.8)
+    ax.set_xticks(range(1, 6)); ax.set_xticklabels(["1\n(familiar)", "2", "3", "4", "5\n(novel)"])
+    ax.set_xlabel("applicability-domain stratum"); ax.set_ylabel("relative interval width (/ label SD)")
+    ax.set_title("Interval width as a novelty signal\n(marginal is flat; AD-conditional rises with novelty)")
+    ax.legend(fontsize=8, loc="upper left")
     _save(fig, "cfig_selective")
 
 
