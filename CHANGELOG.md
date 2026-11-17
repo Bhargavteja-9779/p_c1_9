@@ -8,3 +8,4 @@
 - 2026-11-16: analysis+figures pipeline; pre-registration amendment (invariance-centric framing) after blinded pilot.
 - 2026-11-16: container restart during precompute (24/55); relaunching checkpointed full run.
 - 2026-11-17: full grid executing (sens ~820/990); state snapshot for restart resilience.
+- 2026-11-17: full experiment complete; first manuscript assembled (Final_Manuscript.docx), all 26 numeric tokens from machine results.

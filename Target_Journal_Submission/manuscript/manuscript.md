@@ -26,7 +26,7 @@ models). Because test-set errors partly cancel, this per-prediction irreproducib
 invisible in leaderboard numbers — a silent confounder. We introduce **SORB** (Standardization-Orbit
 Robust learning), a representation-agnostic scheme that augments training over, and averages
 inference across, each molecule's *standardization orbit*. Test-time orbit averaging enforces
-invariance at inference with neutral-to-positive effect on accuracy across datasets, while training
+invariance at inference with no significant accuracy cost across datasets, while training
 augmentation teaches invariance and benefits robust (tree-based) learners. A controlled
 semi-synthetic experiment confirms that standard models exploit the standardization state as a
 spurious signal and that SORB prevents it. We release an open, reproducible implementation and a
@@ -184,13 +184,20 @@ approximation, and a linear model (ridge/logistic). These span the linear-to-non
 fingerprint-to-descriptor space used in practice.
 
 **Splits and leakage control.** The primary protocol is a Bemis–Murcko scaffold split
-[@bemismurcko1996] (group-disjoint), with random splits as a robustness check. To prevent
-standardization-variant leakage, all splits are computed on a standardization-invariant canonical
-identity (largest fragment + neutralized + canonical tautomer + stereo-stripped InChIKey), so no two
-representations of the same molecule can straddle the train/test boundary. We audit each dataset for
-exact and near-duplicate contamination (Section 6, Supporting Information). Across pipelines, the
-*same* molecules and the *same* split are used; only the standardization (and hence featurization)
-differs, isolating the standardization effect.
+[@bemismurcko1996] (scaffold-group-disjoint), with random splits as a robustness check. Crucially for
+this study, the split is computed once per dataset and seed on the raw structures and then reused
+unchanged for every standardization pipeline, so the *same* molecules and the *same* partition are
+used throughout; only the standardization (and hence featurization) differs. This holds every
+confound — including any residual duplication or leakage — constant across pipelines, which is what
+isolates the standardization effect. We separately audit each dataset against a
+standardization-invariant canonical identity (largest fragment + neutralized + canonical tautomer +
+stereo-stripped InChIKey; Supporting Information, Table S1): residual canonical-identity overlap
+across the scaffold split is {{LEAK_ID_LEAK}} in total (0.06% of all molecules), arising when exact
+duplicates carry tautomer-dependent Murcko scaffolds, far too small to affect any comparison. The
+audit also quantifies a phenomenon directly relevant to our thesis: {{N_COLLAPSE}} pairs of distinct
+raw SMILES across the benchmarks collapse to a single molecule after standardization, and
+{{N_DUP_DISAGREE}} duplicate groups carry disagreeing labels — standardization-sensitive redundancy
+that is invisible unless one standardizes before auditing.
 
 **Standardization pipelines.** For the sensitivity and ranking analyses we define six realistic
 end-to-end pipelines (parse-only; RDKit default; canonical-tautomer; pH-7.4 protonation; MDL
@@ -215,12 +222,14 @@ data instructions are released (Section 10).
 # 6. Results: Standardization Sensitivity and the Invariance Violation
 
 ## 6.1 Data integrity and leakage controls
-Before modeling, we audited every dataset (Supporting Information, Table S1). Splitting on a
-standardization-invariant canonical identity guarantees that no two representations of one molecule
-cross the train/test boundary (observed cross-split identity leakage: {{LEAK_ID_LEAK}} across all
-datasets). We report exact-duplicate and near-duplicate statistics per dataset; these are properties
-of the public benchmarks and are held fixed across all pipelines, so they cannot explain
-pipeline-to-pipeline differences.
+Before modeling, we audited every dataset against a standardization-invariant canonical identity
+(Supporting Information, Table S1). Residual canonical-identity overlap across the scaffold split is
+{{LEAK_ID_LEAK}} across all 55 datasets (0.06%), too small to influence any result; and because the
+identical split is reused for every pipeline, all duplicate and near-duplicate structure is held fixed
+across pipelines and cannot explain pipeline-to-pipeline differences. The audit additionally reveals
+that {{N_COLLAPSE}} pairs of distinct raw SMILES collapse to one molecule after standardization and
+{{N_DUP_DISAGREE}} duplicate groups carry conflicting labels — a standardization-dependent data-quality
+issue that curation pipelines would silently resolve differently.
 
 ## 6.2 Aggregate metrics are only weakly sensitive (RQ1)
 Varying the standardization pipeline changes the aggregate primary metric by a median of
@@ -263,24 +272,29 @@ permeability datasets are more affected than simple physicochemical sets.
 ## 7.1 SORB enforces and teaches invariance (RQ4, RQ5)
 Table 3 and Figure 5 summarize SORB across datasets (three seeds; paired tests over datasets).
 **Test-time orbit averaging** (SORB-testorbit) reduces per-prediction standardization sensitivity by
-construction and has a neutral-to-positive effect on accuracy: the median change in the primary
-metric versus the baseline is {{SORB_TESTORBIT_MED}} ({{SORB_TESTORBIT_FRAC}}% of datasets improved;
-Wilcoxon $p={{SORB_TESTORBIT_P}}$). It is a drop-in inference wrapper that requires no retraining.
-**Training augmentation** (SORB-trainaug) reduces the orbit prediction spread by a median of
-{{SORB_TRAINAUG_INVRED}} (a {{SORB_TRAINAUG_INVREDPCT}}% relative reduction; Figure 5a), i.e., the
-model *learns* partial invariance without inference-time averaging. Its accuracy effect is
-model-dependent (Section 7.2). **SORB-full** combines both.
+construction while leaving accuracy essentially unchanged: the median change in the primary metric
+versus the baseline is {{SORB_TESTORBIT_MED}} (improved on {{SORB_TESTORBIT_FRAC}}% of datasets;
+Wilcoxon $p={{SORB_TESTORBIT_P}}$, not significant). It is therefore a free reliability improvement —
+a drop-in inference wrapper, requiring no retraining, that makes a model's prediction (nearly)
+independent of the arbitrary standardization of its input. **Training augmentation** (SORB-trainaug)
+reduces the orbit prediction spread by a median of {{SORB_TRAINAUG_INVRED}} (a
+{{SORB_TRAINAUG_INVREDPCT}}% relative reduction, on {{SORB_TRAINAUG_FRAC}}% of cases; Figure 5a), i.e.,
+the model *learns* partial invariance without any inference-time averaging. This comes at a small
+accuracy cost that is model-dependent (Section 7.2). **SORB-full** combines both. We emphasize that
+SORB's contribution is reliability — reproducible, standardization-invariant predictions — not an
+improvement in aggregate accuracy, which it is not designed to provide.
 
 ## 7.2 Where SORB helps and where it does not (honest error analysis)
 SORB is not a universal accuracy improver, and we report this transparently. Training augmentation
-benefits robust learners (gradient-boosted trees and random forests), for which it both lowers the
-invariance violation and maintains or improves accuracy, but it can destabilize high-variance base
-learners: for linear and kernel models on some datasets, augmenting the training set with orbit
-members increased the error (e.g., on {{SORB_WORST_EXAMPLE}}). The inference-time averaging variant
-does not share this failure mode and is the safe default. We therefore recommend test-time orbit
-averaging universally, and training augmentation specifically for tree-ensemble models. The
-consistency-regularized neural variant (Supporting Information) offers a third option when a
-differentiable model is used.
+reliably lowers the invariance violation (reduced on {{SORB_TRAINAUG_FRAC}}% of cases), but its
+accuracy effect is model-dependent: for the gradient-boosted-tree learner it is roughly accuracy-
+neutral, whereas for the high-variance linear learner on fingerprints it can increase error on
+some datasets (most visibly on high-variance regression targets such as plasma-protein binding), so
+its pooled median accuracy effect is slightly negative (Table 3, Figure 5b). The inference-time
+averaging variant does not share this failure mode: it is accuracy-neutral and enforces invariance,
+and is therefore the safe default. We accordingly recommend test-time orbit averaging universally, and
+training augmentation specifically for robust (tree-ensemble) learners. The consistency-regularized
+neural variant (Supporting Information) offers a third option when a differentiable model is used.
 
 ## 7.3 Controlled semi-synthetic validation (RQ5)
 To confirm the mechanism with a known ground truth, we constructed a controlled setting in which the

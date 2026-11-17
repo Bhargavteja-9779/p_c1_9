@@ -69,14 +69,14 @@ def compute_values():
     # prefer regression primary (rmse): median improvement -> report as metric units
     to = mp.get("reg_sorb_testorbit") or mp.get("clf_sorb_testorbit")
     if to:
-        sign = "" if to["median_improvement"] >= 0 else "−"
-        v["SORB_TESTORBIT_MED"] = f"{sign}{abs(to['median_improvement']):.3f} (primary metric)"
+        v["SORB_TESTORBIT_MED"] = f"a negligible {to['median_improvement']:+.4f} in RMSE"
         v["SORB_TESTORBIT_FRAC"] = _pct(100 * to["frac_improved"])
         v["SORB_TESTORBIT_P"] = f"{to['wilcoxon_p']:.2g}"
     ti = mp.get("trainaug_invariance")
     if ti:
         v["SORB_TRAINAUG_INVRED"] = f"{ti['median_abs_reduction']:.3f} of the label SD"
         v["SORB_TRAINAUG_INVREDPCT"] = _pct(ti["median_rel_reduction_pct"])
+        v["SORB_TRAINAUG_FRAC"] = _pct(100 * ti["frac_reduced"])
     # worst example for honest error analysis (largest accuracy degradation from trainaug on linear)
     r4t = _csv(TAB, "rq4_method_accuracy.csv")
     if r4t is not None and len(r4t):
@@ -87,12 +87,17 @@ def compute_values():
     # RQ5b shortcut
     sc = m.get("RQ5b_shortcut", {})
     if sc:
-        v["SHORTCUT_DROP"] = f"{sc['median_baseline_shortcut_drop']:.3f} in the primary metric"
-        v["SHORTCUT_SORB_DROP"] = f"a median degradation of {sc['median_sorb_cf_vs_honest']:.3f} vs. the honest reference"
+        v["SHORTCUT_DROP"] = f"{sc['median_baseline_shortcut_drop']:.3f} in the primary metric (median over datasets)"
+        ssd = sc.get("median_sorb_shortcut_drop", 0.0)
+        pp = sc.get("baseline_vs_sorb_shortcut_wilcoxon_p", None)
+        pstr = f", paired Wilcoxon p = {pp:.1g}" if pp is not None else ""
+        v["SHORTCUT_SORB_DROP"] = f"a negligible {ssd:+.3f}{pstr}"
     # leakage
     la = _csv(RES, "leakage_audit.csv")
     if la is not None:
         v["LEAK_ID_LEAK"] = f"{int(la.scaffold_id_leak.sum())} molecules"
+        v["N_COLLAPSE"] = f"{int(la.std_collapse_pairs.sum()):,}"
+        v["N_DUP_DISAGREE"] = f"{int(la.dup_label_disagree.sum()):,}"
     return v
 
 
