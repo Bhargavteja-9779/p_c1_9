@@ -21,9 +21,19 @@ LOWER_BETTER = {"rmse": True, "mae": True, "ece": True, "auroc": False, "auprc":
                 "spearman": False, "mcc": False}
 
 
+# molnet:lipophilicity is the same AstraZeneca logD7.4 benchmark as tdc:lipophilicity_astrazeneca
+# (confirmed identical by the leakage audit); drop the duplicate from all analyses.
+DROP_DATASETS = {"molnet:lipophilicity"}
+
+
 def _load(name):
     p = os.path.join(RES, name)
-    return pd.read_csv(p) if os.path.exists(p) else None
+    if not os.path.exists(p):
+        return None
+    df = pd.read_csv(p)
+    if "dataset" in df.columns:
+        df = df[~df.dataset.isin(DROP_DATASETS)].copy()
+    return df
 
 
 def rq1_sensitivity(sens):
@@ -148,12 +158,22 @@ def rq5_invariance(meth):
                          "frac_reduced": float(np.mean(red > 0)), "wilcoxon_p": w["p"], "n_datasets": len(common)})
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(TAB, "rq5_invariance.csv"), index=False)
-    # headline baseline invariance by representation
-    inv_head = base.groupby(["model", "feat"]).agg(
+    # headline baseline invariance by representation. Regression only: orbit/pipe SD are divided by the
+    # label SD, which is meaningful only for regression. Classification probability SD is reported
+    # separately (raw, on the 0-1 probability scale) to avoid the scale conflation flagged in review.
+    reg = base[base.task == "reg"]
+    inv_head = reg.groupby(["model", "feat"]).agg(
         orbit_mean_rel_sd=("orbit_mean_rel_sd", "median"),
         pipe_mean_rel_sd=("mean_rel_sd", "median")).round(4).reset_index()
     inv_head.to_csv(os.path.join(TAB, "rq5_baseline_invariance_by_representation.csv"), index=False)
-    return df, {"baseline_invariance_by_representation": inv_head.to_dict("records")}
+    clf = base[base.task == "clf"]
+    clf_head = clf.groupby(["model", "feat"]).agg(
+        orbit_prob_sd=("orbit_mean_rel_sd", "median"),   # label_sd was 1.0 for clf -> this is raw prob SD
+        pipe_prob_sd=("mean_rel_sd", "median")).round(4).reset_index()
+    clf_head.to_csv(os.path.join(TAB, "rq5_baseline_invariance_classification.csv"), index=False)
+    return df, {"baseline_invariance_by_representation": inv_head.to_dict("records"),
+                "classification_probability_sd": clf_head.to_dict("records"),
+                "n_reg_datasets": int(reg.dataset.nunique()), "n_clf_datasets": int(clf.dataset.nunique())}
 
 
 
@@ -208,6 +228,37 @@ def method_pooled(meth):
     return out
 
 
+def method_omnibus(meth):
+    """Friedman omnibus + Nemenyi CD across regression datasets over the 4 methods (per model x feat,
+    then pooled by averaging to one value per dataset), plus Holm-Bonferroni on the per-cell SORB-vs-
+    baseline Wilcoxon p-values. Addresses the review that these were claimed but not computed."""
+    out = {}
+    reg = meth[meth.task == "reg"]
+    methods = ["baseline", "sorb_trainaug", "sorb_testorbit", "sorb_full"]
+    # one RMSE per (dataset) averaged over model/feat/seed, per method
+    piv = (reg.groupby(["dataset", "method"]).rmse.mean().unstack())
+    piv = piv.dropna(subset=methods)[methods]
+    if len(piv) >= 3:
+        # RMSE: lower is better -> pass negated so friedman() ranks 1=best
+        fr = friedman(-piv.values)
+        out["friedman"] = {"p": fr["p"], "stat": fr["stat"], "mean_ranks": dict(zip(methods, fr["mean_ranks"])),
+                           "nemenyi_cd": nemenyi_cd(len(methods), len(piv)), "n_datasets": len(piv)}
+    # Holm-Bonferroni across the per-cell SORB-vs-baseline tests
+    r4 = _load("../tables/rq4_method_accuracy.csv") if False else None
+    import os as _os
+    p = _os.path.join(TAB, "rq4_method_accuracy.csv")
+    if _os.path.exists(p):
+        t = pd.read_csv(p)
+        pv = {f"{r.model}|{r.feat}|{r.task}|{r.variant}": float(r.wilcoxon_p) for r in t.itertuples()}
+        hb = holm_bonferroni(pv)
+        n_sig_raw = int((t.wilcoxon_p < 0.05).sum())
+        n_sig_adj = int(sum(1 for v in hb.values() if v[1]))
+        out["multiplicity"] = {"n_tests": len(pv), "n_sig_raw_0.05": n_sig_raw, "n_sig_holm_0.05": n_sig_adj}
+        t["holm_p_reject"] = t.apply(lambda r: hb.get(f"{r.model}|{r.feat}|{r.task}|{r.variant}", (1, False))[1], axis=1)
+        t.to_csv(p, index=False)
+    return out
+
+
 def main():
     metrics, statistics = {}, {}
     sens = _load("raw_results.csv")
@@ -223,6 +274,7 @@ def main():
         dfi, metrics["RQ5_invariance"] = rq5_invariance(meth)
         statistics["RQ5_invariance_table"] = dfi.to_dict("records")
         metrics["RQ4_method_pooled"] = method_pooled(meth)
+        metrics["RQ4_omnibus"] = method_omnibus(meth)
     sc = _load("shortcut_results.csv")
     if sc is not None:
         _, metrics["RQ5b_shortcut"] = rq5b_shortcut(sc)

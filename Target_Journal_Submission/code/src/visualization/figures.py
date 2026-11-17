@@ -26,13 +26,17 @@ def _save(fig, name):
     plt.close(fig)
 
 
+DROP_DATASETS = {"molnet:lipophilicity"}
 def _load(n):
-    p = os.path.join(RES, n); return pd.read_csv(p) if os.path.exists(p) else None
+    p = os.path.join(RES, n)
+    if not os.path.exists(p): return None
+    df = pd.read_csv(p)
+    return df[~df.dataset.isin(DROP_DATASETS)].copy() if "dataset" in df.columns else df
 
 
 def fig_invariance_by_representation(meth):
     """Headline: baseline standardization-invariance violation by model x featurization."""
-    base = meth[meth.method == "baseline"].copy()
+    base = meth[(meth.method == "baseline") & (meth.task == "reg")].copy()
     base["mf"] = base.model + "\n" + base.feat
     order = base.groupby("mf").orbit_mean_rel_sd.median().sort_values().index
     fig, ax = plt.subplots(figsize=(7, 4))
@@ -54,7 +58,7 @@ def fig_invariance_by_representation(meth):
 def fig_silent_contrast(sens, meth):
     """Aggregate metric is ~robust (small spread) but per-prediction invariance is violated."""
     rq1 = pd.read_csv(os.path.join(TAB, "rq1_sensitivity.csv")) if os.path.exists(os.path.join(TAB, "rq1_sensitivity.csv")) else None
-    base = meth[meth.method == "baseline"]
+    base = meth[(meth.method == "baseline") & (meth.task == "reg")]
     fig, axes = plt.subplots(1, 2, figsize=(9, 4))
     if rq1 is not None:
         axes[0].hist(rq1.rel_spread_pct.clip(upper=15), bins=30, color=CB["grey"], alpha=0.8)

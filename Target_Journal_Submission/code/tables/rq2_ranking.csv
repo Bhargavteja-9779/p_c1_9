@@ -63,8 +63,6 @@ molnet:esol,reg,desc,1.0,1.0,False,1
 molnet:esol,reg,ecfp,1.0,1.0,False,1
 molnet:freesolv,reg,desc,1.0,1.0,False,1
 molnet:freesolv,reg,ecfp,1.0,1.0,False,1
-molnet:lipophilicity,reg,desc,1.0,1.0,False,1
-molnet:lipophilicity,reg,ecfp,1.0,1.0,False,1
 tdc:ames,clf,desc,1.0,1.0,False,1
 tdc:ames,clf,ecfp,1.0,1.0,False,1
 tdc:bbb_martins,clf,desc,1.0,1.0,False,1
