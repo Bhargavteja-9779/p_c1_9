@@ -134,16 +134,20 @@ def main():
     for _, r in cdf.iterrows(): h += "| " + " | ".join(str(r[c]) for c in cdf.columns) + " |\n"
     doc.append(h + "\n")
 
-    # S4c scaffold-conditional coverage gap (independent partition)
+    # S4c scaffold-conditional coverage gap (honest control; noise-dominated)
     if "scaffold_gap_scaffold" in m:
         g = m["scaffold_gap_scaffold"]
-        doc.append("## S4c. Generalization to an independent partition (scaffold-conditional coverage)\n")
-        doc.append(f"Mondrian-AD is calibrated on applicability-domain strata. Evaluated instead on "
-                   f"Bemis-Murcko scaffold clusters — a partition it was NOT calibrated on — it still "
-                   f"reduces the scaffold-conditional coverage gap (max stratum deviation from nominal) "
-                   f"from {g['b_mean']:.3f} (marginal) to {g['a_mean']:.3f} (Mondrian-AD), paired Wilcoxon "
-                   f"p = {g['wilcoxon_p']:.2g}, improved on {100*g['frac_improved']:.0f}% of datasets. The "
-                   f"improvement is therefore not an artifact of scoring on the calibration axis.\n")
+        doc.append("## S4c. Scaffold-conditional coverage (a different partition)\n")
+        doc.append(f"As a control we also measured the scaffold-conditional coverage gap (maximum deviation "
+                   f"from nominal across Bemis-Murcko scaffold clusters). This statistic is a maximum over "
+                   f"up to 50 clusters, most with very few compounds, so it is dominated by small-sample "
+                   f"noise and sits near {g['b_mean']:.2f} for every method; Mondrian-AD vs marginal shows "
+                   f"no significant difference on it ({g['a_mean']:.3f} vs {g['b_mean']:.3f}, p = "
+                   f"{g['wilcoxon_p']:.2g}). We do not claim Mondrian-AD repairs arbitrary conditional "
+                   f"coverage: it targets the applicability-domain axis specifically. The evidence that the "
+                   f"far-stratum gain is not an evaluation artifact is instead that the distance-normalized "
+                   f"baseline, which conditions on the AD axis by normalization rather than per-bin "
+                   f"calibration, also raises far-stratum coverage (main text Section 7.1).\n")
 
     # S5 alpha robustness (if the sweep file exists)
     arp = os.path.join(RES, "conformal_alpha_results.csv")

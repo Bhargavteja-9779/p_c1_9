@@ -274,12 +274,16 @@ reaches similar farthest-stratum coverage ({{SMOOTH_FAR_COV}}) with slightly tig
 on average but, being a heuristic, is not uniformly better than hard Mondrian-AD on the sparsest strata,
 so we present it as a practical option rather than a strict improvement.
 
-**Generalization to an independent partition.** Because Mondrian-AD is both calibrated and evaluated on
-applicability-domain strata, one might worry its per-stratum restoration is guaranteed by construction.
-It is not merely that: evaluated on a *different* partition it was not calibrated on — Bemis–Murcko
-scaffold clusters — Mondrian-AD also reduces the scaffold-conditional coverage gap relative to marginal
-({{MARG_SCAFGAP}}$\to${{MOND_SCAFGAP}}; $p={{SCAFGAP_P}}$), showing the improvement is not an artifact of
-scoring on the calibration axis (Supporting Information).
+**Is the improvement an evaluation artifact?** Because Mondrian-AD is calibrated and evaluated on the
+same applicability-domain strata, one might worry its per-stratum restoration is guaranteed by
+construction. Two observations argue otherwise. First, the *distance-normalized* baseline conditions on
+the same applicability-domain axis by a completely different mechanism — scaling the interval by $d(x)$
+rather than calibrating per bin — yet it too raises farthest-stratum coverage substantially
+({{KNN_FAR_COV}}, versus {{MARG_FAR_COV}} for marginal); the gain therefore reflects genuine
+distance-conditioning, not an artifact of scoring on the calibration partition. Second, the effect is
+monotone and smooth across all five strata (Figure @fig-profile), not a discrete jump in the single
+calibrated bin. We are nonetheless explicit (Section 10) that exact per-stratum validity is not claimed:
+the strata are data-dependent and the most novel stratum is open-ended.
 
 ## 7.2 The cost, and the trade-off
 Reliability for novel compounds is not free. On average Mondrian-AD widens intervals by {{WIDTH_COST}}%
