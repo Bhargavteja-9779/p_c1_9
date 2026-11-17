@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.015884792432188988, "xpipe_sorb_med": 0.020678699016571045, "orbit_sd_raw": 0.04812706151100044, "orbit_sd_canon_taut": 0.0010423407680421137, "orbit_sd_random": 0.060771282504716605, "dataset": "tdc:half_life_obach", "task": "reg", "model": "linear", "feat": "desc", "seed": 0, "label_scale": 83.06434169715347}

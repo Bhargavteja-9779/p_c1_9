@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.12938785945361445, "xpipe_sorb_med": 0.11633680535636466, "orbit_sd_raw": 0.11184578723735987, "orbit_sd_canon_taut": 0.0013135837983263335, "orbit_sd_random": 0.13334718656114197, "dataset": "tdc:clearance_hepatocyte_az", "task": "reg", "model": "lgbm", "feat": "desc", "seed": 0, "label_scale": 50.550814608171116}

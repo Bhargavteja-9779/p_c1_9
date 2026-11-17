@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.07824669031069192, "xpipe_sorb_med": 0.10256490763786164, "orbit_sd_raw": 0.1125623515162183, "orbit_sd_canon_taut": 8.910916914865018e-17, "orbit_sd_random": 0.10890849077831123, "dataset": "mace:CHEMBL218_EC50", "task": "reg", "model": "lgbm", "feat": "desc", "seed": 0, "label_scale": 1.0524405417981728}

@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.01679915376007557, "xpipe_sorb_med": 0.007386255543678999, "orbit_sd_raw": 0.06295323088631619, "orbit_sd_canon_taut": 0.00032679963462263684, "orbit_sd_random": 0.09365413886967457, "dataset": "tdc:bbb_martins", "task": "clf", "model": "linear", "feat": "desc", "seed": 0, "label_scale": 0.42754702921007026}

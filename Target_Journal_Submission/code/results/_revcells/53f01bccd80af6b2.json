@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.039156653111800874, "xpipe_sorb_med": 0.03975187965994632, "orbit_sd_raw": 0.033149103218320326, "orbit_sd_canon_taut": 0.00016519100890667786, "orbit_sd_random": 0.04421032664659816, "dataset": "tdc:vdss_lombardo", "task": "reg", "model": "lgbm", "feat": "ecfp", "seed": 0, "label_scale": 24.37446385979602}

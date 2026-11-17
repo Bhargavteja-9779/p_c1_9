@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.04280180787360402, "xpipe_sorb_med": 0.05268174737920959, "orbit_sd_raw": 0.06201413801477548, "orbit_sd_canon_taut": 0.00021397688342989822, "orbit_sd_random": 0.043421647789753486, "dataset": "molnet:esol", "task": "reg", "model": "lgbm", "feat": "desc", "seed": 0, "label_scale": 2.0662810790066004}

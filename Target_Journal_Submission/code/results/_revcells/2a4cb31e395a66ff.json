@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.023787343874573708, "xpipe_sorb_med": 0.016212955117225647, "orbit_sd_raw": 0.1570533948939748, "orbit_sd_canon_taut": 1.578367305933149e-08, "orbit_sd_random": 0.16688021622554175, "dataset": "tdc:dili", "task": "clf", "model": "linear", "feat": "ecfp", "seed": 0, "label_scale": 0.4998891853958022}

@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.09756969443074222, "xpipe_sorb_med": 0.092284798324067, "orbit_sd_raw": 0.12464749397073267, "orbit_sd_canon_taut": 0.000467702636339109, "orbit_sd_random": 0.14817896916634812, "dataset": "tdc:lipophilicity_astrazeneca", "task": "reg", "model": "lgbm", "feat": "desc", "seed": 0, "label_scale": 1.2118836708801848}

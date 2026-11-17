@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.0008471200708299875, "xpipe_sorb_med": 0.004810867831110954, "orbit_sd_raw": 0.05406182472237419, "orbit_sd_canon_taut": 2.1067132385817612e-07, "orbit_sd_random": 0.04661902778590648, "dataset": "mace:CHEMBL3979_EC50", "task": "reg", "model": "linear", "feat": "desc", "seed": 0, "label_scale": 1.1381667185479212}

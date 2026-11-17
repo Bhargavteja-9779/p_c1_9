@@ -78,7 +78,7 @@ def compute_values():
         # machine-generated invariance table (regression)
         tbl = (": Standardization-invariance violation (regression), median over datasets: per-prediction "
                "SD relative to the label SD, across a molecule's full equivalent-form orbit and across the "
-               "six realistic pipelines. {#tbl:inv}\n\n"
+               "six realistic pipelines.\n\n"
                "| Model | Featurization | Orbit SD / label SD | Pipeline SD / label SD |\n|---|---|---|---|\n")
         for r in r5:
             tbl += f"| {r['model']} | {r['feat']} | {r['orbit_mean_rel_sd']:.3f} | {r['pipe_mean_rel_sd']:.4f} |\n"

@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.04700012277283984, "xpipe_sorb_med": 0.0008142815847902231, "orbit_sd_raw": 0.06442604649257277, "orbit_sd_canon_taut": 6.939135854385301e-06, "orbit_sd_random": 0.09726309200354626, "dataset": "tdc:bioavailability_ma", "task": "clf", "model": "lgbm", "feat": "ecfp", "seed": 0, "label_scale": 0.4223765474860524}

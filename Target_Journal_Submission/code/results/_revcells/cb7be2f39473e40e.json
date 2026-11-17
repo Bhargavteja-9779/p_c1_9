@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.016046522185206413, "xpipe_sorb_med": 0.005031066481024027, "orbit_sd_raw": 0.0950086886777885, "orbit_sd_canon_taut": 0.00020683889752901133, "orbit_sd_random": 0.09183854824355306, "dataset": "tdc:ppbr_az", "task": "reg", "model": "linear", "feat": "desc", "seed": 0, "label_scale": 18.213771355811648}

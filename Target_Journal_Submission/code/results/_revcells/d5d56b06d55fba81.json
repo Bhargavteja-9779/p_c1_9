@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.020953848958015442, "xpipe_sorb_med": 0.011492643505334854, "orbit_sd_raw": 0.07181960239238032, "orbit_sd_canon_taut": 0.00043947370451031376, "orbit_sd_random": 0.07455817208056513, "dataset": "tdc:clearance_microsome_az", "task": "reg", "model": "linear", "feat": "desc", "seed": 0, "label_scale": 45.126314560323905}

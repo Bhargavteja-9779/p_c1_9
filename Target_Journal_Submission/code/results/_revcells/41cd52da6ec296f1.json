@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.026702623968634334, "xpipe_sorb_med": 0.0031953264855847105, "orbit_sd_raw": 0.06990253816778118, "orbit_sd_canon_taut": 1.2119912934693923e-17, "orbit_sd_random": 0.06441872695342464, "dataset": "tdc:herg", "task": "clf", "model": "lgbm", "feat": "ecfp", "seed": 0, "label_scale": 0.45974149987721946}

@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.09029989716316789, "xpipe_sorb_med": 0.046471341468422425, "orbit_sd_raw": 0.10352815970323076, "orbit_sd_canon_taut": 0.0002671703377025946, "orbit_sd_random": 0.11603936951121797, "dataset": "tdc:cyp3a4_substrate_carbonmangels", "task": "clf", "model": "lgbm", "feat": "ecfp", "seed": 0, "label_scale": 0.49815529151986776}

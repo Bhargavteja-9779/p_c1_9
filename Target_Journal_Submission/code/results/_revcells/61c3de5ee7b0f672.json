@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.0073824618326252716, "xpipe_sorb_med": 0.0002604178321053982, "orbit_sd_raw": 0.060484919398698905, "orbit_sd_canon_taut": 0.0004883140803691779, "orbit_sd_random": 0.05215824949759917, "dataset": "tdc:pgp_broccatelli", "task": "clf", "model": "lgbm", "feat": "ecfp", "seed": 0, "label_scale": 0.49870705598174364}

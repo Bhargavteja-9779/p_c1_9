@@ -1,0 +1,1 @@
+{"xpipe_baseline_med": 0.0, "xpipe_sorb_med": 0.05270767584443092, "orbit_sd_raw": 0.0549751421595261, "orbit_sd_canon_taut": 2.300799682175931e-08, "orbit_sd_random": 0.04615456509123844, "dataset": "molnet:freesolv", "task": "reg", "model": "linear", "feat": "desc", "seed": 0, "label_scale": 3.7379772076383357}

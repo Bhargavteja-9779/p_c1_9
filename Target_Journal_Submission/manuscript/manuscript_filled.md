@@ -1,5 +1,5 @@
 ---
-title: "Chemically Equivalent, Computationally Different: Standardization-Invariance Violations in Molecular Property Prediction and a Representation-Agnostic Remedy"
+title: "Chemically Equivalent, Computationally Different: Standardization-Induced Prediction Variability in Molecular Property Models, and a Simple Fix"
 author:
   - name: "[Author Name(s)]"
     affiliation: "[Affiliation]"
@@ -31,8 +31,10 @@ models that exploit the standardization state as a spurious shortcut (which we d
 controlled experiment) — we study **SORB** (Standardization-Orbit Robust learning), the established
 augmentation-plus-test-time-averaging paradigm transferred to the chemical-graph standardization orbit.
 Test-time orbit averaging is accuracy-equivalent to the baseline and removes input-presentation
-dependence; training augmentation reduces cross-canonicalizer disagreement and the shortcut, at a real
-accuracy cost. SORB improves reliability, not accuracy. We release an open, reproducible implementation
+dependence; training augmentation resists the standardization shortcut at a real accuracy cost, but — contrary to
+expectation — does not reduce cross-canonicalizer disagreement. The practical upshot is simple: a shared,
+consistent canonical-tautomer pipeline is the effective fix, and the more elaborate orbit-robust method
+is a targeted tool, not a default. We release an open, reproducible implementation
 and a reporting protocol so that molecular-property results can be made standardization-reproducible.
 
 # 1. Introduction
@@ -83,15 +85,22 @@ a mechanistic account of which operations and representations are responsible, a
 2. **A representation-dependent mechanism.** We attribute the violation to specific standardization
    operations (dominated by tautomer canonicalization) and show it is strongly representation-dependent:
    fingerprint-based linear models are the most sensitive and tree ensembles the least (Section 6).
-3. **SORB, a representation-agnostic remedy.** We define a molecule's *standardization orbit* and a
-   method that augments training over it and averages inference across it. Test-time orbit averaging
-   enforces invariance at inference; training augmentation teaches it. We evaluate both with
-   multi-seed, multi-dataset statistics and report honestly where each helps and where it does not
-   (Section 7).
-4. **A controlled validation and an open protocol.** A semi-synthetic experiment with a known
-   invariance ground truth demonstrates that standard models exploit standardization as a shortcut
-   and that SORB resists it. We release code, data instructions, and a reporting checklist for
-   standardization-reproducible molecular modeling (Section 7, 10).
+3. **A simple, effective first-line fix, and the residual problem.** We show that applying one
+   consistent canonical-tautomer standardization at both training and inference collapses the
+   per-prediction sensitivity to near zero at no cost — the single most important practical
+   recommendation — and we isolate what it does *not* fix: cross-canonicalizer disagreement between
+   laboratories, and models that exploit standardization as a shortcut (Section 7).
+4. **An orbit formalization and an honest evaluation of orbit-robust training (SORB).** We cast the
+   established augmentation-plus-test-time-averaging paradigm [@bjerrum2017; @maxsmi2021] onto the
+   chemical-graph standardization orbit, and evaluate it with multi-dataset statistics (Friedman/Nemenyi,
+   multiplicity correction): test-time averaging is accuracy-equivalent and removes input-presentation
+   dependence; training augmentation resists the standardization shortcut at a real accuracy cost but does
+   not reduce cross-canonicalizer disagreement. We report these limits transparently: orbit-robust training
+   is narrower in value than a shared canonicalization convention.
+5. **A controlled validation and an open protocol.** A semi-synthetic experiment with a known invariance
+   ground truth demonstrates that standard models exploit standardization as a shortcut and that
+   orbit-augmented training resists it. We release code, data instructions, figures/tables regenerable
+   from machine-readable outputs, and a reporting checklist (Section 7, 10).
 
 # 2. Related Work
 
@@ -147,8 +156,7 @@ $$ f(x_i) \approx f(x_j) \quad \text{for all equivalent representations } x_i, x
 We call the set of representations reachable from a molecule by applying standardization operations
 its **standardization orbit** $\mathcal{O}(x)$.
 
-![A single molecule and members of its standardization orbit (chemically equivalent forms) receive materially different predictions from a fingerprint linear model, although the measured property is identical; the spread of predictions is spurious.](../code/figures/fig1_concept.png){#fig:concept width=80%}
-
+![A single molecule and members of its standardization orbit (chemically equivalent forms) receive materially different predictions from a fingerprint linear model, although the measured property is identical; the spread of predictions is spurious.](../code/figures/fig1_concept.png){width=80%}
 A model's **standardization sensitivity** on a test
 molecule is the spread (standard deviation) of its predictions over the orbit,
 $ s(x) = \mathrm{SD}_{x' \in \mathcal{O}(x)}\, f(x') $, which is $0$ for a perfectly invariant model.
@@ -291,7 +299,7 @@ datasets; the label-SD normalization is meaningful only for regression, and clas
 separately below and in Table S-clf). The first level is what two laboratories that each pick a
 different, realistic end-to-end standardization pipeline would actually see: across the six realistic
 pipelines, a trained model's prediction for the same molecule has a median SD of 0.006× of
-the label SD (Table @tbl:inv, "pipeline" column) — modest, though with a long tail. The second level is
+the label SD (the "pipeline" column of the invariance table below) — modest, though with a long tail. The second level is
 the model's sensitivity across a molecule's full *orbit* of chemically-equivalent forms (including
 enumerated tautomers that a single pipeline would not vary over): here the median is
 0.11× of the label SD, and the effect is strongly representation-dependent — smallest
@@ -306,7 +314,7 @@ fixed assay-noise level, since the realistic-pipeline effect is well below, and 
 effect on sensitive learners is a sizeable fraction of, typical ChEMBL assay reproducibility
 (~0.3 log units [@landrum2024]).
 
-: Standardization-invariance violation (regression), median over datasets: per-prediction SD relative to the label SD, across a molecule's full equivalent-form orbit and across the six realistic pipelines. {#tbl:inv}
+: Standardization-invariance violation (regression), median over datasets: per-prediction SD relative to the label SD, across a molecule's full equivalent-form orbit and across the six realistic pipelines.
 
 | Model | Featurization | Orbit SD / label SD | Pipeline SD / label SD |
 |---|---|---|---|
@@ -316,11 +324,8 @@ effect on sensitive learners is a sizeable fraction of, typical ChEMBL assay rep
 | linear | ecfp | 0.471 | 0.0333 |
 
 
-![Standardization-invariance violation (regression) is representation-dependent: per-prediction orbit SD relative to label SD by model and featurization. Fingerprint linear models are most sensitive; tree ensembles least.](../code/figures/fig_invariance_by_representation.png){#fig:inv width=70%}
-
-![The silent confounder: aggregate benchmark metrics are nearly unchanged across pipelines (a), while per-prediction orbit SD is substantial (b).](../code/figures/fig_silent_contrast.png){#fig:silent width=85%}
-
-
+![Standardization-invariance violation (regression) is representation-dependent: per-prediction orbit SD relative to label SD by model and featurization. Fingerprint linear models are most sensitive; tree ensembles least.](../code/figures/fig_invariance_by_representation.png){width=72%}
+![The silent confounder: aggregate benchmark metrics are nearly unchanged across pipelines (a), while per-prediction orbit SD is substantial (b).](../code/figures/fig_silent_contrast.png){width=85%}
 ## 6.5 Which operation is responsible (RQ3)
 A one-operation-at-a-time ablation attributes most of the effect to tautomer canonicalization, consistent with
 the chemistry: tautomer and protonation changes alter the most descriptor- and fingerprint-relevant
@@ -328,9 +333,7 @@ substructures (Figure 4; Table S3). The magnitude of a dataset's instability cor
 fraction of ionizable/tautomerizable molecules (Supporting Information), explaining why potency and
 permeability datasets are more affected than simple physicochemical sets.
 
-![One-operation-at-a-time ablation: median absolute change in the primary metric attributable to each standardization operation.](../code/figures/fig_operation_ablation.png){#fig:abl width=60%}
-
-
+![One-operation-at-a-time ablation: median absolute change in the primary metric attributable to each standardization operation.](../code/figures/fig_operation_ablation.png){width=60%}
 # 7. Results: Standardization-Orbit Robust Learning
 
 ## 7.1 SORB enforces and teaches invariance (RQ4, RQ5)
@@ -346,13 +349,12 @@ cost of up to 6× inference passes. It is a drop-in, retraining-free reliability
 a free lunch: the reliability is bought with inference compute. **Training augmentation**
 (SORB-trainaug) *learns* partial invariance — it reduces the orbit prediction spread by a median of
 0.029 of the label SD (a 36% relative reduction on 91%
-of cases; Figure @fig:method a) without any inference-time averaging — but it ranks significantly worse
+of cases; Figure 5a) without any inference-time averaging — but it ranks significantly worse
 on accuracy than the baseline (rank difference exceeds the critical difference), i.e. it carries a real
 accuracy cost (Section 7.2). Of 6 per-cell SORB-vs-baseline tests significant at the 0.05
 level, only 1 survives Holm–Bonferroni correction, so we do not over-read per-cell effects.
 
-![SORB effect: (a) training augmentation reduces the per-prediction orbit SD (points below the diagonal); (b) accuracy effect of each SORB variant across datasets (test-orbit averaging is accuracy-equivalent to baseline; training augmentation carries an accuracy cost).](../code/figures/fig_method_effect.png){#fig:method width=85%}
-
+![SORB effect: (a) training augmentation reduces the per-prediction orbit SD (points below the diagonal); (b) accuracy effect of each SORB variant across datasets (test-orbit averaging is accuracy-equivalent to baseline; training augmentation carries an accuracy cost).](../code/figures/fig_method_effect.png){width=88%}
 We emphasize that SORB's value is reliability — reproducible, standardization-robust predictions — not
 an improvement in aggregate accuracy, which it is not designed to provide and does not achieve.
 
@@ -373,7 +375,37 @@ robustness to the *input* presentation is wanted without re-standardizing; and t
 only where a model that has *learned* cross-canonicalizer invariance is needed and its accuracy cost is
 acceptable.
 
-## 7.3 Controlled semi-synthetic validation (RQ5)
+## 7.3 The first-line fix: consistent canonical-tautomer standardization
+A natural objection is that the whole problem is solved by simply standardizing consistently. We confirm
+this is largely true and recommend it as the first line of defense. Because tautomer canonicalization is
+the dominant operation (Section 6.5), a baseline model trained and evaluated with a consistent
+canonical-tautomer pipeline is nearly invariant to how each test molecule is presented: the
+per-prediction orbit SD collapses from 0.12× of the label SD (default RDKit cleanup, which
+does not canonicalize tautomers) to 0.001× with canonical-tautomer standardization applied
+at both training and inference (median over datasets) — a near-complete, zero-cost remedy for
+input-presentation sensitivity. This is the single most important practical recommendation of this work,
+and it requires no new method.
+
+## 7.4 Cross-canonicalizer disagreement, and the limits of orbit-robust training
+Consistent canonicalization removes variance *within* one pipeline but not *between* pipelines: two
+laboratories that each standardize consistently, but with different (equally valid) canonicalizers,
+still train different models. We quantify this by training two models on two different canonical
+pipelines (default vs canonical-tautomer) and measuring their prediction disagreement on a common test
+set. The disagreement is modest — a median of 0.07× of the label SD — reflecting that, on
+these pre-curated benchmarks, the realistic cross-laboratory effect is small. Importantly, and contrary
+to our initial expectation, orbit-augmented (SORB) training does **not** reduce this disagreement:
+two SORB models (trained on the same orbit with independent augmentation sampling, as two laboratories
+would independently produce) disagree by 0.08× of the label SD, statistically
+indistinguishable from the baseline — orbit augmentation trades pipeline-choice variance for
+augmentation-sampling variance of comparable size rather than eliminating it. We report this honestly:
+for cross-laboratory reproducibility, the effective remedy is a *shared, documented* canonicalization
+convention, not orbit augmentation. The clean, demonstrable benefits of orbit-robust modeling are
+therefore narrower than we first supposed: test-time orbit averaging gives input-presentation
+invariance at inference (Section 7.1), and training augmentation resists the standardization shortcut
+(Section 7.5) — but neither improves cross-canonicalizer agreement, and consistent canonicalization
+(Section 7.3) already handles input-presentation variance at no cost.
+
+## 7.5 Controlled semi-synthetic validation (RQ5)
 To confirm the mechanism with a known ground truth, we constructed a controlled setting in which the
 standardization state is made artificially predictive of the label (the orbit member presented for a
 molecule is chosen by its target). A standard model trained on this data exploits the standardization
@@ -388,7 +420,7 @@ We verify that the central findings are not artifacts of a single protocol. (i) 
 task:** the representation-dependent invariance violation and the method rankings hold for both ECFP
 and descriptor featurizations and for both regression and classification (reported separately
 throughout). (ii) **Split:** under random rather than scaffold splits, the baseline per-prediction orbit
-SD is {{RANDOM_SPLIT_SD}} of the label SD (median over the regression datasets), close to the scaffold
+SD is 0.13× of the label SD (median over the regression datasets), close to the scaffold
 value (0.11×), so the effect is not an artifact of the scaffold protocol. (iii)
 **Across-dataset significance:** the method-level conclusions are supported by the Friedman/Nemenyi
 analysis of Section 7.1 with the dataset as the unit of analysis. We did not run a full random-split
@@ -414,11 +446,15 @@ practitioners actually act upon — the predicted potency or ADMET value for a s
 move materially with an arbitrary upstream convention. This is a reliability problem distinct from,
 and additive to, label noise [@landrum2024; @crusius2024] and notation effects on sequence models
 [@kikuchi2025]: it affects every featurization and is driven by the chemical graph. The practical
-implications are concrete. Papers should report their standardization pipeline as part of the
-experimental record, as curation guides already urge for data preparation [@qsarready2024;
-@curationreview2026]; benchmark providers should either fix and document a canonical orbit or release
-orbits; and models used for decision-making should be made invariant, cheaply, by averaging over the
-orbit at inference.
+implications are concrete and, reassuringly, mostly simple. First, apply and *report* one consistent
+canonical-tautomer standardization pipeline to both training and inference inputs; this alone collapses
+the input-presentation sensitivity to near zero (Section 7.3) and should be standard practice, extending
+the long-standing curation guidance [@fourches2010; @qsarready2024; @curationreview2026] with a specific,
+quantified recommendation. Second, because laboratories still differ in *which* canonicalizer they use,
+benchmark providers should document (or release) the exact standardization applied so that results are
+comparable across groups (orbit augmentation, we find, does not substitute for this). Third,
+the shortcut result is a caution for automated pipelines: a model can silently learn to read the
+standardization state rather than the chemistry.
 
 # 11. Limitations
 Several limitations bound our claims. (i) The public benchmarks are already partially standardized,
@@ -440,13 +476,18 @@ define; invariance to operations outside the orbit is not guaranteed.
 
 # 12. Conclusion
 Chemically-equivalent standardization choices leave molecular-property benchmark metrics nearly
-unchanged but make individual predictions materially irreproducible — a silent confounder in a field
-that evaluates by aggregate metrics. We quantified this standardization-invariance violation across
-54 public datasets and 3 model families, showed it is representation-dependent
-and driven chiefly by tautomer canonicalization, and introduced SORB, a representation-agnostic method that
-enforces invariance at inference (safely and universally) and teaches it during training (for robust
-learners). We release code, data instructions, and a reporting protocol so that molecular-property
-modeling can be made standardization-reproducible.
+unchanged but make individual predictions less reproducible than the aggregate numbers suggest — a
+confounder that is easy to miss because evaluation is aggregate. We quantified this
+standardization-invariance violation across 54 public datasets and 3 model
+families, showed it is representation-dependent and driven chiefly by tautomer canonicalization, and established
+that a single consistent canonical-tautomer pipeline is a simple and near-complete first-line fix for
+input-presentation sensitivity. Cross-laboratory disagreement from *different* canonicalizers is best
+addressed by a shared, documented convention rather than by modeling: we evaluated orbit-robust training
+(SORB) honestly and found it does not reduce cross-canonicalizer disagreement and carries a real
+accuracy cost, though it does resist the standardization shortcut and, as test-time averaging, gives
+input-presentation invariance. SORB is thus a targeted tool, not a default, and the central practical
+message is the simple one. We release code, data, machine-regenerable figures/tables, and a reporting
+protocol so that molecular-property modeling can be made standardization-reproducible.
 
 # Data and Software Availability
 All datasets are public and require no credentials: the Therapeutics Data Commons ADMET benchmark
