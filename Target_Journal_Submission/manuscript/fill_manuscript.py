@@ -32,9 +32,14 @@ def compute_values():
     m = _j("metrics.json")
     v = {"ORBIT_M": "6"}
     sens = _csv(RES, "raw_results.csv")
+    DROP={"molnet:lipophilicity"}
     if sens is not None:
+        sens = sens[~sens.dataset.isin(DROP)]
         v["N_DATASETS"] = str(sens.dataset.nunique())
         v["N_MODELS"] = str(sens.model.nunique())
+    inv = m.get("RQ5_invariance", {})
+    if inv.get("n_reg_datasets") is not None:
+        v["N_METHOD_DATASETS"] = str(inv["n_reg_datasets"] + inv["n_clf_datasets"])
         v["BIG_DATASET_N"] = f"{int(sens.n_train.max() + sens.n_test.max()):,}" if "n_train" in sens else "13,000"
     # RQ1
     r1 = m.get("RQ1_sensitivity", {})

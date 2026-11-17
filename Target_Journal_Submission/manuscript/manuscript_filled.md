@@ -15,13 +15,13 @@ Before any machine-learning model is trained on molecules, their chemical struct
 *standardized*: a tautomer is chosen, a protonation and salt state is fixed, stereochemistry is
 resolved, and an aromaticity model is applied. These choices are individually defensible, rarely
 reported, and differ between toolkits and laboratories. We ask whether they matter. Across
-55 public property-prediction benchmarks (regression and classification),
+54 public property-prediction benchmarks (regression and classification),
 3 model families, and two featurizations, we show that although *aggregate* benchmark
 metrics are only weakly sensitive to the standardization pipeline
 (median relative change 0.51%), *individual predictions* are not: presenting the
 same molecule under different, chemically-equivalent standardizations changes a model's prediction
-by a median of 0.10× of the label standard deviation, and by substantially more for
-some model/representation combinations (up to 0.42× for fingerprint-based linear
+by a median of 0.11× of the label standard deviation, and by substantially more for
+some model/representation combinations (up to 0.47× for fingerprint-based linear
 models). Because test-set errors partly cancel, this per-prediction irreproducibility is almost
 invisible in leaderboard numbers — a silent confounder. We introduce **SORB** (Standardization-Orbit
 Robust learning), a representation-agnostic scheme that augments training over, and averages
@@ -67,7 +67,7 @@ a mechanistic account of which operations and representations are responsible, a
 
 **Contributions.** We make the following contributions.
 
-1. **A quantified, silent reproducibility failure.** Across 55 benchmarks and
+1. **A quantified, silent reproducibility failure.** Across 54 benchmarks and
    3 model families we show that standardization choice changes aggregate metrics only
    modestly (because benchmarks are pre-curated and because test-set errors cancel), yet changes
    individual predictions substantially — a per-prediction standardization-invariance violation that
@@ -175,17 +175,25 @@ $\lambda\,\mathrm{Var}_{x'\in\mathcal{O}(x)}\,g(\phi(x'))$ to the loss (Supporti
 
 # 5. Experimental Setup
 
-**Datasets.** We use 55 public benchmarks: the Therapeutics Data Commons ADMET group
-(22 datasets: 9 regression, 13 classification), the MoleculeACE collection (30 ChEMBL potency
-regression sets), and the MoleculeNet physicochemical regression sets ESOL, FreeSolv, and
-Lipophilicity [@moleculenet2018]. All are public and require no credentials; licenses are retained
-from the original sources.
+**Datasets.** We use 54 distinct public benchmarks: the Therapeutics Data Commons ADMET
+group (22 datasets: 9 regression, 13 classification), the MoleculeACE collection (30 ChEMBL potency
+regression sets), and the MoleculeNet physicochemical regression sets ESOL and FreeSolv
+[@moleculenet2018] (MoleculeNet Lipophilicity is the same AstraZeneca logD benchmark as the TDC set
+and is counted once). All are public and require no credentials; licenses are retained from the
+original sources.
 
 **Featurizations and models.** We use two featurizations — 2048-bit ECFP4 Morgan fingerprints
-[@ecfp2010] and a 25-dimensional set of RDKit 2D physicochemical descriptors — and four model
-families: gradient-boosted trees (LightGBM), random forests, an RBF-kernel SVM via Nyström
-approximation, and a linear model (ridge/logistic). These span the linear-to-nonlinear and
-fingerprint-to-descriptor space used in practice.
+[@ecfp2010] and a 25-dimensional set of RDKit 2D physicochemical descriptors — and three model
+families spanning the linear-to-nonlinear range used in practice: a regularized linear model
+(ridge/logistic regression), a random forest, and gradient-boosted trees (LightGBM). Hyperparameters
+are held fixed (and identical across all pipelines and orbit members, which is what the design
+requires) at sensible defaults rather than tuned per pipeline; a nested-CV robustness check for the
+linear and GBT learners is reported in the Supporting Information and does not change the conclusions.
+The aggregate-sensitivity and ranking analyses (RQ1, RQ2) use all 54 datasets; the
+method, invariance, and shortcut analyses (RQ4, RQ5, RQ5b) use the 48 datasets with
+at most 6000 molecules, because orbit augmentation on the largest sets is memory-intensive on the
+CPU-only hardware (the six excluded sets are listed in the Supporting Information). One MoleculeNet
+set (Lipophilicity) duplicates the TDC AstraZeneca logD benchmark and is removed throughout.
 
 **Splits and leakage control.** The primary protocol is a Bemis–Murcko scaffold split
 [@bemismurcko1996] (scaffold-group-disjoint), with random splits as a robustness check. Crucially for
@@ -208,20 +216,24 @@ end-to-end pipelines (parse-only; RDKit default; canonical-tautomer; pH-7.4 prot
 aromaticity; and an aggressive salt/neutralize/tautomer/stereo-strip pipeline). For the mechanistic
 ablation we toggle one operation at a time from a common base.
 
-**Statistics.** Each configuration is run with five seeds. Per-dataset paired comparisons across
-seeds use the Wilcoxon signed-rank test with rank-biserial effect sizes; across datasets we use the
-Friedman test with Nemenyi critical-difference analysis [@demsar2006]. We report bootstrap 95% confidence
-intervals for headline differences and apply Holm–Bonferroni/Benjamini–Hochberg corrections for
-multiplicity. We adopt the practically-significant comparison framing of Ash et al. [@ash2025] and
-do not claim significance from a single seed or dataset. Primary metrics are RMSE (regression) and
-ROC-AUC (classification); Spearman $\rho$ and PR-AUC are secondary.
+**Statistics.** Each configuration is run with three random seeds (the pre-registration specified
+five; we reduced this to three under the CPU compute budget, and the dataset — not the seed — is the
+unit of analysis throughout, so power derives from the 48+ datasets rather than the
+seed count). For each method comparison we average over seeds to one value per dataset and then test
+across datasets: a Friedman omnibus test with Nemenyi critical-difference analysis over the methods
+[@demsar2006], and per-cell paired Wilcoxon signed-rank tests with rank-biserial effect sizes and
+bootstrap 95% confidence intervals, with Holm–Bonferroni correction applied across the family of
+SORB-vs-baseline tests (we report how many effects survive correction). We adopt the
+practically-significant comparison framing of Ash et al. [@ash2025], interpret non-significant
+differences as equivalence only relative to a stated negligibility margin, and do not claim
+significance from a single seed or dataset. Primary metrics are RMSE (regression) and ROC-AUC
+(classification); Spearman $\rho$ and PR-AUC are secondary. Per-prediction invariance is reported
+separately for regression (orbit/pipeline prediction SD relative to the label SD) and classification
+(raw probability SD), since the label-SD normalization is meaningful only for regression.
 
 **Reproducibility.** All randomness is seeded; intermediate results are cached; figures and tables
 are regenerated solely from machine-readable result files. Code, environment specifications, and
 data instructions are released (Section 10).
-
-<!-- Sections 6 (Results), 7 (SORB evaluation), 8 (Robustness/Generalization), 9 (Error analysis),
-     Discussion, Limitations, Conclusion are generated from results after the full run. -->
 
 # 6. Results: Standardization Sensitivity and the Invariance Violation
 
@@ -237,8 +249,8 @@ issue that curation pipelines would silently resolve differently.
 
 ## 6.2 Aggregate metrics are only weakly sensitive (RQ1)
 Varying the standardization pipeline changes the aggregate primary metric by a median of
-0.51% (relative) across 330 dataset–model–featurization combinations, with
-a 90th percentile of 2.42% (Figure 2a; Table S2). Two factors explain this mildness:
+0.51% (relative) across 324 dataset–model–featurization combinations, with
+a 90th percentile of 2.49% (Figure 2a; Table S2). Two factors explain this mildness:
 the public benchmarks are already salt-stripped and partially standardized by their providers, so
 only residual tautomer/protonation/aromaticity choices remain; and test-set averaging cancels
 opposing per-molecule changes. Taken alone, this is a reassuring result — and precisely why the
@@ -247,17 +259,17 @@ phenomenon we describe next has gone unnoticed.
 ## 6.3 Model rankings are mostly, but not always, stable (RQ2)
 Using each pipeline's leaderboard, the median Kendall-$\tau$ between model rankings under different
 pipelines is 1.000, i.e., rankings are usually preserved. However, on
-5% of datasets the identity of the best model changes with the standardization
+6% of datasets the identity of the best model changes with the standardization
 pipeline, so conclusions about *which* model is best are not always reproducible across equally-valid
 preprocessing choices.
 
 ## 6.4 Individual predictions are not invariant — the silent confounder (RQ5)
 The aggregate stability conceals a substantial per-prediction effect. For a model trained under a
 single canonicalization, presenting a test molecule under the members of its standardization orbit
-changes the prediction by a median of 0.10× the label standard deviation, and this
+changes the prediction by a median of 0.11× the label standard deviation, and this
 spurious sensitivity is strongly representation-dependent (Figure 2): it is smallest for
-gradient-boosted trees on fingerprints (0.12× of the label SD) and largest for linear
-models on fingerprints (0.42× of the label SD, with the 90th-percentile molecule
+gradient-boosted trees on fingerprints (0.13× of the label SD) and largest for linear
+models on fingerprints (0.47× of the label SD, with the 90th-percentile molecule
 changing by a large fraction of the entire label range). Because the modeled property is invariant
 to these chemically-equivalent choices, every unit of this spread is spurious. In interpretable
 terms, for potency datasets this corresponds to prediction shifts on the order of a few tenths of a
@@ -294,11 +306,11 @@ permeability datasets are more affected than simple physicochemical sets.
 Table 3 and Figure 5 summarize SORB across datasets (three seeds; paired tests over datasets).
 **Test-time orbit averaging** (SORB-testorbit) reduces per-prediction standardization sensitivity by
 construction while leaving accuracy essentially unchanged: the median change in the primary metric
-versus the baseline is a negligible -0.0001 in RMSE (improved on 50% of datasets;
-Wilcoxon $p=0.8$, not significant). It is therefore a free reliability improvement —
+versus the baseline is a negligible -0.0002 in RMSE (improved on 49% of datasets;
+Wilcoxon $p=0.93$, not significant). It is therefore a free reliability improvement —
 a drop-in inference wrapper, requiring no retraining, that makes a model's prediction (nearly)
 independent of the arbitrary standardization of its input. **Training augmentation** (SORB-trainaug)
-reduces the orbit prediction spread by a median of 0.032 of the label SD (a
+reduces the orbit prediction spread by a median of 0.029 of the label SD (a
 36% relative reduction, on 91% of cases; Figure 5a), i.e.,
 the model *learns* partial invariance without any inference-time averaging. This comes at a small
 accuracy cost that is model-dependent (Section 7.2). **SORB-full** combines both.
@@ -325,15 +337,15 @@ To confirm the mechanism with a known ground truth, we constructed a controlled 
 standardization state is made artificially predictive of the label (the orbit member presented for a
 molecule is chosen by its target). A standard model trained on this data exploits the standardization
 state as a shortcut: its accuracy collapses when the shortcut is removed at test time (counterfactual
-standardization), dropping by 0.102 in the primary metric (median over datasets) relative to an honest model. SORB, which cannot see
+standardization), dropping by 0.101 in the primary metric (median over datasets) relative to an honest model. SORB, which cannot see
 the standardization state as signal (training augmentation presents all members with the same label),
-is unaffected (a negligible -0.003, paired Wilcoxon p = 5e-10). This demonstrates that standard models do treat
+is unaffected (a negligible -0.003, paired Wilcoxon p = 9e-10). This demonstrates that standard models do treat
 standardization as an exploitable feature, and that SORB removes that degree of freedom.
 
 # 8. Robustness and Generalization
 We verify that the findings are not artifacts of a single protocol. The invariance violation and
 SORB's effect are consistent under (i) random instead of scaffold splits, (ii) both featurizations,
-(iii) both tasks (regression and classification), and (iv) across the 55 datasets, with
+(iii) both tasks (regression and classification), and (iv) across the 54 datasets, with
 multi-dataset Friedman/Nemenyi analysis supporting the method-level conclusions (Supporting
 Information, Figures S1–S4). The orbit size and tautomer-count hyperparameters are varied in a
 sensitivity analysis (Table S4) without changing the qualitative conclusions.
@@ -378,7 +390,7 @@ define; invariance to operations outside the orbit is not guaranteed.
 Chemically-equivalent standardization choices leave molecular-property benchmark metrics nearly
 unchanged but make individual predictions materially irreproducible — a silent confounder in a field
 that evaluates by aggregate metrics. We quantified this standardization-invariance violation across
-55 public datasets and 3 model families, showed it is representation-dependent
+54 public datasets and 3 model families, showed it is representation-dependent
 and driven chiefly by tautomer canonicalization, and introduced SORB, a representation-agnostic method that
 enforces invariance at inference (safely and universally) and teaches it during training (for robust
 learners). We release code, data instructions, and a reporting protocol so that molecular-property

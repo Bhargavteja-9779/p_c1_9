@@ -54,14 +54,19 @@ molecule, and a model's prediction for a compound of interest would depend on an
 convention rather than on chemistry. This is a reproducibility and reliability question that, to our
 knowledge, has not been quantified at scale.
 
-The question is distinct from, and complementary to, two lines of prior work. First, the effect of
-*SMILES string* canonicalization and randomization — a pure notation axis — on sequence models has
-recently been studied [@kikuchi2025]. Standardization acts instead on the chemical *graph* and
-therefore changes every downstream featurization (fingerprints, physicochemical descriptors, and
-graph representations alike), not only string inputs. Second, it is known at the level of individual
-*descriptors* and single datasets that tautomer and ionization choices change computed properties
-[@tautomerqsar2013]; and data-quality studies show that heterogeneous or noisy labels cap achievable
-accuracy [@landrum2024; @crusius2024; @curationreview2026]. What is missing is a systematic,
+The question is distinct from, and complementary to, three lines of prior work. First, Kikuchi et al.
+[@kikuchi2025] recently introduced *notation-level confounding* for the *SMILES-string* axis, showing
+that equivalent notations can spuriously correlate with labels and recommending that preprocessing be
+reported; that work is confined to the string notation and chemical language models. Standardization
+acts instead on the chemical *graph* and therefore changes every downstream featurization
+(fingerprints, physicochemical descriptors, and graph representations alike), not only string inputs,
+and so affects the fingerprint and descriptor models that dominate production QSAR. Second, the
+foundational curation literature established that structure-curation errors propagate into QSAR model
+performance [@fourches2010; @fourches2016], and it is known at the level of individual *descriptors*
+and single datasets that tautomer and ionization choices change computed properties
+[@tautomerqsar2013]; data-quality studies likewise show that heterogeneous or noisy labels cap
+achievable accuracy [@landrum2024; @crusius2024; @curationreview2026]. Third, augmentation and
+test-time averaging over equivalent SMILES are established techniques [@bjerrum2017; @maxsmi2021]. What is missing is a systematic,
 multi-dataset measurement of how standardization choices propagate to *trained-model predictions*,
 a mechanistic account of which operations and representations are responsible, and a remedy.
 
@@ -87,10 +92,12 @@ a mechanistic account of which operations and representations are responsible, a
 
 # 2. Related Work
 
-**Structure standardization and curation.** Standardization is a recognized prerequisite of QSAR
-modeling, and open, deterministic workflows exist to perform it consistently
-[@qsarready2024; @pubchemstd2018]. These tools aim to *fix* a single canonical form; they do not
-study the downstream consequences of choosing among several valid forms, nor do they provide a
+**Structure standardization and curation.** The importance of chemical-structure curation for QSAR has
+long been emphasized [@fourches2010; @fourches2016], and standardization is a recognized prerequisite
+of QSAR modeling, with open, deterministic workflows to perform it consistently
+[@qsarready2024; @pubchemstd2018]. These works establish that curation *errors* degrade models and aim
+to *fix* a single canonical form; they do not quantify the per-prediction consequences of choosing
+among several equally-valid canonical forms, nor do they provide a
 modeling method that is robust to the choice. Reviews emphasize that structural and experimental
 data quality bound achievable performance [@curationreview2026; @landrum2024], but treat
 standardization as a preprocessing best practice rather than a source of per-prediction variance.
@@ -103,10 +110,21 @@ and representations, (ii) treating protonation, salts, stereochemistry, and arom
 tautomers as a single *standardization orbit*, and (iii) separating training augmentation from an
 inference-time averaging that enforces invariance.
 
-**Notation robustness and augmentation.** SMILES randomization improves and stress-tests sequence
-models [@kikuchi2025]; this is a string-level axis orthogonal to graph standardization. Our orbit
-augmentation is analogous in spirit but operates on chemically-distinct graphs and applies to any
-featurization.
+**Notation robustness and augmentation.** Training-time SMILES randomization and test-time averaging
+over enumerated SMILES — i.e., augmentation plus test-time augmentation used as an ensemble — are
+established for molecular models [@bjerrum2017; @maxsmi2021], and maxsmi [@maxsmi2021] additionally
+uses the spread of predictions across SMILES variants as a confidence signal, structurally analogous
+to our orbit-prediction-SD invariance metric. SORB is this same augmentation-plus-test-time-averaging
+paradigm, transferred to the chemical-*graph* standardization orbit. The distinction is more than
+cosmetic: canonical fingerprints and 2D descriptors are invariant to SMILES notation, so SMILES-level
+augmentation does nothing for the fingerprint/descriptor models that dominate production QSAR, whereas
+graph standardization changes their features. Critically, Kikuchi et al. [@kikuchi2025] already
+introduced "notation-level confounding" for the SMILES-string axis — showing equivalent notations can
+spuriously correlate with labels, that the effect on property prediction is small in aggregate, and
+recommending explicit preprocessing reporting. Our contribution is the graph-standardization analogue:
+a systematic, representation-dependent, per-prediction quantification across many benchmarks, an
+explicit comparison of the trivial canonicalization fix against orbit-robust training, and an
+orbit formalization — not the confounding concept itself, which we credit to that work.
 
 **Evaluation rigor and reliability.** Rigorous, practically-significant method comparison is an
 active concern in molecular ML [@ash2025; @vantilborg2022; @sheridan2013], as are probability
@@ -175,17 +193,25 @@ $\lambda\,\mathrm{Var}_{x'\in\mathcal{O}(x)}\,g(\phi(x'))$ to the loss (Supporti
 
 # 5. Experimental Setup
 
-**Datasets.** We use {{N_DATASETS}} public benchmarks: the Therapeutics Data Commons ADMET group
-(22 datasets: 9 regression, 13 classification), the MoleculeACE collection (30 ChEMBL potency
-regression sets), and the MoleculeNet physicochemical regression sets ESOL, FreeSolv, and
-Lipophilicity [@moleculenet2018]. All are public and require no credentials; licenses are retained
-from the original sources.
+**Datasets.** We use {{N_DATASETS}} distinct public benchmarks: the Therapeutics Data Commons ADMET
+group (22 datasets: 9 regression, 13 classification), the MoleculeACE collection (30 ChEMBL potency
+regression sets), and the MoleculeNet physicochemical regression sets ESOL and FreeSolv
+[@moleculenet2018] (MoleculeNet Lipophilicity is the same AstraZeneca logD benchmark as the TDC set
+and is counted once). All are public and require no credentials; licenses are retained from the
+original sources.
 
 **Featurizations and models.** We use two featurizations — 2048-bit ECFP4 Morgan fingerprints
-[@ecfp2010] and a 25-dimensional set of RDKit 2D physicochemical descriptors — and four model
-families: gradient-boosted trees (LightGBM), random forests, an RBF-kernel SVM via Nyström
-approximation, and a linear model (ridge/logistic). These span the linear-to-nonlinear and
-fingerprint-to-descriptor space used in practice.
+[@ecfp2010] and a 25-dimensional set of RDKit 2D physicochemical descriptors — and three model
+families spanning the linear-to-nonlinear range used in practice: a regularized linear model
+(ridge/logistic regression), a random forest, and gradient-boosted trees (LightGBM). Hyperparameters
+are held fixed (and identical across all pipelines and orbit members, which is what the design
+requires) at sensible defaults rather than tuned per pipeline; a nested-CV robustness check for the
+linear and GBT learners is reported in the Supporting Information and does not change the conclusions.
+The aggregate-sensitivity and ranking analyses (RQ1, RQ2) use all {{N_DATASETS}} datasets; the
+method, invariance, and shortcut analyses (RQ4, RQ5, RQ5b) use the {{N_METHOD_DATASETS}} datasets with
+at most 6000 molecules, because orbit augmentation on the largest sets is memory-intensive on the
+CPU-only hardware (the six excluded sets are listed in the Supporting Information). One MoleculeNet
+set (Lipophilicity) duplicates the TDC AstraZeneca logD benchmark and is removed throughout.
 
 **Splits and leakage control.** The primary protocol is a Bemis–Murcko scaffold split
 [@bemismurcko1996] (scaffold-group-disjoint), with random splits as a robustness check. Crucially for
@@ -208,20 +234,24 @@ end-to-end pipelines (parse-only; RDKit default; canonical-tautomer; pH-7.4 prot
 aromaticity; and an aggressive salt/neutralize/tautomer/stereo-strip pipeline). For the mechanistic
 ablation we toggle one operation at a time from a common base.
 
-**Statistics.** Each configuration is run with five seeds. Per-dataset paired comparisons across
-seeds use the Wilcoxon signed-rank test with rank-biserial effect sizes; across datasets we use the
-Friedman test with Nemenyi critical-difference analysis [@demsar2006]. We report bootstrap 95% confidence
-intervals for headline differences and apply Holm–Bonferroni/Benjamini–Hochberg corrections for
-multiplicity. We adopt the practically-significant comparison framing of Ash et al. [@ash2025] and
-do not claim significance from a single seed or dataset. Primary metrics are RMSE (regression) and
-ROC-AUC (classification); Spearman $\rho$ and PR-AUC are secondary.
+**Statistics.** Each configuration is run with three random seeds (the pre-registration specified
+five; we reduced this to three under the CPU compute budget, and the dataset — not the seed — is the
+unit of analysis throughout, so power derives from the {{N_METHOD_DATASETS}}+ datasets rather than the
+seed count). For each method comparison we average over seeds to one value per dataset and then test
+across datasets: a Friedman omnibus test with Nemenyi critical-difference analysis over the methods
+[@demsar2006], and per-cell paired Wilcoxon signed-rank tests with rank-biserial effect sizes and
+bootstrap 95% confidence intervals, with Holm–Bonferroni correction applied across the family of
+SORB-vs-baseline tests (we report how many effects survive correction). We adopt the
+practically-significant comparison framing of Ash et al. [@ash2025], interpret non-significant
+differences as equivalence only relative to a stated negligibility margin, and do not claim
+significance from a single seed or dataset. Primary metrics are RMSE (regression) and ROC-AUC
+(classification); Spearman $\rho$ and PR-AUC are secondary. Per-prediction invariance is reported
+separately for regression (orbit/pipeline prediction SD relative to the label SD) and classification
+(raw probability SD), since the label-SD normalization is meaningful only for regression.
 
 **Reproducibility.** All randomness is seeded; intermediate results are cached; figures and tables
 are regenerated solely from machine-readable result files. Code, environment specifications, and
 data instructions are released (Section 10).
-
-<!-- Sections 6 (Results), 7 (SORB evaluation), 8 (Robustness/Generalization), 9 (Error analysis),
-     Discussion, Limitations, Conclusion are generated from results after the full run. -->
 
 # 6. Results: Standardization Sensitivity and the Invariance Violation
 
