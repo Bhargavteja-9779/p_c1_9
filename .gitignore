@@ -8,3 +8,24 @@ data_cache/
 Target_Journal_Submission/code/results/_cells/
 Target_Journal_Submission/code/results/full_run*.log
 Target_Journal_Submission/code/std_cache/
+
+# --- conformal study: transient checkpoints, logs, and generated artifacts (regenerated from code) ---
+Target_Journal_Submission/code/results/_confcells/
+Target_Journal_Submission/code/results/_revcells/
+Target_Journal_Submission/code/results/experiment_logs/
+Target_Journal_Submission/code/results/conformal_run*.log
+Target_Journal_Submission/code/results/conformal_results.csv
+Target_Journal_Submission/code/results/conformal_alpha_results.csv
+Target_Journal_Submission/code/results/conformal_metrics.json
+Target_Journal_Submission/code/tables/conformal_summary_*.csv
+Target_Journal_Submission/code/figures/cfig_*.png
+Target_Journal_Submission/code/figures/cfig_*.pdf
+# generated manuscript artifacts (source of truth = conformal_manuscript.md + scripts)
+Target_Journal_Submission/manuscript/conformal_manuscript_filled.md
+Target_Journal_Submission/manuscript/conformal_manuscript_build.md
+Target_Journal_Submission/manuscript/conformal_values.json
+Target_Journal_Submission/manuscript/conformal_SI.md
+Target_Journal_Submission/manuscript/Conformal_Manuscript.docx
+Target_Journal_Submission/manuscript/Conformal_Manuscript.pdf
+Target_Journal_Submission/manuscript/Conformal_SI.docx
+Target_Journal_Submission/manuscript/Conformal_SI.pdf

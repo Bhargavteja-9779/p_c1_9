@@ -19,7 +19,7 @@ def main():
     for split in sorted(d.split.unique()):
         ds = d[d.split == split]
         # per-method: average over models/feats/seeds to one value per dataset, then mean over datasets
-        agg = ds.groupby(["method", "dataset"])[["marginal_cov", "far_cov", "worst_bin_cov", "cond_gap_ad", "rel_width"]].mean()
+        agg = ds.groupby(["method", "dataset"])[["marginal_cov", "far_cov", "near_cov", "worst_bin_cov", "cond_gap_ad", "rel_width", "far_width"]].mean()
         summ = agg.groupby("method").mean().round(4)
         summ.to_csv(os.path.join(TAB, f"conformal_summary_{split}.csv"))
         m[f"summary_{split}"] = summ.reset_index().to_dict("records")

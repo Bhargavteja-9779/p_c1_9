@@ -33,6 +33,8 @@ def _job(a):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--mode", default="quick"); ap.add_argument("--nproc", type=int, default=3)
     ap.add_argument("--splits", default="scaffold,random"); ap.add_argument("--alphas", default="0.1")
+    ap.add_argument("--models", default=""); ap.add_argument("--feats", default=""); ap.add_argument("--seeds", default="")
+    ap.add_argument("--out", default="conformal_results.csv")
     a = ap.parse_args(); set_global_seed(0)
     splits = a.splits.split(","); alphas = [float(x) for x in a.alphas.split(",")]
     sp = specs_reg()
@@ -41,6 +43,10 @@ def main():
         models, feats, seeds = ["lgbm", "linear"], ["ecfp"], [0, 1]
     else:
         models, feats, seeds = ["lgbm", "rf", "linear"], ["ecfp", "desc"], [0, 1, 2]
+    # optional overrides for robustness grids (e.g. alpha sweeps on a representative subset)
+    if a.models: models = a.models.split(",")
+    if a.feats: feats = a.feats.split(",")
+    if a.seeds: seeds = [int(x) for x in a.seeds.split(",")]
     jobs = [(s, sd, m, f, sp_, al) for s in sp for sd in seeds for m in models for f in feats for sp_ in splits for al in alphas]
     print(f"conformal study: {len(jobs)} cells on {len(sp)} datasets", flush=True)
     out = []; t0 = time.time()
@@ -48,7 +54,7 @@ def main():
         for i, rows in enumerate(pool.imap_unordered(_job, jobs), 1):
             out.extend(rows)
             if i % 50 == 0 or i == len(jobs): print(f"  {i}/{len(jobs)} ({time.time()-t0:.0f}s)", flush=True)
-    pd.DataFrame(out).to_csv(os.path.join(RES, "conformal_results.csv"), index=False)
+    pd.DataFrame(out).to_csv(os.path.join(RES, a.out), index=False)
     print("DONE", flush=True)
 
 if __name__ == "__main__":

@@ -46,11 +46,21 @@ def marginal(res_cal, pred_te_dummy_len, alpha):
     return np.full(pred_te_dummy_len, q)
 
 
-def normalized(res_cal, sigma_cal, sigma_te, alpha):
-    """Heteroscedastic: score = |res|/sigma; half-width_i = q * sigma_i."""
-    sc = np.abs(res_cal) / np.maximum(sigma_cal, 1e-6)
+def normalized(res_cal, sigma_cal, sigma_te, alpha, beta=None):
+    """Heteroscedastic (normalized) conformal with the standard additive regularizer
+    [Papadopoulos 2002; Lei et al. 2018; Angelopoulos & Bates 2023]: score = |res|/(sigma+beta),
+    half-width_i = q * (sigma_i + beta). beta>0 bounds the score when the difficulty estimate is
+    near zero; the hyperparameter-free default beta = median(sigma_cal) sets it to the typical
+    difficulty scale. half-width = q * (sigma_te + beta)."""
+    sigma_cal = np.maximum(sigma_cal, 0.0)
+    sigma_te = np.maximum(sigma_te, 0.0)
+    if beta is None:
+        beta = float(np.median(sigma_cal))
+    if not np.isfinite(beta) or beta <= 0:
+        beta = float(np.mean(sigma_cal)) if np.mean(sigma_cal) > 0 else 1e-3
+    sc = np.abs(res_cal) / (sigma_cal + beta)
     q = conformal_quantile(sc, alpha)
-    return q * np.maximum(sigma_te, 1e-6)
+    return q * (sigma_te + beta)
 
 
 def mondrian(res_cal, group_cal, group_te, alpha, fallback_q=None):
