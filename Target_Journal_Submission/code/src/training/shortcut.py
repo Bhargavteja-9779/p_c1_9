@@ -67,19 +67,24 @@ def run_shortcut_cell(spec, seed, model_name="lgbm", feat="ecfp", train_aug=4,
     biased = _primary(spec.task, y[te], predict_scores(ms, _feat(te_short, feat), spec.task))
     cf = _primary(spec.task, y[te], predict_scores(ms, Xc[te], spec.task))
 
-    # SORB train-aug on the SHORTCUT training molecules (augment over orbit, shared label) -> cannot
-    # use standardization state as signal; test counterfactually (canonical)
+    # SORB train-aug over the orbit (every orbit member carries the molecule's label) decorrelates the
+    # standardization STATE from the label, so the model cannot learn the shortcut. We test the SAME
+    # fitted model both WITH the shortcut presentation and COUNTERFACTUALLY (canonical); an invariant
+    # model shows little difference, unlike the baseline.
     from models.sorb import SORB
     est = SORB(model_name, spec.task, feat, seed=seed, orbit_cfg=cfg, train_aug=train_aug, test_orbit=1)
     tr_orb = [orbits[i] for i in tr]
     est.fit([raw[i] for i in tr], y[tr], orbits=tr_orb)
+    sorb_biased = _primary(spec.task, y[te], predict_scores(est.model, _feat(te_short, feat), spec.task))
     sorb_cf = _primary(spec.task, y[te], predict_scores(est.model, Xc[te], spec.task))
 
     lower_better = spec.task == "reg"
     def drop(a, b):  # performance drop from a to b (positive = got worse)
         return (b - a) if lower_better else (a - b)
     return {"dataset": spec.name, "task": spec.task, "model": model_name, "feat": feat, "seed": seed,
-            "honest_ref": honest_ref, "shortcut_biased": biased, "shortcut_cf": cf, "sorb_cf": sorb_cf,
-            "baseline_shortcut_drop": float(drop(biased, cf)),
+            "honest_ref": honest_ref, "shortcut_biased": biased, "shortcut_cf": cf,
+            "sorb_biased": sorb_biased, "sorb_cf": sorb_cf,
+            "baseline_shortcut_drop": float(drop(biased, cf)),      # baseline reliance on the shortcut
+            "sorb_shortcut_drop": float(drop(sorb_biased, sorb_cf)),  # SORB reliance (should be ~0)
             "baseline_cf_vs_honest": float(drop(honest_ref, cf)),
             "sorb_cf_vs_honest": float(drop(honest_ref, sorb_cf))}

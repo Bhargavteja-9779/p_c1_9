@@ -1,0 +1,5 @@
+Model,Featurization,Orbit SD / label SD,Pipeline SD / label SD
+lgbm,desc,0.0843,0.004
+lgbm,ecfp,0.1191,0.0071
+linear,desc,0.0715,0.0039
+linear,ecfp,0.4247,0.0286

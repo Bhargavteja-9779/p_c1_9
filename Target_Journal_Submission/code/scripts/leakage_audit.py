@@ -21,10 +21,11 @@ from rdkit import DataStructs
 OUT = os.path.join(os.path.dirname(__file__), "..", "results")
 
 
-def nn_tanimoto_rate(train_smiles, test_smiles, thr=0.95, cap=1500):
-    tr_fps = [ecfp_bitset(s) for s in train_smiles]
-    tr_fps = [f for f in tr_fps if f is not None]
+def nn_tanimoto_rate(train_smiles, test_smiles, thr=0.95, cap=1000, train_cap=4000):
     rng = np.random.default_rng(0)
+    ts = train_smiles if len(train_smiles) <= train_cap else [train_smiles[i] for i in rng.choice(len(train_smiles), train_cap, replace=False)]
+    tr_fps = [ecfp_bitset(s) for s in ts]
+    tr_fps = [f for f in tr_fps if f is not None]
     idx = range(len(test_smiles)) if len(test_smiles) <= cap else rng.choice(len(test_smiles), cap, replace=False)
     hits = 0; n = 0
     for i in idx:

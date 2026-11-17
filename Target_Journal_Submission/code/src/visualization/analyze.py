@@ -168,10 +168,16 @@ def rq5b_shortcut(sc):
                      "median_sorb_cf_vs_honest": float(gd.sorb_cf_vs_honest.median())})
     df = pd.DataFrame(rows); df.to_csv(os.path.join(TAB, "rq5b_shortcut.csv"), index=False)
     pooled = sc.groupby("dataset").mean(numeric_only=True)
-    return df, {"median_baseline_shortcut_drop": float(pooled.baseline_shortcut_drop.median()),
-                "median_sorb_cf_vs_honest": float(pooled.sorb_cf_vs_honest.median()),
-                "median_baseline_cf_vs_honest": float(pooled.baseline_cf_vs_honest.median()),
-                "n_datasets": int(len(pooled))}
+    out = {"median_baseline_shortcut_drop": float(pooled.baseline_shortcut_drop.median()),
+           "median_baseline_cf_vs_honest": float(pooled.baseline_cf_vs_honest.median()),
+           "n_datasets": int(len(pooled))}
+    if "sorb_shortcut_drop" in pooled:
+        out["median_sorb_shortcut_drop"] = float(pooled.sorb_shortcut_drop.median())
+        # how much more the baseline relies on the shortcut than SORB (paired)
+        pw = paired_wilcoxon(sc.groupby("dataset").baseline_shortcut_drop.mean().values,
+                             sc.groupby("dataset").sorb_shortcut_drop.mean().values)
+        out["baseline_vs_sorb_shortcut_wilcoxon_p"] = float(pw["p"])
+    return df, out
 
 
 def method_pooled(meth):
