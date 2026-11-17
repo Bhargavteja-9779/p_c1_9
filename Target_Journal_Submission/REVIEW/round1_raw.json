@@ -1,0 +1,800 @@
+[
+ {
+  "reviewer": "R1-novelty",
+  "overall_recommendation": "major_revision",
+  "summary": "The genuinely novel core is the systematic, multi-benchmark measurement that standardization choice barely moves aggregate metrics yet substantially shifts individual predictions in a strongly representation-dependent way (C1/C2) on the chemical-graph axis; this is a real, publishable gap and the string-vs-graph distinction from Kikuchi is correct at the axis level. However, the paper materially overstates its methodological and conceptual novelty: SORB is the well-established train-augmentation + test-time-averaging (TTA-as-ensemble) paradigm transplanted to a new augmentation axis, and the closest method prior art (Bjerrum 2017; Zhang 2018; Kimber/maxsmi 2021) is entirely uncited; and several conceptual contributions (the confounder framing, the semi-synthetic shortcut experiment, and the reporting protocol) substantially overlap Kikuchi 2025's already-published \"notation-level confounding,\" which the paper credits only as a narrow orthogonal string axis. The foundational curation canon (Fourches/Tropsha) is also missing. Novelty is salvageable by honest repositioning plus added citations; no new experiment is strictly required.",
+  "findings": [
+   {
+    "severity": "MAJOR",
+    "area": "Methodological novelty / closest prior art uncited (SORB = TTA-as-ensemble on a new axis)",
+    "issue": "SORB is defined (Abstract L26-33; Sec 4.2 L151-170; contribution C3 L78-82) as 'augment training over, and average inference across' each molecule's orbit, plus an optional consistency-regularized variant. This is exactly the established data-augmentation + test-time-augmentation-as-ensemble paradigm for molecular property prediction: Bjerrum 2017 (SMILES enumeration as train- and test-time augmentation), Zhang et al. 2018 (inference-time SMILES averaging explicitly framed as ensemble consensus), and Kimber et al. 2021 (maxsmi) which formalizes test-time augmentation as ensembling and even uses the across-augmentation prediction variance as a confidence/uncertainty signal (structurally identical to this paper's orbit prediction SD invariance metric). The consistency-regularized neural variant is standard consistency regularization. None of these are cited anywhere (references.bib contains no Bjerrum/Zhang/Kimber/maxsmi). The Related Work paragraph on augmentation (L106-109) cites only Kikuchi and tautaug2021 and calls SORB 'analogous in spirit', which understates that the method mechanism itself is prior art.",
+    "evidence": "WebSearch confirmed the TTA-as-ensemble lineage is the dominant design in molecular property prediction (train with augmentation, average equivalent representations at inference, treat spread as confidence). The paper presents SORB as a new 'representation-agnostic method/scheme' without acknowledging the mechanism is established; by ACS/JCIM standards, presenting a known recipe applied to a new input axis as a novel method, while omitting the nearest method citations, is a prior-art failure. Note the axis distinction actually helps the paper (canonical fingerprints are notation-invariant, so SMILES-TTA is inapplicable to the fingerprint/descriptor models here) \u2014 but that argument is never made because the lineage is never acknowledged.",
+    "fix": "Cite Bjerrum 2017, Zhang 2018, and Kimber/maxsmi 2021, and add a subsection in Related Work and Sec 4 that explicitly frames SORB as the augmentation+test-time-averaging-ensemble paradigm applied to the graph-standardization orbit. Reframe the C3 contribution from 'a new method' to 'transferring the augmentation-ensemble paradigm to the previously-unstudied graph-standardization axis, where string-level SMILES-TTA is inapplicable because graph featurizations are notation-invariant' \u2014 this is a legitimate and defensible novelty claim. Also note that using orbit SD as a reliability metric parallels maxsmi's use of TTA variance as confidence, and credit it.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Conceptual novelty / under-crediting Kikuchi 2025",
+    "issue": "The paper credits Kikuchi 2025 only as a narrow 'pure notation axis' that is 'orthogonal' and affects only sequence models (Intro L57-61; Related Work L106-109), then presents as fresh: (a) the 'silent confounder' framing (Abstract L26; title of Sec 6.4), (b) the semi-synthetic 'standardization-as-shortcut' experiment (Sec 7.3 L299-307, contribution C4), and (c) the reporting-protocol recommendation (C5; Discussion L334-337). But Kikuchi's actual paper introduces 'notation-level confounding' precisely as equivalent-representation variants that 'spuriously correlate with class labels and inflate predictive performance', reports that notation inconsistency 'minimally affects property prediction' (parallel to this paper's RQ1 aggregate-insensitivity 'reassuring' finding, Sec 6.2), audits how inconsistencies appear in benchmarks, and recommends 'explicit reporting of preprocessing tools and settings'. So the shortcut/confounder framing and the reporting recommendation are the graph-axis analogues of already-published contributions, not new concepts.",
+    "evidence": "WebSearch of arXiv:2505.07139 (v3/v4) confirms Kikuchi's confounding = spurious correlation of notation with labels inflating performance, the minimal-property-prediction-effect finding, and the preprocessing-reporting recommendation. The manuscript's Section 7.3 shortcut design (standardization state made predictive of label; naive model exploits it) is conceptually the same phenomenon on the graph axis. Presenting these as novel overstates the conceptual contribution.",
+    "fix": "Rewrite the Kikuchi positioning to acknowledge the overlap explicitly: state that the confounder framing, the shortcut-exploitation phenomenon, and the preprocessing-reporting recommendation were introduced by Kikuchi for the SMILES-string axis, and that this work's novelty is (i) the chemical-graph axis that affects all featurizations (not just language models), (ii) the systematic multi-benchmark, representation-dependent per-prediction quantification, and (iii) a concrete robust-learning remedy and orbit formalization. Temper 'silent confounder' as new terminology.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Missing foundational prior art (curation canon and assay-heterogeneity)",
+    "issue": "The motivation (Intro L36-66; Related Work L90-96) cites QSAR-ready/PubChem/curation-review works but omits the foundational curation canon that directly established that structure standardization/curation errors propagate into QSAR model performance: Fourches, Muratov, Tropsha 'Trust, But Verify: On the Importance of Chemical Structure Curation in Cheminformatics and QSAR Modeling Research' (JCIM 2010) and 'Trust, but Verify II' (JCIM 2016). The journal-selection notes also reference assay-heterogeneity work ('AssayMatch', Landrum noise, 'Three-Level Noise Floor'); only landrum2024/crusius2024 are cited. These are directly on-point for 'does standardization matter for models' and their omission weakens the literature-review rigor expected at JCIM.",
+    "evidence": "WebSearch surfaced the Fourches/Tropsha 'Trust, But Verify' papers as the canonical references for structure-curation impact on QSAR, and a 2026 curation review reiterating that curation materially affects performance and reproducibility. A JCIM reviewer will expect these foundational works to be engaged, especially since the paper's thesis is standardization-affects-models.",
+    "fix": "Add and distinguish Fourches/Muratov/Tropsha (2010, 2016) and the relevant assay-heterogeneity papers: credit them for establishing that curation/standardization errors affect QSAR, then sharpen the gap as the per-prediction, representation-dependent, multi-benchmark invariance measurement plus the remedy, which those recommendation/error-propagation works do not provide.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "'Silent confounder / per-prediction invariance' framing is partly a relabeling",
+    "issue": "The central framing (Abstract; Sec 6.4; Problem Formulation Sec 3) rests on two ideas that are not themselves new: (i) aggregate metrics hide per-sample variability, and (ii) prediction spread under equivalent-input augmentation is a reliability/uncertainty signal (already used by Kimber/maxsmi 2021 as a confidence measure). The 'standardization orbit' is a relabeling of an 'augmentation set', and 'standardization invariance' is the molecular-property instance of the broad augmentation-invariance literature. The genuinely novel claim is narrower: the magnitude and strong representation-dependence of this spread on the graph-standardization axis, measured across 55 benchmarks.",
+    "evidence": "The problem formulation (L118-135) defines standardization sensitivity s(x)=SD over the orbit, which is the augmentation-variance quantity used elsewhere as uncertainty; wrapping it in new terminology risks a reviewer reading the conceptual contribution as presentation rather than substance.",
+    "fix": "State the precise novel claim explicitly (representation-dependent magnitude of per-prediction standardization sensitivity across many benchmarks, and that aggregate metrics conceal it) and drop or qualify the implication that the confounder/invariance framing is itself novel. Relate s(x) to the known augmentation-variance-as-uncertainty literature.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MINOR",
+    "area": "Over-claiming 'first / not quantified at scale'",
+    "issue": "Claims such as 'to our knowledge, has not been quantified at scale' (Intro L55), 'What is missing is a systematic, multi-dataset measurement...' (L64-66), and 'First multi-dataset... quantification' (research plan C1) are defensible for the diagnosis but are stated broadly given the adjacent TTA/notation/curation literature now shown to exist.",
+    "evidence": "No multi-benchmark per-prediction standardization-invariance study surfaced, so the core diagnosis gap is real; but the surrounding claims should be scoped to the exact novel axis to avoid an easy reviewer rebuttal that 'standardization affects models' is long known (Fourches/Tropsha) and that equivalent-representation confounding is published (Kikuchi).",
+    "fix": "Scope the novelty claims tightly: 'first systematic, multi-benchmark, representation-dependent measurement of per-prediction sensitivity to the chemical-graph standardization choice, together with a robust-learning remedy.' Avoid unqualified 'first/not quantified' phrasing.",
+    "requires_new_experiment": false
+   }
+  ]
+ },
+ {
+  "reviewer": "R2-methodology",
+  "overall_recommendation": "major_revision",
+  "summary": "The core construction (standardization orbit, train-aug + test-time averaging, orbit-prediction-SD metric, semi-synthetic shortcut) is sensible and mostly sound, but two methodological problems undermine the central quantitative claims. First, the \"standardization orbit\" includes transformations that are NOT label-invariant for the endpoints studied (pH-7.4 protonation vs neutral, and stereo-stripping), so for logD/solubility/permeability/enantioselective potency the measured orbit spread partly reflects a REAL property dependence rather than \"spurious\" model sensitivity, and SORB enforces a partially false invariance. Second, the headline invariance statistic pools regression orbit-SD (normalized by label SD, dimensionless) with classification orbit-SD (raw predicted-probability SD, scale=1) and reports the mixture as \"\u00d7 the label standard deviation,\" which is a units error affecting the 0.10\u00d7/0.12\u00d7/0.42\u00d7 numbers. Several smaller issues (non-matched test sets for the accuracy-neutrality test, trivial-by-construction framing of test-orbit invariance with an unquantified deployment gap, unjustified top-k tautomer pruning, featurization-sensitivity confound in the metric) are fixable by reanalysis or small experiments. Classification probabilities are handled correctly; ECE uses a biased equal-width estimator but is only a secondary diagnostic.",
+  "findings": [
+   {
+    "severity": "MAJOR",
+    "category": "invalid-invariance-assumption",
+    "area": "Orbit definition / Problem formulation (Sec 3, 4.1; standardize.py standardization_orbit; Limitation ii)",
+    "issue": "The standardization orbit is treated as a set of label-invariant representations, but standardization_orbit() (standardize.py L259-268) adds the pH-7.4 protonated form AND the neutralized form AND the stereo-stripped form as orbit members. Protonation state is physically determinative of exactly the endpoints in the benchmark set (lipophilicity/logD, aqueous solubility, permeability, plasma-protein binding are all pH/charge dependent), and stereo-stripping merges enantiomers/diastereomers that genuinely differ for enantioselective ADMET/potency endpoints. Thus the per-molecule prediction SD across the orbit (the paper's central 'violation' metric, _orbit_invariance in invariance.py) partly measures a REAL, correct property dependence the model learned, not 'spurious' sensitivity \u2014 yet every unit is claimed spurious (Sec 6.4: 'every unit of this spread is spurious'). Correspondingly, SORB forces equal predictions over genuinely different species, which degrades correctness rather than improving reliability. Limitation (ii) asserts invariance 'holds for the physicochemical and ADMET endpoints used,' which is false for the pH/charge-dependent and stereo-dependent endpoints that dominate the collection.",
+    "evidence": "standardize.py OrbitConfig defaults include include_ph74, include_neutral, include_stripstereo all True; standardization_orbit adds op_protonate_ph74(smiles), op_neutralize(bmol), and op_strip_stereo(bmol) as members. The modeled endpoints include MoleculeNet Lipophilicity (logD at pH 7.4) and TDC ADMET (solubility, Caco-2/PAMPA permeability, PPBR) whose measured value is defined at a specific pH and therefore differs between the charged and neutral orbit members. RQ3 (metrics.json) reports +ph74 and +stripstereo aggregate deltas of 0.0, but that is the AGGREGATE-metric ablation; the contribution of the protonation and stereo axes to the per-molecule ORBIT SD (the headline quantity) is never decomposed, so the 'spurious' interpretation is unsupported where those axes contribute.",
+    "fix": "Restrict the invariance orbit to operations that are genuinely label-invariant for the chosen endpoints (tautomer interconversion, aromaticity model, salt/fragment choice, SMILES-level notation), and move protonation and stereochemistry out of the default orbit or treat them per-endpoint. At minimum, decompose the orbit-prediction-SD by axis (tautomer vs protonation vs stereo vs aromaticity) using the existing cached orbits and report how much of the 0.10-0.42\u00d7 comes from the property-determining axes; restate Limitation (ii) accurately and exclude pH/charge-defined endpoints from the 'invariance-violation' framing or analyze them separately.",
+    "failure_scenario": "For the Lipophilicity (logD@7.4) dataset, a molecule ionizable near pH 7.4 has orbit members {neutral, pH-7.4 cation/anion} with genuinely different true logD. The model correctly predicts different values, inflating s(x); the paper counts this as a 'spurious standardization-invariance violation,' and SORB 'fixes' it by averaging the two into a value that is wrong for both species.",
+    "requires_new_experiment": true,
+    "short_summary": "Orbit includes non-invariant axes (protonation, stereo) for pH/stereo-dependent endpoints",
+    "verdict": "CONFIRMED"
+   },
+   {
+    "severity": "MAJOR",
+    "category": "units-error",
+    "area": "Headline invariance statistic (Abstract; Sec 6.4; analyze.py method_pooled L199-207, rq5_invariance L152-155; invariance.py _orbit_invariance + run_method_cell scale)",
+    "issue": "The headline 'orbit prediction SD = 0.10\u00d7 (overall), 0.12\u00d7 (GBT), 0.42\u00d7 (linear) of the label SD' pools regression and classification rows that are on different scales. In run_method_cell, scale = std(y[train]) for regression but scale = 1.0 for classification; _orbit_invariance divides the orbit prediction SD by this scale. So regression orbit_mean_rel_sd is a dimensionless fraction of the label SD, whereas classification orbit_mean_rel_sd is the raw SD of predicted P(y=1) (0-1 units), NOT normalized by the label SD. analyze.py then takes medians of orbit_mean_rel_sd pooled over both tasks (method_pooled L199-201 has no task filter; rq5 representation table L152-154 groups only by model\u00d7feat), and the manuscript labels the result '\u00d7 the label standard deviation.' The two quantities are not commensurable and should not be pooled or jointly labeled.",
+    "evidence": "Direct computation on method_results.csv: baseline orbit_mean_rel_sd median is 0.122 for reg (label-SD-normalized) but 0.033 for clf (raw probability SD, label_sd column = 1.0 for all clf rows). Pooled method_pooled trainaug_invariance baseline_median = 0.106 (metrics.json) mixes these; the clf contribution is mislabeled '\u00d7 label SD.' The '36% relative reduction' and frac_reduced are likewise pooled across incommensurable units.",
+    "fix": "Normalize classification orbit SD by its own label SD (e.g., sqrt(p(1-p)) of the training labels) so both tasks are dimensionless, OR report regression and classification invariance separately throughout (Abstract, Sec 6.4, Table 2, rq5 tables). Recompute the headline 0.10\u00d7/0.12\u00d7/0.42\u00d7 and the 36% reduction per task. This is a pure re-aggregation of existing results.",
+    "failure_scenario": "A reader interprets '0.42\u00d7 the label SD' for linear+fingerprint as holding uniformly; in fact the linear/ecfp regression value is ~0.48 while the classification value is ~0.06 raw-probability units, and the published 0.4247 is a cross-unit median that corresponds to no single interpretable quantity.",
+    "requires_new_experiment": false,
+    "short_summary": "Reg (\u00f7label SD) and clf (raw prob SD, \u00f71) orbit-SD pooled, labeled '\u00d7 label SD'",
+    "verdict": "CONFIRMED"
+   },
+   {
+    "severity": "MODERATE",
+    "category": "invalid-pairing",
+    "area": "Accuracy-neutrality of test-orbit/full (Sec 7.1-7.2; invariance.py run_method_cell L80-108; analyze.py method_pooled L189-197)",
+    "issue": "The central 'test-time averaging is accuracy-neutral' claim (median change -0.0001 RMSE, Wilcoxon p=0.8) is computed by pairing the baseline primary metric measured on the FULL test set against the SORB-testorbit/full metric measured on a random subset capped at ACC_CAP=600 molecules. For method datasets (<=6000 molecules, 80/20 split => test up to ~1200), datasets whose test set exceeds 600 have the two arms evaluated on different instance sets, so the paired Wilcoxon and the per-dataset delta are not apples-to-apples and carry extra subsampling noise.",
+    "evidence": "run_method_cell: baseline row uses _acc(..., y[te], predict(base, Xcanon[te])) on the full test index te (L97); sorb_testorbit/sorb_full use sc = est.predict(cap_smi,...) with cap = te subsampled to ACC_CAP=600 (L80), scored against y[cap] (L104-108). method_pooled (L189-192) merges baseline and variant metrics by dataset\u00d7model\u00d7feat and subtracts them, so baseline-on-full is differenced against testorbit-on-cap whenever |te|>600.",
+    "fix": "Evaluate baseline (and sorb_trainaug) on the identical capped subset used for the orbit-averaged variants before computing the paired deltas and Wilcoxon tests; or raise/remove the cap. Cheap re-run from the existing harness; recompute RQ4 accuracy rows.",
+    "failure_scenario": "On a 4000-molecule dataset (test ~800), baseline RMSE is on all 800 while testorbit RMSE is on a random 600; the reported per-dataset 'improvement' reflects subset-sampling variance, not the method, biasing the pooled median toward 0 and the p-value toward non-significance.",
+    "requires_new_experiment": false,
+    "short_summary": "Baseline (full test) vs test-orbit (<=600 cap) paired on non-identical sets",
+    "verdict": "CONFIRMED"
+   },
+   {
+    "severity": "MODERATE",
+    "category": "trivial-by-construction",
+    "area": "Test-orbit 'enforces invariance' (Abstract; Sec 4.2, 7.1, 10; sorb.py predict; standardize.py standardization_orbit L233)",
+    "issue": "Test-time orbit averaging is invariant only tautologically: within the experiment each molecule has one precomputed orbit (dataset_orbits keyed on raw SMILES), so the averaged prediction is a single fixed value and orbit-SD is identically 0 by construction (correctly, the code records no invariance stat for it: inv_model=None). This is a definitional property, not an empirical finding, and should be stated as such rather than listed among SORB's contributions. More importantly, the deployment claim ('drop-in inference wrapper makes a model's prediction (nearly) independent of input standardization') is only approximate and the residual is never measured: standardization_orbit builds the orbit from base = P_rdkit(presented_smiles), and P_rdkit does largest-fragment+neutralize but NOT canonical-tautomer, so presenting two different tautomers of the same compound yields different base forms, different orbits, and different averaged predictions.",
+    "evidence": "standardize.py L233: base = NAMED_PIPELINES['P_rdkit'].apply(smiles); P_rdkit (L179) has canonical_tautomer=False. Orbit membership (tautomer enumeration from bmol, L253-254) therefore depends on which tautomer was presented. sorb.py predict averages over that presentation-dependent orbit. The manuscript hedges with '(nearly)' (Sec 4.2, 7.1) but never quantifies the residual prediction SD of the wrapper across presentations.",
+    "fix": "State plainly that in-sample test-orbit invariance is exact by construction (not an empirical result). For the deployment claim, construct the inference orbit from a canonical-tautomer (presentation-independent) base so the orbit is identical regardless of input standardization, and empirically measure the residual prediction SD of the test-orbit wrapper when the SAME molecule is presented under each named pipeline.",
+    "failure_scenario": "A practitioner applies the 'drop-in' wrapper to a molecule drawn as tautomer T2 instead of the canonical T1; standardization_orbit returns a different member set, the orbit mean differs, and the promised standardization-independence does not hold.",
+    "requires_new_experiment": true,
+    "short_summary": "Test-orbit invariance trivial in-sample; deployment orbit is presentation-dependent, residual unmeasured",
+    "verdict": "CONFIRMED"
+   },
+   {
+    "severity": "MODERATE",
+    "category": "unjustified-heuristic",
+    "area": "Tautomer-score pruning / orbit boundedness (Sec 4.1; standardize.py enumerate_tautomers L121-139, OrbitConfig max_tautomers)",
+    "issue": "The orbit's tautomer members are the top-k (max_tautomers=3 in run_all.py) distinct tautomers ranked by RDKit's canonicalization score, with no energy/population threshold and no justification that this set equals the chemically co-existing forms. The manuscript states implausible forms 'are excluded' by the ranking, but enumerate_tautomers applies no plausibility threshold \u2014 it simply truncates to k, so exclusion is incidental to rank, not guaranteed (a molecule with many close-scoring plausible tautomers loses real members; a molecule with one dominant tautomer may retain implausible high-energy members 2-3 that are NOT chemically equivalent). The central magnitude (0.42\u00d7) can depend on this arbitrary k, yet only 'qualitative' robustness is claimed (Sec 8, Table S4).",
+    "evidence": "standardize.py enumerate_tautomers L128-137 ranks by tautomer_score and returns scored[:max_forms] with no threshold; the docstring's 'naturally downranked and excluded' is not enforced. tautomer_score (L110-118) is exactly RDKit's canonical-tautomer scoring, so the 'plausibility' pruning is circular with how the canonical member is chosen.",
+    "fix": "Define orbit membership with a principled criterion (score-gap or relative-population/energy threshold, or a tautomer-fraction cutoff) rather than a fixed top-k; verify no implausible tautomer survives the cut. Report the MAGNITUDE sensitivity of the headline orbit-SD to max_tautomers and max_members quantitatively (not just 'qualitatively unchanged').",
+    "failure_scenario": "For a barbiturate/hydroxypyridine with several near-degenerate tautomers, k=3 drops genuine members and understates s(x); for a simple amide, member 3 is a high-energy imidic-acid tautomer no chemist would regard as the same species, overstating s(x) and teaching SORB a false invariance.",
+    "requires_new_experiment": true,
+    "short_summary": "Top-k tautomer cut has no energy/population threshold; magnitude sensitivity to k unquantified",
+    "verdict": "CONFIRMED"
+   },
+   {
+    "severity": "MODERATE",
+    "category": "confounded-metric",
+    "area": "Interpretation of orbit-prediction-SD (Sec 3, 6.4; invariance.py _orbit_invariance)",
+    "issue": "The orbit-prediction-SD is presented as a model property ('standardization sensitivity'), but it is largely a measure of how much the FEATURIZATION changes across the orbit (which the authors choose) propagated through the model. The pre-registration itself concedes it is '>0 by construction unless the featurization is already invariant' (research_plan.md L150-151), yet this is not disclosed in the manuscript. Consequently the flagship 'representation-dependent' result (linear+fingerprint most sensitive, trees least) is partly a restatement of the generic fact that linear models respond continuously to input perturbations while tree ensembles are piecewise-constant \u2014 not a discovery specific to standardization. The mean is also computed over all test molecules including singleton-orbit molecules whose SD is 0 by construction (~5-8% of molecules), so the magnitude depends on orbit-composition as well.",
+    "evidence": "_orbit_invariance (invariance.py L53-66) returns SD of predict_scores over cached orbit featurizations with no normalization for the magnitude of feature change across the orbit; singleton/short orbits append sds=0.0 (L59). research_plan.md L150-151 explicitly notes the metric is positive 'by construction' from featurization differences.",
+    "fix": "Disclose in the manuscript that the metric reflects featurization-change-through-model and is positive by construction. Add a control that separates 'how much features change' from 'how much the model amplifies it' \u2014 e.g., report prediction SD relative to the orbit's feature-space spread, or benchmark against a featurization-invariant reference \u2014 so the representation-dependence claim is not confounded with generic model smoothness. Report the metric restricted to molecules with non-trivial orbits.",
+    "failure_scenario": "A reader concludes linear+fingerprint models have a special standardization pathology; in fact any input perturbation of comparable feature-space magnitude would produce a similar linear-vs-tree gap, so the standardization-specific content of the claim is overstated.",
+    "requires_new_experiment": false,
+    "short_summary": "Orbit-SD mostly measures featurization change through model; confound undisclosed",
+    "verdict": "CONFIRMED"
+   },
+   {
+    "severity": "MINOR",
+    "category": "calibration-estimator",
+    "area": "Classification probability / ECE handling (metrics.py classification_metrics, expected_calibration_error; zoo.py predict_scores; invariance.py _acc)",
+    "issue": "Classification probabilities are handled correctly overall: predict_scores returns P(y=1) via predict_proba (sigmoid fallback only for the dropped SVM path), and orbit averaging takes the mean probability, which is a valid ensemble; AUROC/AUPRC/Brier use the score, hard-label metrics threshold at 0.5. The only weakness is that ECE uses an equal-WIDTH 15-bin estimator, which is known to be biased and high-variance on the imbalanced TDC ADMET classification sets (sparsely populated high-probability bins). ECE is a secondary diagnostic (not in the headline), so impact is limited.",
+    "evidence": "metrics.py expected_calibration_error L37-47 uses np.linspace(0,1,n_bins+1) equal-width bins; many TDC clf endpoints have prevalence far from 0.5, leaving extreme bins underpopulated and the ECE estimate unstable.",
+    "fix": "Use equal-mass (adaptive) binning or a debiased ECE estimator, and confirm ECE for SORB variants is computed on the orbit-averaged probabilities (not single-member). State the binning scheme in the SI.",
+    "failure_scenario": "On a low-prevalence ADMET classifier, equal-width ECE is dominated by a few points in high-probability bins and can swing with bin count, making any calibration comparison between baseline and SORB unreliable.",
+    "requires_new_experiment": false,
+    "short_summary": "ECE uses biased equal-width binning; probability/averaging handling otherwise correct",
+    "verdict": "PLAUSIBLE"
+   }
+  ]
+ },
+ {
+  "reviewer": "R3-experimental (Experimental Design & Fairness)",
+  "overall_recommendation": "major_revision",
+  "summary": "The core experimental scaffold is thoughtful, and the central design choice the paper hangs its causal claim on \u2014 computing one split on the raw structures and reusing it unchanged across every standardization pipeline \u2014 is sound and a genuine strength: it holds data partition, duplication and leakage constant so that only featurization varies. However, several design and fairness problems inflate or confound the headline results. The marquee per-prediction effect size (0.42x/0.10x of label SD) is measured over an artificial standardization \"orbit\" (which includes rank-2/3 enumerated tautomers and isolated stereo-stripping), while the realistic end-to-end pipeline-to-pipeline per-prediction spread that actually corresponds to \"two labs standardizing differently\" is ~0.03x in the same data and is never surfaced. The flagship \"representation-dependent\" ranking (linear+fingerprint most sensitive) is confounded by arbitrary, untuned per-model regularization. The methods section misstates the seed count (five vs the three actually run, versus a pre-registered 5/10), silently drops a pre-registered model family (SVM) while still describing it, and the \"free lunch\" test-time-averaging claim rests partly on an accuracy comparison across mismatched test subsets. These are fixable but material.",
+  "findings": [
+   {
+    "severity": "MAJOR",
+    "area": "Effect-size realism (orbit vs realistic pipelines)",
+    "issue": "The headline per-prediction violation (abstract + Section 6.4: median 0.10x label SD, 'up to 0.42x for fingerprint-based linear models') is the synthetic standardization-ORBIT spread (metrics.json RQ5_invariance orbit_mean_rel_sd; linear+ecfp=0.4247). The orbit (src/preprocessing/standardize.py standardization_orbit) mixes the canonical form with up to 3 rank-ordered enumerated tautomers, pH-7.4, neutral, stereo-stripped and MDL-aromaticity forms simultaneously. No single realistic named pipeline produces a rank-2/3 tautomer or an isolated stereo-strip. The quantity that actually corresponds to the paper's own motivating scenario ('two laboratories apply different but equally valid standardizations') is the spread across the six realistic end-to-end pipelines (pipe_mean_rel_sd / mean_rel_sd), which is only 0.0286 for linear+ecfp and ~0.004 for trees/descriptors \u2014 roughly 15x smaller \u2014 and is never stated in the manuscript.",
+    "evidence": "metrics.json: RQ5 linear+ecfp orbit_mean_rel_sd=0.4247 but pipe_mean_rel_sd=0.0286; lgbm+ecfp orbit=0.1191 vs pipe=0.0071. The abstract/Section 6.4 present only the 0.42/0.10 orbit numbers and frame orbit members as 'different, chemically-equivalent standardizations', conflating the artificial orbit with realistic pipeline choice. The realistic figure is computed (analyze.py rq5_invariance) but omitted from the manuscript.",
+    "fix": "Report the realistic per-prediction pipeline spread (pipe_mean_rel_sd) alongside, and with equal prominence to, the orbit spread in the abstract and Section 6.4; lead the practical-reproducibility claim with the ~0.03x pipeline number and clearly label 0.42x as a worst-case over the full synthetic orbit. Explicitly state that orbit members include non-canonical enumerated tautomers and isolated axis toggles that exceed any single realistic pipeline.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Hyperparameter fairness / representation-dependence confound",
+    "issue": "No hyperparameters are tuned (src/models/zoo.py: Ridge alpha=1.0, LogisticRegression C=1.0 on 2048-bit ECFP with StandardScaler(with_mean=False); LightGBM 400 trees; RF 200 trees \u2014 all fixed). Holding them fixed ACROSS pipelines is correct and isolates standardization, but the paper's Contribution 2 is a cross-MODEL mechanistic claim ('linear+fingerprint most sensitive, tree ensembles least'), and that ranking is confounded with each model's arbitrary, non-comparable regularization. alpha=1.0 is weak for a 2048-dim sparse space, so an under-regularized linear model will be hypersensitive to which fingerprint bits flip under tautomerization \u2014 the observed 0.42x may reflect under-regularization, not representation. This is corroborated by the catastrophic train-augmentation failure for linear+ecfp (statistics.json: mean RMSE change -3.29, CI to -6.41, i.e. multiples of the label SD), which the manuscript downplays as a 'small accuracy cost'.",
+    "evidence": "zoo.py fixed alpha=1.0/C=1.0; statistics.json linear/ecfp/reg sorb_trainaug mean_improvement=-3.289, ci_lo=-6.41 (RMSE increase of several label SDs) vs lgbm/ecfp/reg trainaug median -0.015. Such instability is a regularization pathology, not a property of 'fingerprint representation' per se.",
+    "fix": "Add a robustness check in which each base learner's key regularization hyperparameter is selected by nested CV on the training fold (still identical across pipelines/orbit), and re-report the representation-dependence ranking and the trainaug accuracy cost. If the linear model's sensitivity shrinks with proper regularization, reframe Contribution 2 accordingly.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Seed count misreport + deviation from pre-registration",
+    "issue": "Section 5 (Statistics) states 'Each configuration is run with five seeds', but the full-mode grid runs three seeds (src/training/grid.py seeds/method_seeds/shortcut_seeds=[0,1,2]; confirmed in raw_results.csv and method_results.csv: seeds {0,1,2}). Section 7.1 separately says 'three seeds', so the manuscript is internally contradictory. The pre-registration specified R=5 scaffold resplits for the full grid and R=10 for the headline SORB and RQ2 comparisons; neither was met, and the reduction is undisclosed.",
+    "evidence": "manuscript_filled.md Section 5 'five seeds' vs Section 7.1 'three seeds'; grid.py full mode seeds=[0,1,2]; research_plan.md 'Repeats: R = 5 ... R = 10 for the headline SORB and RQ2 comparisons'.",
+    "fix": "Correct Section 5 to the actual count and reconcile with Section 7.1. Disclose the deviation from the pre-registered 5/10 repeats and justify it, or run the pre-registered number of repeats for at least the headline SORB and RQ2 analyses.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Dropped model family / misdescribed setup (SVM)",
+    "issue": "Section 5 describes 'four model families: gradient-boosted trees (LightGBM), random forests, an RBF-kernel SVM via Nystrom approximation, and a linear model', but the SVM is never run (grid.py MODELS=['lgbm','rf','linear'] with comment 'svm(Nystroem) dropped: costly, least informative'). The abstract and Contributions correctly say '3 model families', so Section 5 describes a model that produced no results. The pre-registration listed a 5-family zoo including SVM; dropping it as 'least informative' is a post-hoc selection not disclosed in the paper.",
+    "evidence": "manuscript Section 5 lists the Nystrom SVM in detail; zoo.py still defines 'svm' but grid.py excludes it; research_plan.md model zoo includes 'ECFP4+SVM(RBF)'. The drop and its post-hoc rationale appear only as a code comment.",
+    "fix": "Either restore the SVM to match the pre-registered zoo, or remove it from Section 5, state plainly that it was dropped, and give a pre-specified (not results-dependent) reason. Do not describe an unrun model in the experimental setup.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Mismatched test sets in the test-orbit accuracy comparison",
+    "issue": "The central safety claim \u2014 SORB-testorbit is 'a free reliability improvement ... accuracy essentially unchanged (median -0.0001 RMSE, p=0.8)' \u2014 is computed from a non-comparable paired difference. In run_method_cell (src/training/invariance.py), baseline and sorb_trainaug accuracy use the FULL test set (y[te]), while sorb_testorbit and sorb_full use a capped random subsample (ACC_CAP=600: y[cap]). For the 6 method datasets with test>600 (lipophilicity x2 ~840; CHEMBL234/214/233/244_Ki 619-731), the baseline-vs-testorbit delta mixes the averaging effect with a full-vs-subsample difference. The added sampling noise inflates variance and biases the Wilcoxon toward the null the paper reports (accuracy-neutral), so the 'free lunch' conclusion is partly an artifact of evaluating on different molecules.",
+    "evidence": "invariance.py: baseline/trainaug use predict_scores(...Xcanon[te]...) on full te; testorbit/full use est.predict(cap_smi,...) with cap<=ACC_CAP=600 (ACC_CAP defined line 24). 6/49 method datasets have 0.2*n>600 (verified). analyze.py method_pooled/rq4_method pair baseline vs variant per dataset without reconciling the subset mismatch.",
+    "fix": "Evaluate baseline and ALL SORB variants on the identical (capped) set of test molecules for every dataset, then recompute the testorbit/full accuracy deltas and p-values. This is a cheap re-evaluation on cached predictions.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MODERATE",
+    "area": "6000-molecule cap biases where the method is tested",
+    "issue": "All method (RQ4/RQ5) and shortcut (RQ5b) experiments exclude the 6 largest datasets via METHOD_MAX_N=6000 (run_all.py): cyp2d6/cyp3a4/cyp2c9_veith (~12-13k), solubility_aqsoldb (~10k), ld50_zhu (~7.4k), ames (~7.3k). These large, drug-like CYP/solubility/toxicity sets are exactly the kind the paper's own mechanism (RQ3: effect scales with ionizable/tautomerizable fraction) predicts should show the LARGEST invariance violation, so SORB is never evaluated where the problem is biggest. It also leaves the classification method evidence resting on only 9 (smaller) datasets, where SORB's effects are already mostly non-significant. The cap is justified only on memory grounds, which is weak for a study that states the complete run finishes in 'a few hours' on 4 CPU cores.",
+    "evidence": "run_all.py METHOD_MAX_N=6000 and the 6 excluded datasets (verified sizes); RQ4 clf n_datasets=9 (statistics.json); RQ3 attributes effect to tautomer/ionization, which is high in CYP/solubility sets. Section 9 claims building orbits for the largest dataset (13,130 mols) 'takes under a minute'.",
+    "fix": "Run the method/shortcut experiments on the 6 excluded datasets (chunk orbit construction / stream featurization to bound memory), or at minimum report invariance-violation magnitude for them so readers can see whether the excluded sets are the most-affected. State the exclusion and its potential bias explicitly in Section 5.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Limited split diversity across seeds",
+    "issue": "The scaffold split (src/data/splits.py scaffold_split) only randomizes tie-breaking among equal-sized scaffold groups; large scaffold groups are deterministically assigned to train regardless of seed. For datasets dominated by a few large scaffolds, the 'different' seeds yield nearly identical partitions, so cross-seed statistics understate true split variability and per-dataset CIs/variance can be optimistic.",
+    "evidence": "Measured test-set Jaccard across seeds 0/1/2: molnet:esol = 0.88 (near-identical splits), tdc:bbb_martins = 0.35, mace:CHEMBL214_Ki = 0.47. splits.py order=sorted by (-len, rng.random()) only breaks size ties.",
+    "fix": "Use genuinely independent resampled scaffold splits (randomize scaffold-group-to-fold assignment to the target train fraction rather than only tie-breaking), or report Monte-Carlo scaffold cross-validation, and include the per-dataset cross-seed split-overlap diagnostic so readers can judge replication independence.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Scope of 'representation-agnostic' / 'representation-dependent' claims",
+    "issue": "Both the mechanistic claim (violation is 'strongly representation-dependent') and the method claim ('representation-agnostic' SORB) are supported by only two featurizations (2048-bit ECFP4 and a 25-dim RDKit descriptor set) and two-to-three model families; no graph neural network or pretrained/learned representation is evaluated. The Limitations section discloses this, but the abstract/Contributions wording is stronger than the evidence base.",
+    "evidence": "grid.py method_feats=['ecfp','desc']; method_models=['lgbm','linear']; Limitations (iv) acknowledges no GNN/pretrained models. 'Representation-agnostic' is asserted from 2 fixed representations.",
+    "fix": "Soften the wording to 'across the fingerprint and descriptor representations tested', or add at least one additional, qualitatively different representation (e.g., a count-based or hashed descriptor, or a small CPU GNN) to substantiate the agnosticism claim.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MINOR",
+    "area": "Shortcut experiment control (training-set size confound)",
+    "issue": "In the semi-synthetic shortcut experiment (src/training/shortcut.py), the SORB model is trained with train_aug=4 (4x augmented training examples) while the baseline shortcut model is trained on 1x data. SORB's resistance to the shortcut is therefore partly confounded with more training data / augmentation regularization, not solely with decorrelating the standardization state from the label.",
+    "evidence": "shortcut.py: SORB(... train_aug=train_aug=4 ...) vs baseline ms fit on single-presentation Xtr_short. The headline comparison baseline_shortcut_drop vs sorb_shortcut_drop (metrics.json RQ5b) does not match data volume.",
+    "fix": "Add a size-matched control (e.g., baseline trained on 4x copies of the shortcut presentation, or SORB with train_aug=1 plus orbit sampling) so the difference is attributable to shortcut decorrelation rather than data volume.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MINOR",
+    "area": "Inconsistent orbit hyperparameters across code paths",
+    "issue": "Default orbit settings differ across entry points: OrbitConfig defaults are max_tautomers=4/max_members=8 (standardize.py), run_sorb_cell uses test_orbit=8, run_method_cell uses test_orbit=6, while the actual run pins ORBIT_CFG(max_tautomers=3, max_members=6) in run_all.py and the manuscript states M=6. Although the pinned config governs the reported run, the divergent defaults are a reproducibility/clarity hazard and make the manuscript's 'orbit bounded to M=6' statement depend on a single call site.",
+    "evidence": "standardize.py OrbitConfig(max_tautomers=4, max_members=8); harness.run_sorb_cell test_orbit=8; invariance.run_method_cell test_orbit=6; run_all.py ORBIT_CFG=OrbitConfig(max_tautomers=3, max_members=6); manuscript 4.1 'M=6'.",
+    "fix": "Set a single canonical OrbitConfig default equal to the reported run and remove the per-function overrides (or document them), so the manuscript's stated orbit parameters are the code defaults.",
+    "requires_new_experiment": false
+   }
+  ]
+ },
+ {
+  "reviewer": "R4-statistics",
+  "overall_recommendation": "major_revision",
+  "summary": "The central empirical effects are real and reproduce when recomputed correctly (the invariance violation, the SORB train-aug reduction, and the semi-synthetic shortcut all survive a proper dataset-level analysis), so no headline claim collapses. However, the statistical reporting has serious, fixable defects: the headline SORB p-values are pseudoreplicated (dataset x model x feat pooled and mislabeled as \"datasets,\" inflating significance by ~5 orders of magnitude); the multiplicity correction and the Friedman/Nemenyi critical-difference analysis that the Methods and Section 8 explicitly claim are never actually computed (the functions are exercised only in unit tests); the seed count is misstated (\"five\" vs the actual three) and the stated primary test is mathematically incapable of significance at that n and is not the test that was run; and promised bootstrap CIs for headline differences are absent. These are major-revision issues of rigor and honest reporting, not fabrication of the underlying signal.",
+  "findings": [
+   {
+    "severity": "MAJOR",
+    "area": "Unit of analysis / pseudoreplication in headline SORB tests",
+    "issue": "The pooled SORB results cited in the abstract and Section 7.1 (e.g. 'median change ... -0.0001 in RMSE (improved on 50% of datasets; Wilcoxon p=0.8)' and the RQ4_method_pooled entries, n=160 for regression, n=36 for classification) come from method_pooled() in src/visualization/analyze.py, which groups by ['dataset','model','feat'] and runs ONE paired Wilcoxon treating all 160 cells as independent. Each of the 40 regression datasets appears 4 times (2 models x 2 featurizations); these 4 rows are strongly correlated, so n is not 160. The text and metrics.json describe these as 'datasets' / '% of datasets'. Recomputing at the correct dataset level (averaging model x feat first, n=40) changes sorb_trainaug from p=5.1e-8 to p=5.6e-3 and frac improved from 0.319 to 0.20 - about five orders of magnitude of inflation. The non-significant pooled results happen to be conservative, but every supportive p-value is anti-conservative.",
+    "evidence": "method_pooled() (analyze.py L183-197) does base/vv = g[...].groupby(['dataset','model','feat'])[metric].mean() then a single paired_wilcoxon over the concatenated index. Verified: reg sorb_trainaug POOLED n=160,p=5.14e-8 vs DATASET-level n=40,p=5.58e-3. metrics.json RQ4_method_pooled reports n=160/36; manuscript 7.1 calls these 'datasets'.",
+    "fix": "Make the dataset the unit of analysis. Either (a) average over model/featurization to one value per dataset and test across datasets (n=40 reg, n=9 clf), or (b) keep model/feat separate and report per-cell tests (as rq4_method already does, n=40 or n=9) without pooling them into one Wilcoxon, or (c) use a mixed-effects model with dataset as a random effect. Re-state every 'X% of datasets' and every pooled p-value with the correct n, and relabel n=160/36 as cells, not datasets.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Multiple-comparison correction claimed but never applied",
+    "issue": "Section 5 states 'we ... apply Holm-Bonferroni/Benjamini-Hochberg corrections for multiplicity.' No reported p-value anywhere is corrected. holm_bonferroni() exists in src/stat_tests/compare.py but is called only in tests/test_pipeline.py, never in analyze.py. The RQ4 table alone reports 24 Wilcoxon tests, plus 8 invariance tests, plus the pooled and shortcut tests, all raw. Several 'significant' results (e.g. the ecfp sorb_trainaug reg p=5.8e-6, linear-ecfp clf p=0.012) would be scrutinized differently under correction over the full family of tests.",
+    "evidence": "grep across src/ and scripts/ finds holm_bonferroni/benjamini/multipletests/fdr only in the function definition and in a unit test; analyze.py (which the header says produces 'every number cited in the manuscript') never calls it. statistics.json RQ4_method_table wilcoxon_p values are raw.",
+    "fix": "Either actually apply Holm-Bonferroni/BH across the declared family of tests and report both raw and adjusted p-values, or remove the correction claim from Section 5 and reframe the per-cell p-values as descriptive. Define the test family explicitly.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Friedman/Nemenyi critical-difference analysis claimed but not performed",
+    "issue": "Section 5 claims 'across datasets we use the Friedman test with Nemenyi critical-difference analysis,' and Section 8 claims 'multi-dataset Friedman/Nemenyi analysis supporting the method-level conclusions (Supporting Information, Figures S1-S4).' Neither friedman() nor nemenyi_cd() is ever called in the analysis or figure pipeline (only in a unit test), no critical-difference numbers appear in metrics.json/statistics.json, and no S1-S4 / CD-diagram figures exist in the figures directory. The method-level conclusions are therefore 'supported' by an analysis that was never run.",
+    "evidence": "grep for friedman(/nemenyi_cd( outside definitions returns only tests/test_pipeline.py L41-42. figures/ contains fig_invariance_by_representation, fig_operation_ablation, fig_silent_contrast, fig_method_effect, fig1_concept - no CD diagram and no S1-S4. figures.py/tables.py contain no friedman/nemenyi/critical-difference code.",
+    "fix": "Compute the Friedman omnibus plus Nemenyi CD across datasets for the SORB variants (the helpers already exist) and generate the SI figures, OR delete the Friedman/Nemenyi and 'Figures S1-S4' claims. Do not cite analyses that are not in the artifact.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Seed count misreported; stated primary test underpowered and not the test actually run",
+    "issue": "Section 5 says 'Each configuration is run with five seeds,' but all result CSVs contain exactly 3 seeds (0,1,2); Section 7.1 separately says 'three seeds,' an internal contradiction, and the pre-registration specified R=5 for the grid and R=10 for headline SORB/RQ2. Worse, Section 5's stated primary test, 'Per-dataset paired comparisons across seeds use the Wilcoxon signed-rank test,' is mathematically incapable of rejecting at alpha=0.05 with 3 seeds (the minimum two-sided signed-rank p at n=3 is 0.25; at n=5 it is 0.0625), and it is not the test actually performed: analyze.py averages over seeds (ds_mean = wide.groupby(level=0).mean()) and then tests ACROSS datasets. The reported uncertainty therefore reflects neither the claimed seed-level test nor the pre-registered replicate count.",
+    "evidence": "method_results.csv, raw_results.csv, shortcut_results.csv all have seed in {0,1,2}. rq4_method() (analyze.py L104-116) does groupby seeds .mean() then paired_wilcoxon across datasets. research_plan.md L122 specifies R=5 (grid) / R=10 (headline). Manuscript L207 'five seeds' vs L273 'three seeds'.",
+    "fix": "Run the pre-registered 5 (and 10 for headline) seeds, or explicitly justify and consistently state 3 seeds throughout. Correct Section 5 to describe the test actually used (seed-averaged per-dataset estimates compared across datasets) and drop the impossible 'per-dataset across-seeds Wilcoxon' description. State the unit of analysis unambiguously.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Promised bootstrap CIs missing for all headline numbers",
+    "issue": "Section 5 promises 'bootstrap 95% confidence intervals for headline differences,' but the headline quantities in the text carry no CI: the 0.42x and 0.10x orbit-SD effects (6.4), the 36% train-aug reduction (7.1), the 0.102 shortcut drop and -0.003 SORB value (7.3). Bootstrap CIs are computed only inside the per-cell RQ4 accuracy table (ci_lo/ci_hi feeding Table 3), not for the quantities the paper actually headlines.",
+    "evidence": "bootstrap_ci is called only in rq4_method() (analyze.py L117). metrics.json RQ5_invariance, RQ4_method_pooled.trainaug_invariance, and RQ5b_shortcut report point medians/means with no interval. Manuscript body text for 6.4/7.1/7.3 contains no CIs.",
+    "fix": "Report bootstrap 95% CIs (dataset-level resampling) for the invariance magnitudes (per representation), the train-aug relative reduction, and the shortcut drop, alongside each headline point estimate.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Shortcut headline p=5e-10 over-interpreted and under-disclosed",
+    "issue": "Section 7.3 reports 'paired Wilcoxon p = 5e-10' for the shortcut result. This p is RQ5b_shortcut.baseline_vs_sorb_shortcut_wilcoxon_p, computed over n=49 datasets after averaging two models (lgbm, linear) into one value per dataset, and the shortcut experiment used only the ecfp featurization - none of which is disclosed. A Wilcoxon p at n=49 essentially only certifies that the sign is consistent; reporting it to 10-figure precision with no effect size and no CI overstates what the test establishes, and the sentence attaches the p to 'SORB ... is unaffected (-0.003)' when the test actually concerns baseline-vs-SORB difference. The effect itself is genuine (per-model: lgbm p=2.2e-9, linear p=2.3e-6), so this is a reporting/disclosure issue, not a false positive.",
+    "evidence": "rq5b_shortcut() (analyze.py L160-180) pools sc.groupby('dataset').mean() over models; shortcut_results.csv feat column is ecfp only, models {lgbm,linear}. metrics.json RQ5b_shortcut p=5.04e-10, n_datasets=49.",
+    "fix": "Report the shortcut effect size (median drop with bootstrap CI) as the headline, present p at reasonable precision (e.g. p<1e-4), disclose that the experiment is ecfp-only and that models were averaged (and show per-model results), and fix the sentence so the p-value is attached to the baseline-vs-SORB contrast it actually tests.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Seed (Monte Carlo) variance not propagated",
+    "issue": "Across-dataset tests treat each dataset's estimate (a mean over only 3 seeds) as a fixed, noise-free value; the within-dataset seed variance is discarded rather than propagated. With only 3 scaffold-resplit seeds the per-dataset point estimate is itself noisy, so the across-dataset Wilcoxon/CI understate true uncertainty, and small median deltas such as the testorbit -0.0001 RMSE and the -0.013 trainaug median are within plausible seed noise.",
+    "evidence": "analyze.py collapses seeds with .mean() before every inferential test (rq4_method L107, rq5_invariance L139, method_pooled L189-191); no seed-level variance component or hierarchical model is used. Only 3 seeds per cell in method_results.csv.",
+    "fix": "Report per-dataset seed variability (e.g. seed-level SD or a per-dataset CI), or use a hierarchical/mixed model with seed nested in dataset; at minimum, show that headline deltas exceed seed noise. Increasing to the pre-registered seed count would materially help.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MINOR",
+    "area": "Misstatement of the smallest effect size",
+    "issue": "Section 6.4 and the abstract state the violation is 'smallest for gradient-boosted trees on fingerprints (0.12x of the label SD).' 0.12 (lgbm-ecfp) is not the smallest of the four representations reported: linear-desc is 0.072 and lgbm-desc is 0.084, both smaller. A reader comparing to Figure 2 would see the contradiction.",
+    "evidence": "metrics.json RQ5_invariance.baseline_invariance_by_representation: lgbm-desc 0.0843, lgbm-ecfp 0.1191, linear-desc 0.0715, linear-ecfp 0.4247.",
+    "fix": "Scope the claim to fingerprint featurizations ('among fingerprint models, smallest for trees at 0.12x and largest for linear at 0.42x') or state that the overall smallest is the descriptor representations (~0.07-0.08x).",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MINOR",
+    "area": "Recurring unit-of-analysis mislabeling and dataset-count overclaim",
+    "issue": "Several '% of datasets' statements use cell counts, not dataset counts: Section 6.3 '5% of datasets' is 0.0545 over n=110 dataset x feat cells (55 datasets), and Section 7.1 '50% of datasets' is over n=160 cells. Section 8 claims the findings hold 'across the 55 datasets,' but the SORB/method and shortcut experiments ran on only 49 datasets (classification n=9, not the 13 TDC classification sets implied), which Section 7/8 does not make clear.",
+    "evidence": "rq2_ranking groups by ['dataset','task','feat'] -> metrics.json RQ2 n_datasets=110; RQ4 pooled n=160; method_results.csv has 40 reg + 9 clf = 49 datasets. Manuscript L312 'across the 55 datasets'.",
+    "fix": "Report fractions over the true number of datasets (or clearly label the denominator as cells), and state in Sections 7-8 that SORB/shortcut results are on the 49 datasets <=6000 molecules (9 classification), not all 55.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MINOR",
+    "area": "Effect-size reporting mismatch (rank-biserial vs Cohen's d_z)",
+    "issue": "Section 5 says Wilcoxon tests are reported 'with rank-biserial effect sizes,' but the output tables report Cohen's d_z instead and never surface rank-biserial. Additionally, the rank-biserial computed in paired_wilcoxon uses scipy's two-sided statistic (which returns min(W+,W-)), so rb = 1 - 2r/total is always >=0 and loses the sign of the effect - harmless here only because it is never reported.",
+    "evidence": "compare.py L22-27 uses res.statistic from stats.wilcoxon(..., alternative='two-sided'); statistics.json RQ4_method_table reports cohen_dz, not rank_biserial.",
+    "fix": "Either report rank-biserial (computed with a signed convention) as stated, or change Section 5 to say Cohen's d_z is the reported effect size. Fix the rb sign if it is ever surfaced.",
+    "requires_new_experiment": false
+   }
+  ]
+ },
+ {
+  "reviewer": "R5-dataset (Dataset Validity & Generalization)",
+  "overall_recommendation": "major_revision",
+  "summary": "The core empirical observation \u2014 that standardization choices barely move aggregate metrics but substantially move individual predictions \u2014 is plausible and important, and the leakage/duplicate auditing is more thorough than most QSAR papers. However, the paper's central assumption (that the modeled property is exactly standardization-invariant for every endpoint used) is simply false for a meaningful fraction of the 55 benchmarks: logD7.4 lipophilicity is by definition protonation-dependent, FreeSolv hydration free energy is tautomer/protomer-specific, and several ADMET permeability/PK endpoints depend on the neutral-species fraction. For those endpoints part of the measured \"orbit prediction SD\" is genuine chemical signal, not a spurious invariance violation, so the headline magnitudes are inflated and SORB's \"enforced invariance\" may average away real information. Two further dataset-validity problems \u2014 a duplicated dataset (lipophilicity counted twice, breaking the independence assumption of the multi-dataset tests) and a pre-registered deduplication step that was never implemented (851 conflicting-label duplicate groups and 82 residual split leaks remain) \u2014 plus an external-validity gap (the artificially enumerated orbit does not estimate realistic between-toolkit disagreement; method/shortcut results are on 49 of 55 datasets while Section 8 claims 55) warrant major revision.",
+  "findings": [
+   {
+    "severity": "MAJOR",
+    "category": "property-invariance-assumption",
+    "area": "Problem formulation / endpoint validity (Section 3, 11-ii; datasets.py TDC_REG, _MOLNET)",
+    "issue": "The entire thesis rests on the property being exactly invariant across the standardization orbit, and Limitation (ii) claims this 'holds for the physicochemical and ADMET endpoints used' and that endpoints whose measured species is a specific tautomer/protonation state are 'excluded'. They are not excluded. (a) tdc:lipophilicity_astrazeneca and molnet:lipophilicity are AstraZeneca logD7.4 \u2014 the distribution coefficient at pH 7.4 is BY DEFINITION ionization-dependent, yet the orbit explicitly includes a 'pH 7.4 protonation' member and a 'neutralized' member (standardize.py op_protonate_ph74 / op_neutralize; OrbitConfig include_ph74/include_neutral). (b) molnet:freesolv is hydration free energy, a physical quantity defined for a specific neutral tautomer; different tautomers have genuinely different dG_hyd, yet the orbit enumerates up to 4 tautomers. (c) Passive-permeability/absorption endpoints (caco2_wang, hia_hou, pgp_broccatelli, bbb_martins) and ionization-sensitive PK endpoints (ppbr_az, vdss_lombardo, clearance_*, half_life) depend on the neutral-species fraction and the ionized form. For all of these, some of the orbit prediction spread reflects real chemical sensitivity, so the claim 'every unit of this spread is spurious' (Section 6.4) is wrong and the headline 0.10x-0.42x label-SD numbers are upper bounds that conflate spurious sensitivity with legitimate signal. Worse, for these endpoints SORB test-time orbit averaging would average predictions over chemically distinct species and could destroy real information rather than enforce a true symmetry.",
+    "evidence": "logD is operationally defined as the pH-dependent octanol/water distribution coefficient; the neutral and pH-7.4 microspecies have different partition behavior, which is exactly the signal logD captures. FreeSolv \u0394G_hyd is tautomer-specific. The orbit (standardize.py standardization_orbit) deliberately injects protonation and tautomer variants for every molecule regardless of endpoint. RQ5_invariance shows the largest spread exactly where descriptors/fingerprints are most protonation/tautomer-sensitive (linear+ecfp 0.42x), so the inflation is non-negligible.",
+    "fix": "Either (i) restrict the invariance-violation headline to endpoints where invariance is genuinely defensible (e.g., single-affinity potency pKi/pEC50) and move logD7.4, FreeSolv, and permeability/PK endpoints to a clearly labeled 'endpoints with partial physical dependence' group reported separately, or (ii) decompose the orbit and report spread from invariance-safe axes (aromaticity model, stereo on achiral/invariant centers, salt) separately from chemically-meaningful axes (protonation, tautomer) for these endpoints. Re-slice the existing per-dataset per-axis results (RQ3 ablation + RQ5) rather than claiming uniform invariance. Delete the false blanket statement in Limitation (ii).",
+    "requires_new_experiment": false,
+    "verdict": "CONFIRMED",
+    "short_summary": "Invariance assumption false for logD7.4, FreeSolv, permeability/PK endpoints",
+    "failure_scenario": "A reader applies SORB test-orbit averaging to the included logD7.4 set; because logD genuinely depends on the pH-7.4 microspecies, averaging the neutral and protonated predictions removes real signal, and the reported 0.42x 'spurious' spread is partly legitimate \u2014 the paper would have taught practitioners to discard information for exactly these endpoints."
+   },
+   {
+    "severity": "MAJOR",
+    "category": "duplicate-dataset-nonindependence",
+    "area": "Dataset count and multi-dataset statistics (Table 1; datasets.py; leakage_audit.csv)",
+    "issue": "tdc:lipophilicity_astrazeneca and molnet:lipophilicity are the SAME AstraZeneca ChEMBL logD7.4 benchmark (both N=4200). The leakage audit confirms near-identical fingerprints (both 82 dup groups, 180 dup mols, 14 label disagreements, 98 std-collapse pairs; train/test NN 0.0143 vs 0.0155). This means (a) the '55 datasets' headline double-counts \u2014 there are 54 distinct datasets; and (b) every across-dataset statistic that treats datasets as independent units (Friedman/Nemenyi, pooled Wilcoxon over datasets, bootstrap CIs 'for headline differences across datasets', frac_top_model_changes, RQ4 pooled n) includes two perfectly correlated copies, violating the independence assumption and inflating effective n.",
+    "evidence": "Table 1 lists both rows at N=4200; leakage_audit.csv rows for the two are statistically identical. The pooled regression n for RQ4 (n=160 = 40 datasets x 4) and the Friedman analysis in Section 8 treat these as separate exchangeable units.",
+    "fix": "Drop one copy (or merge and keep a single logD7.4 benchmark), correct the dataset count throughout (abstract, Section 5, Section 12), and recompute all across-dataset tests and CIs without the duplicate. This is re-analysis of existing per-dataset numbers.",
+    "requires_new_experiment": false,
+    "verdict": "CONFIRMED",
+    "short_summary": "Lipophilicity dataset counted twice; breaks across-dataset independence",
+    "failure_scenario": "The Friedman/Nemenyi and pooled Wilcoxon include two identical logD7.4 copies as independent units; the duplicate narrows CIs and biases the dataset-level win/loss fractions, and any reviewer who notices the two 4200-compound 'lipophilicity' rows will distrust the whole dataset table."
+   },
+   {
+    "severity": "MAJOR",
+    "category": "external-validity-synthetic-orbit",
+    "area": "Lower-bound caveat and real-world relevance of the measured effect (Section 6.2, 11-i; standardize.py orbit)",
+    "issue": "The paper frames the phenomenon as a reproducibility failure between two labs that standardize the same benchmark differently, and honestly notes the benchmarks are pre-standardized so the effect is a 'lower bound'. But the per-prediction violation is actually measured against an ARTIFICIALLY ENUMERATED orbit (RDKit tautomer enumeration + Dimorphite re-protonation + MDL aromaticity re-perception) applied to already-canonicalized structures. This is neither a clean lower bound (the orbit re-introduces variation, including chemically marginal tautomers, that no single real pipeline would emit) nor an estimate of the actually-claimed scenario (disagreement between two real end-to-end toolkits). The quantity practitioners care about \u2014 'if lab A uses RDKit and lab B uses ChemAxon/OpenBabel, how much do predictions disagree?' \u2014 is never measured. RQ3 shows only tautomer has a nonzero aggregate ablation delta (0.006; +ph74/+mdlarom/+stripstereo/-neutralize all 0.0), suggesting much of the engineered orbit spread comes from one axis and from enumeration artifacts rather than realistic cross-toolkit choices.",
+    "evidence": "standardize.py builds the orbit by composing RDKit operations on top of the P_rdkit base; no second real toolkit is used. RQ3_ablation median_abs_delta_by_operation is 0.0 for four of five operations. Section 6.2 attributes the mild aggregate effect partly to providers having pre-standardized the data.",
+    "fix": "Add an experiment that standardizes each dataset end-to-end with 2-3 genuinely different real toolkits/workflows (e.g., RDKit vs OpenBabel vs a datamol/ChemAxon-style pipeline) and measures per-prediction disagreement on that realistic set, then report the enumerated-orbit number as a controlled upper-bound companion. This directly tests the between-lab claim the paper makes.",
+    "requires_new_experiment": true,
+    "verdict": "CONFIRMED",
+    "short_summary": "Orbit is synthetically enumerated, not realistic cross-toolkit disagreement",
+    "failure_scenario": "A practitioner expecting the paper to quantify RDKit-vs-ChemAxon prediction disagreement finds the number was computed on a hand-enumerated tautomer/protomer set that includes forms neither toolkit would produce, so the headline neither bounds nor estimates the scenario in the motivation."
+   },
+   {
+    "severity": "MAJOR",
+    "category": "preregistration-deviation-dedup",
+    "area": "Deduplication and split integrity (research_plan.md Splitting; splits.py scaffold_split; leakage_audit.csv)",
+    "issue": "The pre-registration explicitly committed to: 'before every split, standardize to a canonical form for duplicate detection; drop exact duplicates; ... never let two standardization variants of the same molecule cross the split (split on canonical-graph identity).' None of this is implemented. scaffold_split groups by Murcko scaffold of the RAW SMILES and neither drops canonical-identity duplicates nor splits on canonical identity; no dedup step exists anywhere in src/. Consequently 851 conflicting-label duplicate groups remain in the data (e.g., ppbr_az 303 disagreeing groups, solubility 232, clearance_hepatocyte 122, ames/cyp groups), and 82 molecules leak across the scaffold split (solubility 27, ames 18, herg 10, cyp2d6 9) \u2014 contradicting leakage_audit.py's own comment that leakage is '0 by construction of our identity-aware splitter'. For RQ1/RQ2 the fixed split holds this constant across pipelines, as argued. But the per-prediction invariance metric (RQ5) and the semi-synthetic shortcut (RQ5b) are per-molecule: conflicting-label duplicates inject label noise that models fit idiosyncratically, confounding the orbit SD attributed to standardization, and a canonical molecule appearing with different labels on both sides of the split for some pipelines contaminates exactly the headline invariance measurement.",
+    "evidence": "splits.py has no dedup and no canonical-identity grouping; grep finds no dedup/drop_duplicates in src/. leakage_audit.csv scaffold_id_leak column sums to 82 nonzero entries; dup_label_disagree column sums to ~851 groups. research_plan.md lines 117-123 promised the dedup that was not done; the deviation is not disclosed in the manuscript.",
+    "fix": "Deduplicate on canonical identity (aggregating/averaging conflicting labels or dropping ambiguous groups) and split on canonical-graph identity as pre-registered, then re-run the per-prediction invariance (RQ5) and shortcut (RQ5b) analyses; report results with and without dedup and disclose the deviation from pre-registration explicitly.",
+    "requires_new_experiment": true,
+    "verdict": "CONFIRMED",
+    "short_summary": "Pre-registered dedup/identity-split never implemented; 851 bad-label dups, 82 leaks",
+    "failure_scenario": "On ppbr_az, two canonical-identical molecules with different labels land on opposite sides of the split and in the orbit-SD computation; the model gives different predictions partly because of the label conflict, and that variance is miscounted as a standardization-invariance violation, inflating RQ5."
+   },
+   {
+    "severity": "MODERATE",
+    "category": "scope-overclaim-coverage",
+    "area": "Generalization claims vs actual coverage (Section 8; metrics.json RQ4/RQ5/RQ5b n)",
+    "issue": "Section 8 states the findings and SORB's effect are consistent '(iv) across the 55 datasets', but the method, invariance, and shortcut experiments were run on only 49 datasets (RQ4 reg n=160=40 datasets x 4; RQ5_invariance n_datasets=49; RQ5b_shortcut n_datasets=49), excluding the 6 largest (solubility 9982, ld50 7385, ames 7278, cyp2c9 12092, cyp2d6 13130, cyp3a4 12328). These excluded datasets also carry the heaviest duplicate/collapse burden (e.g., cyp2d6 251 dup groups / 273 collapse pairs; ames 618/611), so the method is validated on precisely the subset least affected by the data-quality issues. The exclusion is not clearly disclosed in Sections 7-8.",
+    "evidence": "metrics.json RQ5_invariance and RQ5b_shortcut both report n_datasets=49; RQ4 pooled reg n=160 implies 40 regression datasets vs 42 available. Section 8 text asserts 'across the 55 datasets'.",
+    "fix": "State plainly that SORB/invariance/shortcut results cover 49 of 55 (or 54) datasets and why; either extend to the 6 large datasets (CPU cost is modest per the paper's own timing) or justify and label the exclusion, and correct the Section 8 '55 datasets' claim.",
+    "requires_new_experiment": false,
+    "verdict": "CONFIRMED",
+    "short_summary": "Method/shortcut on 49 datasets but Section 8 claims 55",
+    "failure_scenario": "A reader cites 'SORB validated across 55 datasets' when the method's invariance and shortcut evidence excludes the six largest (and dirtiest) datasets, overstating generality."
+   },
+   {
+    "severity": "MINOR",
+    "category": "external-validity-domain",
+    "area": "Chemical/endpoint domain breadth (Section 5; Limitations iv)",
+    "issue": "All benchmarks are small (<=13k), drug-like small molecules from three related sources (ChEMBL potency, TDC ADMET, 3 MoleculeNet physicochemical), heavily weighted to ChEMBL potency (30 of 55). There is no evaluation on other chemical spaces where standardization choices are more consequential (macrocycles, peptides, zwitterions, metal-containing, agrochemicals, materials) and, as acknowledged, no pretrained graph/sequence models. The 'representation-agnostic' and broad reproducibility claims are therefore demonstrated only on a narrow, mutually similar slice of chemistry and two classical featurizations.",
+    "evidence": "Table 1 composition; Limitation (iv) already concedes the model-family gap but not the chemical-domain narrowness.",
+    "fix": "Scope the generalization claims to drug-like small molecules with fingerprint/descriptor featurizations, and add a sentence in Limitations about chemical-space breadth (zwitterions/macrocycles where tautomer/protonation choices dominate) as explicit future work; optionally add one out-of-domain dataset as a spot check.",
+    "requires_new_experiment": false,
+    "verdict": "PLAUSIBLE",
+    "short_summary": "Narrow drug-like domain; broad generalization unproven",
+    "failure_scenario": "The invariance-violation magnitudes, dominated by drug-like ChEMBL potency sets, are read as general to all molecular ML, including chemistries (zwitterions, macrocycles) where the real effect could be far larger or qualitatively different."
+   }
+  ]
+ },
+ {
+  "reviewer": "R6-magnitude (Effect Magnitude & Robustness)",
+  "overall_recommendation": "major_revision",
+  "summary": "The core phenomenon (nonzero per-prediction standardization sensitivity) is real and cleanly measured, but the headline magnitude is overstated relative to what realistic standardization practice produces, and the manuscript's robustness claims are not backed by data. The paper headlines the standardization-ORBIT prediction SD (0.10-0.42x label SD) and frames it as the between-laboratory reproducibility gap, yet the paper's own realistic named-pipeline SD - exactly the \"two labs apply different valid pipelines\" scenario - is 14-17x smaller (0.004-0.034x label SD, ~0.009-0.034 log units) and is tabulated without interpretation. Separately, Section 8 asserts the findings hold under random splits and that orbit-size/tautomer-count were varied, but the grid only ran scaffold splits and the cited SI (random-split replication, Table S4, Figures S1-S4) is an empty placeholder. These must be resolved before the magnitude/robustness claims can stand.",
+  "findings": [
+   {
+    "severity": "FATAL",
+    "area": "Robustness - random splits claimed but never run",
+    "issue": "Section 5 lists random splits as a robustness check and Section 8 states 'We verify that the findings are not artifacts of a single protocol. The invariance violation and SORB's effect are consistent under (i) random instead of scaffold splits', citing SI Figures S1-S4. In fact the production grid hardcodes split=\"scaffold\" (code/src/training/grid.py:25-30), every result row in raw_results.csv/method_results.csv/ablation_results.csv carries split=scaffold (5940/2352/2970 rows, 0 random), and supplementary/supplementary.md S7 'Random-split replication ... (Table S4)' is an unfilled skeleton header with no figures S1-S4 on disk. The affirmative robustness claim and its SI references describe experiments that were not performed.",
+    "evidence": "grid.py:26,30 set split=\"scaffold\" for quick and full runs; a Counter over all four result CSVs returns split={'scaffold': ...} only and seeds {0,1,2}; supplementary.md is 39 lines of placeholders ({{N_DATASETS}}) with S7 naming random-split/orbit-size sensitivity but containing no tables or numbers; code/figures/ holds only the 5 main figures, no S1-S4. The magnitude is plausibly split-dependent: random splits reduce train/test distribution shift and would change both baseline accuracy and the orbit SD, so this is a load-bearing, not cosmetic, check.",
+    "fix": "Either actually run the full grid (and the SORB and orbit-size analyses) under random splits and populate S7/Table S4/Figures S1-S4 with real numbers, or delete every claim of random-split robustness (Section 5 'with random splits as a robustness check', Section 8 item (i)) and the orbit-size/tautomer-count sensitivity claim. Do not cite SI exhibits that do not exist.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Headline magnitude relies on orbit SD, not realistic-pipeline SD",
+    "issue": "The abstract, Section 6.4, and Conclusion headline the standardization-ORBIT prediction SD (median 0.10x, up to 0.42x label SD) and the Introduction/Section 3 frame it as what 'two laboratories that download the same benchmark and apply different but equally valid standardizations' would experience. But that two-labs scenario is precisely the realistic named-pipeline SD, which the paper measured and reports in Table 2 as 0.0040-0.0286x label SD - 14-17x smaller - and never discusses in the text. The orbit is deliberately more diverse than any single deterministic pipeline (it enumerates up to 4 alternative tautomers plus protonation/stereo/aromaticity variants and measures spread across all of them, whereas every realistic pipeline selects ONE canonical tautomer; standardize.py:121-139, 228-269). The headline therefore reports a near-upper-bound while the practically-relevant quantity is an order of magnitude smaller.",
+    "evidence": "From method_results.csv (baseline): lgbm/ecfp median orbit rel-SD 0.129 vs pipeline rel-SD 0.0075 (ratio 17.3x), i.e. 0.169 vs 0.009 absolute log units; linear/ecfp 0.481 vs 0.034 (ratio 14x). metrics.json RQ5_invariance lists pipe_mean_rel_sd 0.004-0.0286 alongside orbit 0.084-0.425. The abstract and Section 6.4 quote only the orbit numbers; the pipeline column in Table 2 (tbl:inv) is presented with zero interpretation and never appears in the narrative.",
+    "fix": "Reframe the magnitude claim as a range bounded below by the realistic-pipeline SD and above by the orbit SD, and interpret the pipeline column explicitly: state that across six realistic end-to-end pipelines the per-prediction SD is ~0.4-2.9% of label SD, rising to 8-42% only under full orbit diversity. If the authors wish to argue real cross-toolkit variation approaches the orbit (because different toolkits pick different canonical tautomers), they should measure it directly (e.g. RDKit vs OpenBabel/ChemAxon/alternative tautomer canonicalizers) rather than substituting the maximally-diverse orbit as a proxy.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "'Comparable to a fraction of assay noise' is not defensible for realistic choices",
+    "issue": "Section 6.4 claims the effect 'corresponds to prediction shifts on the order of a few tenths of a log unit - comparable to a fraction of experimental assay noise.' In absolute units this holds only for the orbit SD on sensitive models (lgbm/ecfp orbit ~0.17 log, linear/ecfp ~0.64 log). Under realistic named pipelines the SD is ~0.009-0.034 log units - roughly 2-10% of typical ChEMBL assay reproducibility (~0.3-0.5 log SD) - i.e. negligible, not 'a few tenths' and not meaningfully 'comparable to a fraction of assay noise.' No assay-noise magnitude is cited anywhere, so the comparison is unquantified.",
+    "evidence": "Computed absolute log-unit SDs from method_results.csv (label_sd median 1.184 log units for lgbm/ecfp reg): orbit abs median 0.169, pipeline abs median 0.0092; linear/ecfp orbit abs 0.643. Manuscript 6.4 makes the 'few tenths / fraction of assay noise' claim without distinguishing orbit from pipeline and without a numeric assay-noise reference.",
+    "fix": "Cite a concrete assay-noise SD (e.g. Kramer et al. / Landrum & Riniker ~0.3-0.55 log for ChEMBL pChEMBL) and state the comparison separately: orbit-worst-case is a sizable fraction of assay noise, realistic-pipeline is ~an order of magnitude below it. Remove the blanket 'few tenths of a log unit' characterization for the realistic scenario.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "'Up to 0.42x' leads with a model the paper itself deprecates",
+    "issue": "The abstract and Section 6.4 foreground 'up to 0.42x for fingerprint-based linear models' as the headline upper bound, but this is the linear+ECFP combination the paper elsewhere characterizes as a 'high-variance' learner it does not recommend (Section 7.2 recommends test-orbit universally and train-aug only for robust tree learners). The best-practice representation (gradient-boosted trees) has orbit SD 0.084-0.119x (and ~0.009 log units under realistic pipelines). Leading with the worst, non-recommended configuration inflates the perceived practical magnitude, and part of the 0.42x may reflect poor conditioning/extrapolation of an unregularized linear model on sparse fingerprints rather than a chemistry-driven signal.",
+    "evidence": "metrics.json RQ5_invariance: linear/ecfp orbit_mean_rel_sd 0.4247 vs lgbm/desc 0.0843, lgbm/ecfp 0.1191, linear/desc 0.0715. Section 7.2 explicitly flags the high-variance linear-on-fingerprint learner as the one SORB train-aug can destabilize.",
+    "fix": "Lead the magnitude statement with the robust/best-practice (tree) number and present 0.42x explicitly as a worst case for a high-variance, non-recommended model; note whether model regularization reduces the linear+ECFP spread, to separate representation sensitivity from estimator instability.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Orbit-size / tautomer-count sensitivity (the magnitude's main knob) not run",
+    "issue": "Section 8 states 'The orbit size and tautomer-count hyperparameters are varied in a sensitivity analysis (Table S4) without changing the qualitative conclusions.' The headline orbit SD is mechanically increasing in max_tautomers/max_members (more enumerated tautomers widen the orbit), so this sensitivity is exactly what determines whether 0.10-0.42x is an artifact of the chosen M=6/max_tautomers=4. No such sweep exists in results, and Table S4 is an empty SI placeholder.",
+    "evidence": "OrbitConfig defaults max_tautomers=4, max_members=8 (standardize.py:218-226); run_method_cell uses test_orbit=6 (invariance.py:70). grep for orbit-size/tautomer sweeps in code/results returns only run-meta and logs, no sweep data; supplementary.md S7 names Table S4 but is unfilled.",
+    "fix": "Run the pre-registered orbit-size and tautomer-count sweep and report how orbit SD scales with M and max_tautomers; if the magnitude grows with orbit size, state the headline number at a fixed, justified orbit definition and show the trend. Otherwise remove the Table S4 claim.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MINOR",
+    "area": "Seed count misstated; weakens the magnitude CIs",
+    "issue": "Section 5 states 'Each configuration is run with five seeds,' and the pre-registration specified R=5 (R=10 for headline SORB/RQ2). The production grid ran only 3 seeds (0,1,2), and Section 7.1 inconsistently says 'three seeds.' Fewer seeds widen the confidence intervals on the magnitude estimates and the robustness of the medians.",
+    "evidence": "grid.py:29-30 seeds=[0,1,2]/method_seeds=[0,1,2]; all result CSVs contain only seeds {0,1,2}. Manuscript line 211 says 'five seeds' while line 294 says 'three seeds'.",
+    "fix": "Correct Section 5 to three seeds for internal consistency, or run the pre-registered five (ten for headline) and update all statistics; report CIs on the per-representation orbit/pipeline SD medians.",
+    "requires_new_experiment": false
+   }
+  ]
+ },
+ {
+  "reviewer": "R7-compute (Computational Cost & Deployment)",
+  "overall_recommendation": "major_revision",
+  "summary": "The diagnostic contribution (standardization-invariance violation is real, representation-dependent, and hidden by aggregate metrics) is sound and worth publishing. But the proposed remedy SORB is not justified on cost/deployment grounds as presented. By the authors' own numbers SORB delivers no accuracy benefit (test-orbit neutral; train-aug significantly worse, p=5e-8) while costing up to 6x inference and 4x training data, and its sole benefit \u2014 reduced per-prediction orbit spread \u2014 is obtainable at 1x cost by the obvious alternative the paper never tests: applying the training canonicalization (including tautomer canonicalization) to inference inputs. The computational analysis is also under-reported and partly inconsistent with the actual runs: SORB was evaluated only on 49/55 datasets (the 6 largest excluded for memory, never disclosed), timing claims are unmeasured, and core-count/runtime figures do not match the authoritative run. A practitioner reading this would reasonably choose \"canonicalize consistently\" over SORB.",
+  "findings": [
+   {
+    "severity": "MAJOR",
+    "area": "Deployment / missing baseline: the cheap alternative that defeats the method",
+    "issue": "The central deployment case for SORB-testorbit is that it makes a prediction '(nearly) independent of the arbitrary standardization of its input' (Sec 7.1). But the obvious, free alternative is never tested: apply the SAME canonicalization used at training (P_rdkit + canonical tautomer) to every inference input. In src/training/invariance.py the 'baseline' config feeds each test molecule's orbit members AS-IS (run_method_cell never re-canonicalizes test inputs), so its measured orbit SD is an artifact of NOT canonicalizing. A deployed model that canonicalizes its inputs maps every orbit member to one form (see canonical_identity() in standardize.py, which collapses tautomer/charge/salt/stereo to a single key) and is therefore EXACTLY invariant at 1x cost, versus SORB's only-approximate invariance at up to 6x inference cost with no accuracy gain. For cross-lab agreement SORB still requires a shared orbit definition and averaging convention, so it does not remove the coordination requirement \u2014 it makes the required convention ~6x more expensive. Without this comparison the reader cannot judge whether SORB is ever worth adopting.",
+    "evidence": "manuscript Sec 7.1 (line 298-301) 'free reliability improvement'; invariance.py run_method_cell uses Xcanon only for baseline/trainaug accuracy and measures baseline invariance via _pipeline_matrix/_orbit_invariance on un-recanonicalized members; metrics.json RQ4 shows testorbit accuracy median improvement -7.45e-5 (p=0.8), i.e. no accuracy upside to offset the 6x cost; canonical_identity() proves a 1x canonical collapse exists.",
+    "fix": "Add a 'canonicalize-at-inference' baseline (apply the full training standardization, including canonical tautomer, to every test input) and report its orbit SD (should be ~0) and accuracy against SORB-testorbit. If canonicalize-at-inference matches SORB on reliability at 1x cost, reframe SORB's niche to the specific case where input standardization cannot be controlled or the canonical form is tool-ambiguous, and state this explicitly in Discussion/Sec 9.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Honest overhead reporting: 'free' conflates no-accuracy-cost with no-compute-cost",
+    "issue": "Sec 7.1 calls test-time orbit averaging 'a free reliability improvement' and Sec 9 calls it 'the cost-effective default', yet Sec 9 itself states it 'multiplies inference cost by the orbit size (at most 6)'. 'Free' is accurate only for accuracy, not for compute: 6x inference latency, throughput, and energy are first-order deployment concerns (batch scoring of large libraries, latency-bound services). No inference-latency, throughput, or energy numbers are given anywhere; there is no cost-benefit quantification backing 'cost-effective'.",
+    "evidence": "manuscript line 298 'free reliability improvement'; lines 344-348 Sec 9 admits '6x' inference but provides no measured latency/throughput; no cost column in any table (tables/table3_method.csv contains only accuracy/invariance).",
+    "fix": "Replace 'free' with 'accuracy-neutral at up to 6x inference cost'. Report measured inference latency/throughput for baseline vs SORB-testorbit on a representative dataset, and state when the 6x is and is not acceptable (e.g., single-compound decision support vs million-compound virtual screening).",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Scope non-disclosure: SORB untested on the largest datasets, where cost and the problem are worst",
+    "issue": "SORB (method + shortcut) ran only on the 49 datasets with <=6000 molecules; the 6 largest (up to cyp2d6_veith, 13,130 mol) were excluded because, per the run_all.py code comment, 'orbit augmentation on very large sets is memory-heavy'. The manuscript never states this: the strings '49' and '6000' do not appear in manuscript_filled.md, and Sec 8 claims the method-level conclusions hold '(iv) across the 55 datasets'. The excluded CYP-inhibition sets are exactly the large, highly-ionizable/tautomerizable datasets where RQ3 predicts the invariance violation is worst AND where 6x inference cost hurts most \u2014 so the method's deployability is unvalidated precisely where it matters, and the overhead/scalability limitation is hidden.",
+    "evidence": "run_all.py lines 183-191 'cap to datasets <= METHOD_MAX_N ... memory-heavy', METHOD_MAX_N=6000; metrics.json RQ5b n_datasets=49; full_run5.log '[E4/E5 method ...] on 49/55 datasets (<= 6000 mol)'; table1_datasets.csv max N=13,130 with 6 datasets >6000; manuscript Sec 8 line 336 '(iv) across the 55 datasets'; grep shows no '49'/'6000' in manuscript.",
+    "fix": "State clearly that SORB was evaluated on 49/55 datasets (<=6000 molecules) and why (memory), and correct Sec 8 to not claim 55. Add this as an explicit Limitation. To actually support deployment claims, run SORB (at least test-orbit averaging, which has no training-memory issue) on the 6 large datasets, or demonstrate a streaming/memory-bounded augmentation implementation.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Unsupported timing claim for orbit construction",
+    "issue": "Sec 9 states 'building orbits for the largest dataset (13,130 molecules) takes under a minute on one core.' There is no timing instrumentation that isolates orbit construction anywhere in src/ (grep for perf_counter/time in src returns nothing; the only time.time() calls in run_all.py report cumulative per-20-job wall time mixed with featurization, inside a parallel Pool, not single-core orbit-only time). The authoritative run that produced metrics.json (full_run5.log) skipped precompute entirely (no '[precompute caches]' line), so no orbit was built in that run, and the 13,130-molecule dataset's orbit is never even used by SORB (it is one of the 6 excluded). The claim is an unverified assertion about a cost the method never actually pays.",
+    "evidence": "manuscript lines 343-345; grep 'perf_counter|elapsed|timeit' in src/ returns nothing; cache.py dataset_orbits has no timing; full_run5.log begins at '[E1/E2 sensitivity grid]' with no precompute stage; dataset excluded per METHOD_MAX_N=6000.",
+    "fix": "Either measure orbit-construction time explicitly (single core, isolated, reported with RDKit/Dimorphite-DL versions) on representative datasets and report the number with its provenance, or remove the specific claim. Do not cite the 13,130-molecule dataset's orbit time when that orbit is not used by the method.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Runtime/hardware figures inconsistent with the actual authoritative run",
+    "issue": "Sec 9 says 'All experiments run on four CPU cores ... the complete study completes in a few hours.' The authoritative run that wrote metrics.json (full_run5.log, timestamped with metrics.json) used nproc=2, and results were in fact accreted across five separate cached runs using 1, 2, 3, and 4 cores. Because caching makes every sensitivity/ablation/method step report '(0s)' in that run, no single cold end-to-end timing of 'a few hours' was ever actually produced; it is an estimate (run_all.py docstring says '~2 h on 4 cores') presented as a measured fact.",
+    "evidence": "grep of logs: full_run.log nproc=4, full_run2 nproc=2, full_run3 nproc=3, full_run4 nproc=1, full_run5 nproc=2; full_run5.log shows every sens/abl/method step '(0s)' (cached), only shortcut takes 558s; run_all.py line 157 default nproc and docstring '~2 h wall on 4 cores'.",
+    "fix": "Report the actual hardware/core count used for the authoritative run and give a measured cold (cache-cleared) end-to-end wall time, or clearly label the runtime as an estimate. Reconcile '4 cores' with the 2-core authoritative run.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Cost-benefit of train-time augmentation not honestly weighed",
+    "issue": "Train-aug costs 4x training data (train_aug=4 in run_method_cell / SORB) yet significantly WORSENS regression accuracy (pooled median improvement -0.013 RMSE, only 32% of cases improved, Wilcoxon p=5.1e-8; for linear+ECFP regression mean -3.29 RMSE, catastrophic). Its only benefit is a 36% reduction in orbit SD \u2014 which, as in Finding 1, is obtainable at 1x via consistent canonicalization. The paper recommends train-aug 'specifically for robust (tree-ensemble) learners' where it is ~neutral, but neutral accuracy at 4x training cost with a reliability gain that a free alternative already provides is not a deployment win, and this trade is never framed as a cost-benefit decision.",
+    "evidence": "metrics.json RQ4 reg_sorb_trainaug median -0.013, frac 0.319, p=5.14e-08; statistics.json linear/ecfp/reg trainaug mean_improvement -3.29 RMSE; trainaug_invariance 36.3% reduction; SORB default train_aug=4 (sorb.py line 35, invariance.py line 70).",
+    "fix": "Present train-aug as a cost (4x data) vs benefit (invariance reduction only, no accuracy gain, possible accuracy loss) decision, and justify the 'adopt for trees' recommendation against the free canonicalize-at-inference alternative rather than only against the as-is baseline.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "'Accuracy-neutral' claim rests on mismatched test sets",
+    "issue": "The headline that test-orbit averaging is 'accuracy-neutral' (justifying its cost by reliability alone) compares baseline accuracy computed on the FULL test set against SORB-testorbit/full accuracy computed on a <=600-molecule random subsample (ACC_CAP=600). For the 6 method datasets with n_test>600 (max 840) the paired comparison is on different test subsets, confounding the very 'no accuracy cost' conclusion that the compute justification depends on.",
+    "evidence": "invariance.py lines 24, 80-81, 97, 104-108: baseline uses predict_scores(..., Xcanon[te]) on full te; sorb_testorbit/sorb_full use est.predict(cap_smi, ...) with cap capped at ACC_CAP=600; method_results.csv: 6/49 datasets have n_test>600 (max 840).",
+    "fix": "Compute all variants' accuracy on the identical (capped) test subset, or raise/remove the cap, and re-report the testorbit accuracy-neutrality (Wilcoxon over datasets) on matched samples.",
+    "requires_new_experiment": false
+   }
+  ]
+ },
+ {
+  "reviewer": "R8-reproducibility",
+  "overall_recommendation": "major_revision",
+  "summary": "The analysis pipeline is genuinely reproducible: analyze.py regenerates results/metrics.json and results/statistics.json bit-for-bit from the committed raw CSVs, tables regenerate identically (git tree stays clean), figures/tables read only from machine-readable result files (no hand-entered numbers), 11 unit tests pass, seeds are set and runs are checkpointed/resumable, and the headline numbers (0.51% aggregate spread, 0.10x orbit SD, 0.032/36%/91% train-aug reduction, -0.0001 test-orbit p=0.8, 0.102 shortcut drop p=5e-10, invariance table 0.084/0.119/0.071/0.425, leakage 82/2832/851) all trace correctly to the result files. However, the manuscript, README, and requirements describe a protocol and environment that were not actually executed: it claims four model families (incl. a Nystrom SVM that was dropped) and five seeds, when the code and committed data used three models and three seeds; the pinned package versions do not match the versions that produced the results; and two results are mis-reported (Section 6.4 contradicts its own table; the shortcut headline pools non-commensurable units). These are fixable, mostly by correcting text to match the executed run, but they currently make the paper non-reproducible as described and internally contradictory.",
+  "findings": [
+   {
+    "severity": "MAJOR",
+    "area": "Protocol vs. executed run (manuscript/README contradict code and data)",
+    "issue": "The manuscript Section 5 states 'four model families: gradient-boosted trees (LightGBM), random forests, an RBF-kernel SVM via Nystrom approximation, and a linear model' and 'Each configuration is run with five seeds'; README says 'the full study uses seeds 0-4'. The code and committed results used only THREE models and THREE seeds. src/training/grid.py: MODELS = ['lgbm','rf','linear']  # svm(Nystroem) dropped: costly, least informative; full-mode seeds=[0,1,2], method_seeds=[0,1,2], shortcut_seeds=[0,1,2]. results/experiment_logs/run_meta_full.json and raw_results.csv confirm models={lgbm,linear,rf}, seeds={0,1,2}; RQ1 n_cells=330 = 55 datasets x 3 models x 2 feats (no SVM). The SVM is described in detail and unit-tested but never appears in any result. The abstract and contributions say '3 model families', directly contradicting Section 5's 'four'. This is also an undisclosed deviation from the pre-registration (research_plan.md: '5 model families', 'R = 5 scaffold resplits (seeds 0-4)', 'R = 10 for the headline SORB and RQ2'); the 2026-11-16 amendment reframes the headline but does not document the model/seed reduction.",
+    "evidence": "A reader cannot reproduce 'four model families, five seeds' from the repo; run_all.py only produces three models and three seeds. The manuscript's stated methods thus do not match the released code or the numbers in metrics.json, and the abstract/Section 5 disagree on the model count.",
+    "fix": "Correct Section 5 to 'three model families' (LightGBM, random forest, linear) and 'three seeds (0-2)'; remove the Nystrom-SVM description or explicitly state it was implemented but dropped from the reported grid; fix README 'seeds 0-4' -> 'seeds 0-2' and the layout note that lists Nystroem-SVM; and add a 'deviations from pre-registration' note. Alternatively, to honor the pre-registration, actually run the 5-seed/4-model grid (new experiment). The text-only correction requires no new experiment.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Environment pinning (requirements.txt / environment.yml do not match run environment)",
+    "issue": "requirements.txt is commented 'Versions pinned to what the study was run with' and pins numpy==2.5.3 and scipy==1.18.1, but the environment that actually produced the results has numpy 2.3.5 and scipy 1.17.1 (verified via importlib.metadata in the container). numpy 2.5.3 does not appear to exist in this environment's package set (the installed 2.x line tops out at 2.3.5), so `pip install -r requirements.txt` would either fail to resolve or install a different version than was used, breaking the determinism claim. environment.yml repeats the mismatched numpy=2.5/scipy=1.18 pins.",
+    "evidence": "Pinned numpy==2.5.3/scipy==1.18.1 vs. actually-used numpy 2.3.5/scipy 1.17.1. A third party following the README cannot recreate the exact environment, undermining 'Determinism: fixed seeds; results cached' and 'environment specifications ... released'.",
+    "fix": "Regenerate requirements.txt and environment.yml from an exact `pip freeze` / `conda env export` of the machine that produced results/*.csv, verify every pin installs cleanly from a clean venv, and (if feasible) confirm run_all.py --mode quick + analyze reproduce the cached cells under those pins.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Results reporting: Section 6.4 contradicts its own Table (tbl:inv)",
+    "issue": "Section 6.4 states the orbit SD 'is smallest for gradient-boosted trees on fingerprints (0.12x of the label SD) and largest for linear models on fingerprints (0.42x...)'. The paper's own Table tbl:inv (and metrics.json RQ5_invariance) show lgbm/desc=0.084 and linear/desc=0.071, both SMALLER than lgbm/ecfp=0.119. So 0.12x is not the smallest value; the minimum is linear-on-descriptors (0.071).",
+    "evidence": "The sentence mis-ranks the four cells against the adjacent table, which a careful reviewer/reader will catch as an internal inconsistency and which weakens the 'representation-dependent' narrative.",
+    "fix": "Reword to e.g. 'smallest for descriptor-based models (~0.07-0.08x) and, among fingerprint models, smallest for gradient-boosted trees (0.12x) and largest for linear models (0.42x)'.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Code/statistics correctness: shortcut headline pools non-commensurable units",
+    "issue": "Section 7.3's headline 'accuracy ... dropping by 0.102 in the primary metric (median over datasets)' is computed in analyze.rq5b_shortcut as pooled.baseline_shortcut_drop.median() over all 49 datasets, i.e. a single median taken across 40 regression RMSE drops AND 9 classification AUROC drops. src/training/shortcut.py computes baseline_shortcut_drop as a raw RMSE difference for regression (not normalized by label SD, unlike the invariance analysis which uses *_rel_sd) and an AUROC difference for classification. Per-task the drops are reg median 0.1128 (RMSE, in each dataset's own label units, unnormalized across datasets with very different label scales) vs clf median 0.0342 (AUROC); the pooled 0.102 is dominated by, and mostly inherits the arbitrary scale of, the regression RMSE values.",
+    "evidence": "A median over mixed RMSE-and-AUROC quantities (and over RMSE values on datasets with incomparable label ranges) is not an interpretable single effect size; '0.102 in the primary metric' conflates units. Contrast the invariance metric, which the authors correctly normalize by label SD.",
+    "fix": "Report the shortcut drop separately for regression and classification, and normalize the regression drop by each dataset's label SD (a dimensionless relative drop) before taking any median, mirroring the orbit_mean_rel_sd convention. The label SDs are available from the dataset loaders, so this is a re-analysis of existing shortcut_results.csv, not a new experiment.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MINOR",
+    "area": "Hardware/runtime claims vs. run metadata",
+    "issue": "Section 9 states 'All experiments run on four CPU cores without a GPU' and README says 'Tested on 4 cores' and 'full study (~2-3 h wall on 4 cores)', but results/experiment_logs/run_meta_full.json records nproc=2 for the actual full run. Parallelism does not affect the (deterministic) numbers, only wall time, but the stated hardware/runtime is inaccurate.",
+    "evidence": "run_meta_full.json: {'mode':'full','nproc':2,...}. The '4 cores / ~2-3 h' figures were not what the committed run used.",
+    "fix": "State the actual core count (2) used for the released run, or note explicitly that core count affects only wall-clock time and not results; adjust the runtime estimate accordingly.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MINOR",
+    "area": "Undisclosed pre-registration deviations (orbit size, headline repeats)",
+    "issue": "research_plan.md pre-registers orbit 'bounded to <= O members, O default 8' and 'R = 10 for the headline SORB and RQ2', whereas the executed run uses OrbitConfig(max_members=6) (manuscript M=6) and three seeds throughout. The manuscript is self-consistent on M=6, but these reductions from the pre-registered plan are not disclosed as deviations.",
+    "evidence": "run_all.py ORBIT_CFG max_members=6 vs pre-reg O=8; three seeds vs pre-reg R=10 headline. Transparent pre-registration is a stated value of the paper (amendment says deviations are 'reported transparently'), so silent changes weaken that claim.",
+    "fix": "Add a brief 'Deviations from pre-registration' paragraph listing the orbit-size (8->6), model-set (5->3 families), and repeat-count (5/10->3 seeds) changes and the rationale (CPU budget).",
+    "requires_new_experiment": false
+   }
+  ]
+ },
+ {
+  "reviewer": "Associate Editor \u2014 writing, structure, figures/tables, references, JCIM scope & author-guideline compliance",
+  "overall_recommendation": "major_revision",
+  "summary": "The core study is in-scope for JCIM, clearly motivated, and the honest-reporting framing (invariance violation hidden by aggregate metrics; SORB as a reliability not accuracy method) is a genuine strength. However, as an editorial package the submission is incomplete and would not clear screening: the Supporting Information is an unpopulated template (literal {{N_DATASETS}} tokens, no actual Tables S1-S4 or Figures S1-S4) even though the main text leans on it for the leakage audit, full results, ablation, and robustness; and the main-text table apparatus is broken (a referenced \"Table 3\" is absent, the only embedded table is never cited, Table 1 is missing). Several claims also over-reach or contradict the paper's own numbers (abstract \"benefits tree-based learners,\" \"smallest for GBT on fingerprints,\" an undisclosed 49/55-dataset restriction, a model family with no reported results, inconsistent seed counts). None of the fixes require new experiments except, optionally, reporting the already-named SVM model.",
+  "findings": [
+   {
+    "severity": "FATAL",
+    "area": "Supporting Information / editorial screening",
+    "issue": "The Supporting Information (Target_Journal_Submission/supplementary/supplementary.md) is a 39-line unpopulated skeleton: it contains a literal unresolved placeholder ({{N_DATASETS}}) and only prose descriptions of what Tables S1-S4 and Figures S1-S4 'will' contain \u2014 no actual tables, numbers, or figures. Yet the main text depends on the SI for load-bearing content: the data-integrity/leakage audit (Table S1, Sections 5 & 6.1), full sensitivity results (Table S2, Section 6.2), the operation ablation (Table S3, Section 6.5), the orbit-size sensitivity (Table S4, Section 8), and Figures S1-S4 (Section 8 robustness, incl. the Friedman-Nemenyi analysis cited as supporting the method conclusions). A submission whose SI is an empty template would be returned at JCIM editorial screening without review.",
+    "evidence": "supplementary.md line 6 reads 'Table S1 lists all {{N_DATASETS}} datasets' with the template token never filled; the file has zero embedded result tables or figures. Main text makes 6 Table S# references and 4 Figure S# references that resolve to nothing.",
+    "fix": "Populate the SI from the existing machine-readable result files (tables/rq1_sensitivity.csv, rq3_ablation.csv, table1_datasets.*, rq4/rq5 CSVs, and the Friedman-Nemenyi/random-split outputs), fill {{N_DATASETS}}, and embed the actual Tables S1-S4 and Figures S1-S4 before submission.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Main-text tables / numbering",
+    "issue": "The main-body table apparatus is incoherent. Section 7.1 and 7.2 both reference 'Table 3' (the SORB results table) as a main table, but no Table 3 is embedded in the manuscript body \u2014 only table3_method.* exist as external files. The only table actually in the body (the invariance table captioned with {#tbl:inv}) is never referenced by number in the prose (no 'Table 1' or 'Table 2' appears anywhere), so under pandoc auto-numbering it becomes 'Table 1' while the cited 'Table 3' is a dangling reference. The datasets table (table1_datasets.*) is likewise neither embedded nor cited.",
+    "evidence": "grep of manuscript_filled.md: table references are only 'Table S1/S2/S3/S4' and 'Table 3' (lines 294, 317); 'Table 1', 'Table 2', and any cite of {#tbl:inv} return NONE. Only one inline table exists (line 267).",
+    "fix": "Embed and number all main tables consistently: Table 1 = datasets (cite in Section 5), Table 2 = invariance-by-representation (cite tbl:inv in Section 6.4), Table 3 = SORB accuracy results (embed a condensed version from table3_method and cite in Section 7.1/7.2).",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Transparency / undisclosed sample restriction",
+    "issue": "All method, invariance, and shortcut results (RQ4, RQ5, RQ5b) were run on a 49-dataset subset (40 regression + 9 classification; molecules <=6000), but this restriction is disclosed nowhere in the manuscript \u2014 'subset', '6000', and the 49-count never appear. Worse, Section 8 claims the invariance violation and SORB's effect are consistent '(iv) across the 55 datasets', which is inaccurate since SORB never ran on all 55 (13 clf datasets exist but only 9 were used; 42 reg but only 40).",
+    "evidence": "metrics.json: reg SORB n=160 (=40 datasets x 4 model-feat), clf n=36 (=9 x 4); RQ5_invariance n_datasets=49; RQ5b n_datasets=49. Task spec confirms method/shortcut experiments ran on 'the 49 datasets <=6000 molecules.' Manuscript Section 8 line 336 says 'across the 55 datasets.'",
+    "fix": "State the <=6000-molecule filter in Section 5, list which datasets were excluded and why, and correct Section 8 to say the SORB/invariance results cover the 49-dataset subset (aggregate RQ1 covers all 55).",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Model zoo / unreported experiment",
+    "issue": "Section 5 lists 'four model families: gradient-boosted trees (LightGBM), random forests, an RBF-kernel SVM via Nystrom approximation, and a linear model', and Section 11 Limitations also invokes 'kernel approximations' as part of the evaluated zoo. But no SVM/Nystrom result appears anywhere, and RQ1 n_cells=330 = 55 datasets x 3 models x 2 featurizations confirms only lgbm/rf/linear were run. Meanwhile the abstract, introduction, and conclusion all say '3 model families'. The manuscript claims a model family it never reports.",
+    "evidence": "rq1_sensitivity.csv unique models = {lgbm, rf, linear}; metrics.json RQ1 n_cells=330 (=55x3x2); 'svm'/'Nystrom' appear only in the Section 5 model list and Section 9's 'kernel approximations'. Abstract/intro/conclusion say '3 model families' (lines 19, 71, 381).",
+    "fix": "Either report the SVM/Nystrom results (if run) or delete SVM from Section 5 and the 'kernel approximations' phrase from Section 9, reconciling the zoo to the 3 models actually reported.",
+    "requires_new_experiment": true
+   },
+   {
+    "severity": "MAJOR",
+    "area": "Abstract / overclaiming vs. data",
+    "issue": "The abstract states training augmentation 'teaches invariance and benefits robust (tree-based) learners', and Section 7.2 calls its accuracy effect 'roughly accuracy-neutral' for the gradient-boosted-tree learner. The data show train-aug significantly *worsens* LightGBM regression accuracy, not benefits/neutral: ecfp regression median improvement -0.015 RMSE, Wilcoxon p=5.8e-6, Cohen dz=-0.39, 95% CI entirely on the worse side; desc regression p=0.02, dz=-0.21. Its only non-negative effects for lgbm are on classification and are non-significant.",
+    "evidence": "statistics.json RQ4_method_table: lgbm/ecfp/reg/sorb_trainaug mean -0.076, median -0.015, wilcoxon_p 5.8e-6, ci_lo -0.141, ci_hi -0.026; lgbm/desc/reg median -0.010, p=0.020. metrics.json reg_sorb_trainaug pooled median -0.013, frac_improved 0.32, p=5e-8.",
+    "fix": "Reframe train-aug's benefit strictly as invariance reduction, and state plainly that it carries a small but statistically significant accuracy cost even for tree learners on regression. Change the abstract wording from 'benefits robust (tree-based) learners' accordingly.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Results text contradicts own table",
+    "issue": "Section 6.4 states the invariance violation 'is smallest for gradient-boosted trees on fingerprints (0.12x of the label SD)', but the paper's own Table 2 shows two combinations are smaller: linear+descriptors (0.071) and lgbm+descriptors (0.084), both below lgbm+ecfp (0.119). The genuinely smallest is linear+descriptors.",
+    "evidence": "table2_invariance.md / tbl:inv: lgbm-desc 0.084, lgbm-ecfp 0.119, linear-desc 0.071, linear-ecfp 0.425. metrics.json RQ5_invariance matches.",
+    "fix": "Correct Section 6.4 to state the violation is smallest for descriptor featurizations (linear+desc 0.071) and largest for fingerprint+linear (0.425), i.e., driven by featurization more than model class.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Figure cross-references",
+    "issue": "Section 6.2 (the aggregate-metric result) cites 'Figure 2a', but Figure 2 by definition order is the invariance-by-representation figure (fig:inv), which is a single panel with no (a)/(b). The aggregate-vs-orbit contrast that actually has panels (a)/(b) is the silent-contrast figure (fig:silent), which is the third figure (Figure 3). The manuscript hard-codes 'Figure N' numbers in prose instead of using its own {#fig:...} labels, so references are not auto-synced and at least this one points to the wrong figure.",
+    "evidence": "Figure definition order in manuscript_filled.md: fig:concept(1), fig:inv(2), fig:silent(3), fig:abl(4), fig:method(5). Section 6.2 line 241 '(Figure 2a; Table S2)' describes aggregate-metric mildness, which is fig:silent panel (a) = Figure 3a.",
+    "fix": "Replace hard-coded figure numbers with pandoc-crossref references ([@fig:silent] etc.) throughout, or at minimum correct 'Figure 2a' to 'Figure 3a'.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Methods internal consistency (seeds)",
+    "issue": "Section 5 (Statistics) states 'Each configuration is run with five seeds', but Section 7.1 reports the SORB experiments with 'three seeds'. The blanket 'five seeds' claim is contradicted for the headline method results.",
+    "evidence": "manuscript_filled.md line 211 'Each configuration is run with five seeds'; line 294 'Table 3 and Figure 5 summarize SORB across datasets (three seeds; ...)'. Research plan specified R=5 for the grid and R=10 for headline SORB, so the realized 3-seed SORB run matches neither.",
+    "fix": "Replace the blanket statement with per-experiment seed counts (e.g., sensitivity/ablation grid = 5 seeds; SORB = 3 seeds) and note the deviation from the pre-registered R=10 for SORB.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MODERATE",
+    "area": "Data and Software Availability (JCIM guideline compliance)",
+    "issue": "Open code and a reporting protocol are headline contributions (C4/C5), but the availability statement gives only a placeholder repository URL ('to be inserted on acceptance'), so reviewers cannot access or verify the implementation during review, and no package versions are pinned in the statement itself (only an RDKit version note lives in the bib). JCIM expects software underpinning the claims to be available to reviewers and reproducibility details to be stated.",
+    "evidence": "manuscript_filled.md lines 387-394: 'released under the MIT License at [repository URL \u2014 to be inserted on acceptance]'; no sklearn/LightGBM/Dimorphite-DL version numbers in the statement.",
+    "fix": "Provide an anonymized code repository accessible to reviewers and list exact versions (RDKit 2026.09, Dimorphite-DL, scikit-learn, LightGBM) in the Data and Software Availability statement.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MINOR",
+    "area": "Unsupported adjective / overclaiming",
+    "issue": "Section 7.1 calls test-time orbit averaging 'a free reliability improvement', but it is not free: Section 9 states it multiplies inference cost by the orbit size (up to 6x).",
+    "evidence": "Section 7.1 line ~300 'a free reliability improvement'; Section 9 line ~346 'Test-time averaging multiplies inference cost by the orbit size (at most 6)'.",
+    "fix": "Replace 'free' with 'low-cost' or 'inference-only (no retraining)', consistent with the up-to-6x inference overhead reported in Section 9.",
+    "requires_new_experiment": false
+   },
+   {
+    "severity": "MINOR",
+    "area": "Imprecise reporting (unit of analysis)",
+    "issue": "Section 6.3 says 'on 5% of datasets the identity of the best model changes', but the ranking analysis unit is a model leaderboard per dataset-featurization (n=110 = 55 datasets x 2 featurizations), not 55 datasets. Calling the 110 leaderboards 'datasets' is imprecise.",
+    "evidence": "metrics.json RQ2_ranking n_datasets=110, frac_top_model_changes=0.0545; 55 datasets x 2 featurizations = 110.",
+    "fix": "State the unit explicitly, e.g., 'on 5% of dataset-featurization leaderboards the top-model identity changes'.",
+    "requires_new_experiment": false
+   }
+  ]
+ },
+ {
+  "reviewer": "R10-hostile (competing researcher / final adversarial)",
+  "overall_recommendation": "reject",
+  "summary": "The core thesis \u2014 \"aggregate metrics robust, per-prediction not, therefore use SORB\" \u2014 survives the shallow \"it's just ensemble averaging\" objection (the per-prediction orbit SD is genuine model sensitivity to different fingerprints, not an averaging artifact). But the paper collapses under a deeper attack: the entire \"violation\" is manufactured by comparing against a strawman baseline (P_rdkit) that deliberately omits tautomer canonicalization \u2014 the very operation RQ3 identifies as dominant \u2014 while the authors already implement deterministic canonical-tautomer standardization in canonical_identity() and use it for deduplication. A canonical-tautomer-once pipeline collapses the orbit to a single point, yielding EXACT invariance at 1x inference cost, dominating SORB-testorbit (approximate invariance, 6x cost) on every axis; this essential baseline is never run, so the paper's claim that invariance requires SORB is unsupported, and the work reduces to \"preprocessing matters, use a consistent canonical pipeline.\" Compounding this are verifiable integrity defects: the manuscript claims \"five seeds\" and \"four model families including an RBF-kernel SVM,\" but every result file contains only three seeds (0,1,2) and three models (lgbm/linear/rf) with no SVM anywhere; the testorbit reliability benefit is asserted but never measured; and the \"benefits tree learners / accuracy-neutral\" claim is contradicted by the authors' own significance tests.",
+  "findings": [
+   {
+    "severity": "FATAL",
+    "category": "missing-essential-baseline",
+    "area": "Core contribution / Method necessity (Sec 4, 6.4, 7.1)",
+    "issue": "The central claim that standardization-invariance 'requires' SORB is established only against a baseline (P_rdkit = largest-fragment + neutralize) that OMITS tautomer canonicalization, which RQ3 (metrics.json RQ3_ablation: +tautomer is the only non-zero operation, 0.006) identifies as the dominant driver of the orbit spread. The authors already implement a deterministic canonical-tautomer standardizer (standardize.py op_canonical_tautomer, used in canonical_identity() for dedup), which collapses the orbit's tautomer axis to a single point. A 'canonical-tautomer-once' pipeline (applied identically to train and test) therefore yields EXACT invariance to input presentation at 1x inference cost with no new convention, strictly dominating SORB-testorbit (approximate, order-truncated, 6x cost). This obvious, cheaper, exactly-invariant baseline is never evaluated, so the paper's core premise ('the silent confounder requires a remedy') and the recommendation of test-time orbit averaging as 'the safe universal default' are unsupported. The work reduces to the known advice 'use a consistent canonical pipeline.'",
+    "evidence": "run_method_cell (invariance.py L78,96): baseline trained on features(...,'P_rdkit',...), i.e. no tautomer canonicalization. NAMED_PIPELINES['P_rdkit'] has canonical_tautomer=False (standardize.py L179). canonical_identity() (L200-214) DOES apply op_canonical_tautomer, proving the authors have an orbit-collapsing canonicalizer in hand but chose a baseline that omits it. RQ3 shows tautomer is the sole material operation. No experiment trains+tests a canonical-tautomer model and measures its residual orbit SD (which would be ~0 on the dominant axis).",
+    "fix": "Add a canonical-tautomer-once baseline (P_taut-style: fix tautomer + one protonation + one aromaticity model, applied to train and test) and report its per-prediction orbit SD and accuracy against SORB-testorbit. SORB can only be a contribution if it beats this baseline on reliability-at-equal-cost or on accuracy; otherwise reframe the paper as a reporting-protocol/diagnosis paper and drop the SORB-necessity claims.",
+    "requires_new_experiment": true,
+    "verdict": "CONFIRMED",
+    "short_summary": "No canonical-tautomer baseline; it would give exact invariance at 1x cost",
+    "failure_scenario": "A reviewer/competitor runs canonical-tautomer-once standardization on train+test: orbit SD on the dominant tautomer axis -> ~0 at 1x inference cost, matching or beating SORB-testorbit's approximate invariance at 6x cost, nullifying the method's reason to exist."
+   },
+   {
+    "severity": "MAJOR",
+    "category": "unsupported-methodology-claim",
+    "area": "Experimental Setup (Sec 5, L185-187) vs result files",
+    "issue": "Section 5 states the study uses 'four model families: gradient-boosted trees (LightGBM), random forests, an RBF-kernel SVM via Nystr\u00f6m approximation, and a linear model.' No SVM appears in ANY result file (raw_results/ablation/method/shortcut models = {lgbm, linear, rf} only). The pre-registration also listed SVM and a tiny MLP consistency variant. Separately, the Abstract/Contributions/Conclusion say '3 model families,' internally contradicting Section 5's 'four.' This is a methodology claim (an RBF-kernel SVM) for which no evidence exists in the released results.",
+    "evidence": "grep of manuscript L19/71/381 ('3 model families') vs L185-186 ('four model families ... RBF-kernel SVM via Nystrom'). CSV scan: raw_results/ablation_results models={lgbm,linear,rf}; method_results/shortcut_results models={lgbm,linear}. 'SVM'/'Nystrom' appears nowhere in results. MLP consistency variant (claimed in Sec 4.2/SI) likewise absent.",
+    "fix": "Either run the SVM (and MLP) and include results, or delete every claim of an SVM/MLP model family and reconcile the model-family count throughout (it is 3: lgbm, linear, rf). State explicitly which models were actually run for each RQ.",
+    "requires_new_experiment": true,
+    "verdict": "CONFIRMED",
+    "short_summary": "Claimed RBF-SVM model family absent from all results; 3-vs-4 count conflict",
+    "failure_scenario": "An editor checks the repo for the SVM results promised in Section 5, finds none, and concludes the methods section describes experiments that were not performed."
+   },
+   {
+    "severity": "MAJOR",
+    "category": "misreported-replication",
+    "area": "Statistics / reproducibility (Sec 5, L211)",
+    "issue": "Section 5 states 'Each configuration is run with five seeds,' and the pre-registration specified R=5 for the grid and R=10 for the headline SORB/RQ2 comparisons. Every result file contains only seeds {0,1,2} = three seeds. The SORB section (L294) quietly says 'three seeds' while Section 5 says 'five' \u2014 an internal contradiction and an undisclosed, unexplained deviation from both the stated methods and the pre-registration that reduces statistical power on the headline null results.",
+    "evidence": "CSV seed scan: raw_results/method_results/shortcut_results/ablation_results all = {'0','1','2'}. Manuscript L211 'five seeds' vs L294 'three seeds'. research_plan.md L120-121: 'R = 5 scaffold resplits ... R = 10 for the headline SORB and RQ2 comparisons.' The pre-registration amendment does not mention reducing seeds.",
+    "fix": "Correct Section 5 to the true seed count, run the pre-registered seed counts (5 grid / 10 headline) or explicitly justify the reduction as a disclosed deviation, and re-derive all p-values/CIs. Note that under-seeding directly weakens the non-significant 'accuracy-neutral' claims (see next finding).",
+    "requires_new_experiment": true,
+    "verdict": "CONFIRMED",
+    "short_summary": "'Five seeds' claimed and R=10 pre-registered, but only 3 seeds were run",
+    "failure_scenario": "A replicator following the pre-registration runs 5/10 seeds, obtains different CIs/p-values, and the 'accuracy-neutral' null (currently p=0.8 at 3 seeds) changes, because the paper's power was overstated."
+   },
+   {
+    "severity": "MAJOR",
+    "category": "contradicted-by-own-data",
+    "area": "SORB error analysis (Sec 7.1-7.2, L300-318)",
+    "issue": "The paper claims training augmentation 'benefits robust (tree-based) learners' and that 'for the gradient-boosted-tree learner it is roughly accuracy-neutral.' The authors' own per-cell statistics show lgbm training augmentation SIGNIFICANTLY WORSENS regression RMSE on both featurizations: lgbm/ecfp/reg median -0.0148, p=5.8e-6, improved on only 22.5% of datasets; lgbm/desc/reg median -0.0101, p=0.02, improved on 35%. Pooled regression trainaug is significantly worse (metrics.json reg_sorb_trainaug median -0.013, p=5.1e-8, 32% improved). Trainaug is positive only on classification and only non-significantly. The 'benefits tree learners / accuracy-neutral for GBDT' framing is directly contradicted by the significance tests.",
+    "evidence": "statistics.json: lgbm/ecfp/reg/sorb_trainaug median_improvement -0.01483, wilcoxon_p 5.8e-6, frac_improved 0.225; lgbm/desc/reg/sorb_trainaug median -0.01006, p=0.0200, frac 0.35. metrics.json RQ4_method_pooled.reg_sorb_trainaug: median -0.013, p=5.1e-8, frac_improved 0.319.",
+    "fix": "Rewrite Sec 7.1-7.2 to state that trainaug significantly degrades tree-learner regression accuracy (not neutral), and restrict any accuracy-positive claim to the specific (classification, non-significant) cells. Do not describe a significantly-worse result (p=5.8e-6) as 'roughly accuracy-neutral.'",
+    "requires_new_experiment": false,
+    "verdict": "CONFIRMED",
+    "short_summary": "Trainaug significantly worsens lgbm RMSE, not 'accuracy-neutral' as claimed",
+    "failure_scenario": "A reader cross-references Table 3 / statistics.json and finds the GBDT trainaug RMSE change is significantly negative (p=5.8e-6), directly contradicting the sentence calling it 'roughly accuracy-neutral.'"
+   },
+   {
+    "severity": "MAJOR",
+    "category": "invalid-null-acceptance",
+    "area": "Test-orbit 'free reliability' claim (Sec 7.1, L298-300)",
+    "issue": "'Accuracy-neutral,' 'no significant accuracy cost,' and 'a free reliability improvement' are all inferred from NON-significant Wilcoxon tests (reg testorbit p=0.8, clf p=0.90). Failing to reject the null is not evidence of equivalence; no equivalence test (e.g., TOST) or negligibility margin is specified. The per-cell CIs are wide and include non-negligible accuracy harm: lgbm/ecfp/reg/testorbit RMSE-change CI = [-0.0077, +0.1446] and lgbm/desc/reg/testorbit CI upper = +0.1029 \u2014 i.e., up to ~0.14 RMSE degradation is consistent with the data. 'Accuracy-neutral' is therefore unestablished.",
+    "evidence": "statistics.json: lgbm/ecfp/reg/sorb_testorbit ci_lo -0.0077, ci_hi 0.1446; lgbm/desc/reg/sorb_testorbit ci_hi 0.1029; linear/ecfp/reg/sorb_testorbit mean +0.315, ci_hi 0.629. metrics.json reg_sorb_testorbit p=0.805. Manuscript L298-300 asserts neutrality from p=0.8.",
+    "fix": "Replace null-acceptance language with a formal equivalence test against a pre-stated negligibility margin (e.g., fraction of label SD), and report that for several model/featurization cells the CI admits meaningful accuracy loss. More seeds (see seed finding) will tighten these CIs.",
+    "requires_new_experiment": false,
+    "verdict": "CONFIRMED",
+    "short_summary": "'Accuracy-neutral' claimed from p>0.05 with CIs admitting +0.14 RMSE harm",
+    "failure_scenario": "A statistician notes the testorbit RMSE CI reaches +0.14 and that no equivalence test was run, so 'free reliability improvement' is an unjustified acceptance of the null."
+   },
+   {
+    "severity": "MAJOR",
+    "category": "asserted-not-measured",
+    "area": "Test-orbit 'enforces invariance' (Abstract; Sec 4.2; Sec 7.1)",
+    "issue": "The reliability benefit of SORB-testorbit \u2014 the paper's recommended universal default \u2014 is asserted 'by construction' but never measured: in run_method_cell the invariance metrics (_pipeline_matrix/_orbit_invariance) are computed only for the baseline and trainaug rows; for sorb_testorbit and sorb_full, base_row is called with inv_model=None, so no orbit SD is recorded for the averaged predictor. Worse, the construction does not actually guarantee the claimed invariance 'to which member was presented': standardization_orbit() is seeded by the presented SMILES (member[0] = P_rdkit(smiles), which does NOT canonicalize tautomers), and the member list is truncated to max_members in insertion order, so two chemically-equivalent input tautomers generate different (order-truncated) orbits and therefore different averages. The abstract's 'makes the output independent of which member was presented' is false as implemented (true only in the unrealized 'complete orbit' limit).",
+    "evidence": "invariance.py L104-108: for ('sorb_testorbit', base) and ('sorb_full', ...), base_row(method, _acc(...), None) -> inv_model=None, so orbit SD never computed for averaged variants. standardize.py L233 base=P_rdkit.apply(smiles) (no canonical_tautomer), L269 members[:cfg.max_members] (order-dependent truncation). No experiment presents the same molecule as different input forms and checks that the testorbit average is invariant.",
+    "fix": "Directly measure cross-presentation invariance of SORB-testorbit: for each test molecule, generate the orbit from several different starting members, average each, and report the residual SD of the averaged prediction (should be ~0 if the claim holds). Fix the orbit construction to be canonicalization-seeded (start from the canonical-tautomer identity, not P_rdkit) so the orbit is genuinely input-independent, or soften the 'enforces invariance' claim to 'reduces, but does not eliminate, presentation dependence.'",
+    "requires_new_experiment": true,
+    "verdict": "CONFIRMED",
+    "short_summary": "Testorbit invariance never measured; input-seeded orbit is not presentation-invariant",
+    "failure_scenario": "Feeding the same molecule as two valid tautomers produces two different order-truncated orbits and two different averaged predictions, falsifying 'independent of which member was presented,' and the paper has no measurement to the contrary."
+   },
+   {
+    "severity": "MAJOR",
+    "category": "overstated-materiality",
+    "area": "Headline effect size (Abstract; Sec 6.4)",
+    "issue": "The alarming headline figure (orbit SD up to 0.42x label SD) is for linear-on-ECFP \u2014 a high-variance model essentially nobody deploys for production QSAR, which the paper itself calls the most unstable learner. For the recommended/most-used model (LightGBM) the orbit SD is 0.084x (desc) to 0.119x (ecfp) of the label SD, which the paper concedes is 'comparable to a fraction of experimental assay noise' (~0.3-0.5 log units for potency). The 'material irreproducibility' narrative is driven by a strawman worst case; for the models practitioners actually use, the effect is at or below assay noise, undercutting the urgency.",
+    "evidence": "metrics.json RQ5_invariance: lgbm/desc 0.0843, lgbm/ecfp 0.1191, linear/desc 0.0715, linear/ecfp 0.4247. Manuscript L257-265 concedes 'comparable to a fraction of experimental assay noise.' The 0.42x worst case is linear/ecfp only.",
+    "fix": "Lead with the effect for deployed models (trees), state explicitly that the 0.42x case is a high-variance linear model not used in practice, and quantify the orbit SD against measured assay reproducibility per endpoint so readers can judge materiality. Temper 'material irreproducibility' accordingly.",
+    "requires_new_experiment": false,
+    "verdict": "CONFIRMED",
+    "short_summary": "Headline 0.42x is a non-deployed model; deployed-model effect is below assay noise",
+    "failure_scenario": "A practitioner using LightGBM sees orbit SD ~0.1x label SD < assay noise and concludes the reported problem does not materially affect real pipelines, i.e., the motivation is inflated."
+   },
+   {
+    "severity": "MODERATE",
+    "category": "circular-validation",
+    "area": "Semi-synthetic shortcut experiment (Sec 7.3; shortcut.py)",
+    "issue": "The 'controlled validation' is near-tautological: the standardization shortcut is INJECTED by construction (shortcut.py _present() picks orbit member by the true label), so a model that averages over the orbit (destroying the injected correlation) cannot exploit it 'by construction' \u2014 SORB wins because the experiment is built so it must. It provides no evidence that naturally-occurring standardization leaks into real labels. Moreover the framing 'accuracy collapses when the shortcut is removed' overstates: the counterfactual baseline is only 0.016 worse than the honest model (median baseline_cf_vs_honest=0.016), i.e., removing the injected leak returns the model to ~honest performance; the 0.102 'drop' is measured against the artificially inflated biased number, not against honest accuracy.",
+    "evidence": "shortcut.py L33-42 _present() selects member by hi_mask (true label). metrics.json RQ5b: median_baseline_shortcut_drop 0.1022 (biased->cf) but median_baseline_cf_vs_honest only 0.0164 (cf vs honest). So counterfactual accuracy ~ honest; the 'collapse' is loss of inflated accuracy, not degradation below honest.",
+    "fix": "Either (a) demonstrate NATURAL standardization-label leakage in real benchmarks (e.g., whether provider standardization state correlates with labels), which would be a genuine finding, or (b) downgrade Sec 7.3 to an illustrative sanity check and remove 'confirms that standard models exploit standardization as a shortcut,' clarifying that the shortcut is injected and that counterfactual accuracy returns to honest baseline.",
+    "requires_new_experiment": true,
+    "verdict": "CONFIRMED",
+    "short_summary": "Shortcut is injected so SORB resists by construction; 'collapse' is only vs inflated number",
+    "failure_scenario": "A reviewer notes the counterfactual model is only 0.016 worse than honest, so nothing 'collapses'; the experiment merely shows injected leakage helps when present and is removed when you destroy it \u2014 a tautology, not evidence of real-world shortcut exploitation."
+   },
+   {
+    "severity": "MODERATE",
+    "category": "scope-misstatement",
+    "area": "Robustness/Generalization (Sec 8, L336; Sec 7)",
+    "issue": "SORB and the shortcut experiments ran on 49 datasets (<=6000 molecules) and only 2 models (lgbm, linear), but Section 8 claims the findings are consistent '(iv) across the 55 datasets,' and the headline invariance table (Tbl inv) reports only lgbm and linear, omitting random forests (the other 'tree ensemble') despite the paper's repeated 'tree ensembles are least sensitive' messaging resting on trees. The method-section 'across datasets' statements never disclose n=49 or the 2-model restriction.",
+    "evidence": "method_results/shortcut_results: n_datasets=49, models={lgbm,linear}. Manuscript L336 'across the 55 datasets' (SORB). RQ5_invariance table (metrics.json) has only lgbm/linear x desc/ecfp; rf absent though raw_results includes rf. Sec 7.1 'across datasets (three seeds)' gives no n.",
+    "fix": "State the SORB/shortcut evaluation scope explicitly (49 datasets <=6000 mols; models lgbm and linear only), correct 'across the 55 datasets' in Sec 8, and either add RF to the SORB/invariance evaluation or stop citing RF robustness in method claims.",
+    "requires_new_experiment": false,
+    "verdict": "CONFIRMED",
+    "short_summary": "SORB ran on 49 datasets / 2 models but text says '55 datasets'; RF omitted",
+    "failure_scenario": "A reader counts datasets in the released SORB results (49), finds no RF and no SVM, and the Section 8 generalization claim ('across the 55 datasets') is demonstrably false."
+   },
+   {
+    "severity": "MODERATE",
+    "category": "non-comparable-quantities",
+    "area": "The 'silent confounder' framing (Sec 6.2 vs 6.4)",
+    "issue": "The rhetorical contrast 'aggregate robust, per-prediction not' compares two quantities that cannot reflect each other by construction: the aggregate metric is computed with every molecule in ONE internally-consistent pipeline (so per-molecule shifts cancel across the test set), while the orbit SD deliberately varies each molecule across its orbit. The aggregate metric is 'blind' to orbit variance tautologically, because orbit members are never fed into the aggregate. The scenario that would actually move the aggregate \u2014 each test molecule presented as an independently/randomly drawn orbit member (a lab that standardizes inconsistently per-compound) \u2014 is not directly tested; the reported pipeline SD (0.004-0.029 relative) stays tiny only because each pipeline is internally consistent, so it does not probe the per-molecule-random case.",
+    "evidence": "invariance.py _pipeline_matrix presents whole-dataset pipelines (consistent per pipeline); _inv_stats/_orbit_invariance present per-molecule orbits. No configuration evaluates aggregate accuracy under per-molecule random orbit draws. metrics.json RQ1 pipe SD 0.004-0.0286 (consistent pipelines) vs orbit SD 0.07-0.42.",
+    "fix": "Add an aggregate-under-random-per-molecule-standardization experiment to show whether/when inconsistent per-compound standardization degrades aggregate metrics; otherwise temper the 'aggregate metrics hide it' claim to acknowledge it is a definitional consequence of measuring aggregate under one consistent pipeline.",
+    "requires_new_experiment": true,
+    "verdict": "PLAUSIBLE",
+    "short_summary": "Aggregate vs orbit-SD contrast compares non-comparable quantities; key case untested",
+    "failure_scenario": "A critic points out that aggregate metrics cannot reflect orbit variance when orbit members are never presented in aggregate evaluation, so 'the aggregate hides it' is true by definition, not a discovered confounder."
+   },
+   {
+    "severity": "MINOR",
+    "category": "internal-inconsistency",
+    "area": "Abstract/Table consistency",
+    "issue": "Model-family count is stated as both '3' (Abstract L19, Contributions L71, Conclusion L381) and 'four' (Sec 5 L185); and headline invariance numbers appear as '0.10x median' (text) vs table values that round differently (0.084-0.119 for trees, 0.425 for linear/ecfp). The abstract's '3 model families' happens to match the 3 models actually run, which further exposes the Section-5 'four (incl. SVM)' claim as spurious.",
+    "evidence": "Manuscript L19/71/381 '3 model families' vs L185 'four model families.' Table inv values 0.084/0.119/0.071/0.425 vs abstract 'up to 0.42x' and 'median 0.10x.'",
+    "fix": "Reconcile the model-family count to the true value (3: lgbm, linear, rf) throughout, and ensure every quoted statistic matches the result files exactly.",
+    "requires_new_experiment": false,
+    "verdict": "CONFIRMED",
+    "short_summary": "Model-family count stated as both 3 and 4 in the same paper",
+    "failure_scenario": "A copy-editor or reviewer flags the 3-vs-4 contradiction and, on checking, discovers the 'four' version includes a model (SVM) absent from all results."
+   }
+  ]
+ }
+]
