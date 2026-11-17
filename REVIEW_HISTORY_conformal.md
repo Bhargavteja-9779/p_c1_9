@@ -66,3 +66,32 @@ labeling/consistency errors.
   breakdown + foreground per-dataset win-rate over raw p-value.
 
 ## Round-2 plan: after revision, a lighter verification re-review (focus: did the fixes land, any new overclaim).
+
+## Round 2 (verification panel, 3 reviewers) + honest reframe
+Reviewers: consistency (clean — all R1 fixes landed, every number traces, 4 cosmetic nits fixed),
+novelty/honesty, and fresh-adversarial. The latter two converged on two legitimate, serious issues that
+were FIXED honestly:
+
+1. [BLOCKING] Abstract/Contribution-#3 claimed Mondrian-AD "improves coverage on an independent scaffold
+   partition it was not calibrated on" — contradicted by our own SI S4c (scaffold-conditional gap p=0.14,
+   null on the primary split; significant only on the random split). REMOVED the claim entirely.
+
+2. [MAJOR] The distance-normalized baseline (Papadopoulos 2011, prior art) is competitive-to-BETTER than
+   our Mondrian-AD on our own data: far-cov 0.892 vs 0.901 (indistinguishable under Nemenyi CD 1.18),
+   cond_gap 0.099 vs 0.106 (MORE uniform), rel_width 2.98 vs 3.19 (TIGHTER), 100% vs 95% win rate. Our
+   "distance-normalized helps but less uniformly / Mondrian helps most" claim was FALSE. REFRAMED the
+   entire paper honestly: the contribution is the benchmark + isolation of the conditioning AXIS (only
+   distance-to-training conditioning helps; learned-difficulty and scaffold do not) + recommendation; the
+   three AD-conditional methods (distance-normalized, smoothed-AD, Mondrian-AD) are statistically
+   indistinguishable and we explicitly do NOT claim our wrapper beats the existing baseline. Title changed
+   from "...and an AD-Conditional Fix" to "...and the Case for AD-Conditional Calibration". Abstract,
+   contributions, Related Work, 6.3, Section 7, Section 8, Discussion, Conclusion all reframed.
+
+Also fixed: far-width "doubles" (mean, outlier-skewed) -> report median +~30%; added distance-normalized
+to the Section 8 / SI S7 width-as-signal analysis (re-ran run_profile with knn_normalized); added Lei
+et al. 2018 citation; aligned REJECTION_RISK wording (no "guaranteed/working method" overclaim).
+
+Honest standing: this is now a benchmark + axis-isolation + practical-recommendation paper, not a
+novel-superior-method paper. That is the honest reading of the data. It is a legitimate JCIM contribution
+but carries residual novelty risk; the alternative (claiming superiority) is precluded by the data and by
+the project's no-fabrication rule.

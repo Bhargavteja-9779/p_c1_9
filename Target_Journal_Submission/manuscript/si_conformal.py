@@ -227,7 +227,7 @@ def main():
                    "rate (scaffold split, lgbm+ECFP, seed 0, mean over datasets).\n\n")
         sd = pd.read_csv(selp)
         rows = []
-        for mth in ["marginal", "smoothed_ad", "mondrian_ad"]:
+        for mth in ["marginal", "knn_normalized", "smoothed_ad", "mondrian_ad"]:
             g = sd[sd.method == mth]
             if not len(g): continue
             rhos, far_ab, base = [], [], []

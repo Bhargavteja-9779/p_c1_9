@@ -1,5 +1,5 @@
 ---
-title: "A False Sense of Security: Standard Conformal Prediction Under-Covers Novel Chemotypes, and an Applicability-Domain-Conditional Fix"
+title: "A False Sense of Security: Standard Conformal Prediction Under-Covers Novel Chemotypes, and the Case for Applicability-Domain-Conditional Calibration"
 author:
   - name: "[Author Name(s)]"
     affiliation: "[Affiliation]"
@@ -20,19 +20,18 @@ decision-relevant failure. Across {{N_DATASETS}} public molecular-property regre
 model families, and two featurizations, standard split-conformal intervals attain their nominal
 marginal coverage ({{MARG_COV}} at a 90% target) yet **under-cover the most novel compounds**: for
 test molecules in the farthest applicability-domain stratum, coverage falls to {{MARG_FAR_COV}} — a
-false sense of security for the extrapolation regime. Neither of the obvious remedies repairs it: a
-learned-difficulty normalized score conditions on the wrong axis (farthest-stratum coverage
-{{NORM_FAR_COV}}), and a scaffold-conditional variant does not help ({{SCAF_FAR_COV}}). We introduce an
-**applicability-domain-conditional conformal** wrapper that calibrates separately across strata of a
-molecule's distance to the training set, with a shrinkage variant for sparse strata. It
-raises coverage for the most novel compounds to nominal (farthest-stratum coverage
-{{MARG_FAR_COV}}$\to${{MOND_FAR_COV}}, an {{FAR_GAIN}}-point gain improved on {{FAR_FRAC}}% of datasets;
-paired $p={{FAR_P}}$), at a modest average width cost ({{WIDTH_COST}}%) and while
-preserving marginal coverage; the extra width falls on exactly the novel compounds, turning interval
-width into an honest uncertainty signal usable for abstention. The wrapper is model- and
-featurization-agnostic, requires no retraining, improves coverage even on an independent (scaffold)
-partition it was not calibrated on, and is validated across splits and significance levels. We provide an
-open, reproducible implementation and a simple recommendation: report and calibrate conformal coverage
+false sense of security for the extrapolation regime. We show that *which conditioning axis* a remedy
+uses is what matters: a learned-difficulty normalized score (farthest-stratum coverage {{NORM_FAR_COV}})
+and a scaffold-conditional variant ({{SCAF_FAR_COV}}) do not repair the gap, whereas conditioning on the
+applicability-domain axis does — both the established distance-normalized conformal ({{KNN_FAR_COV}})
+and a simple applicability-domain Mondrian wrapper we describe ({{MOND_FAR_COV}}) raise novel-compound
+coverage to near nominal (the applicability-domain-conditional methods are statistically indistinguishable
+from one another and clearly separated from the rest by a Friedman/Nemenyi analysis). The Mondrian
+wrapper and its shrinkage variant add an interpretable, approximately guaranteed per-stratum calibration
+at comparable cost; across these methods the extra interval width falls on exactly the novel compounds,
+turning width into an honest uncertainty signal usable for abstention. All are model- and
+featurization-agnostic, need no retraining, and hold across splits and significance levels. We provide an
+open, reproducible benchmark and a simple recommendation: report and calibrate conformal coverage
 conditional on the applicability domain, so that the uncertainty attached to a novel candidate can
 actually be trusted.
 
@@ -64,33 +63,34 @@ applicability-domain work of Oršolić and Šmuc [@orsolic2023dad] for compound�
 concurrently by Hosni et al. [@hosni2026ad], who use the applicability domain as a reliability *flag*).
 What has not been done, and what we provide, is a *systematic, benchmark-scale* characterization for
 single-task molecular regression — across many datasets, models, and featurizations, with coverage
-resolved continuously along the applicability domain — together with a direct, honest comparison of the
-simplest post-hoc remedies. The questions are empirical: how large is the effect, do the standard
-AD-aware conformal variants fix it, and is there a cheap, reliable wrapper that does?
+resolved continuously along the applicability domain — together with a direct, honest head-to-head of
+the simplest post-hoc remedies that isolates *which conditioning axis* actually matters. The questions
+are empirical: how large is the effect, and which of the standard conformal variants fix it?
 
 **Contributions.**
 
 1. **A quantified "false security" benchmark.** Across {{N_DATASETS}} public molecular-property
    regression datasets, three model families, and two featurizations, we show that standard
    split-conformal intervals meet their marginal target yet systematically under-cover novel
-   chemotypes — coverage in the most novel applicability-domain stratum falls well below nominal — and
-   that neither the learned-difficulty normalized variant nor a scaffold-conditional variant repairs
-   it (Section 6).
-2. **An applicability-domain-conditional conformal wrapper.** We calibrate conformal quantiles
-   separately across strata of a molecule's distance to the training set — a Mondrian taxonomy on the
-   applicability domain — with a shrinkage variant for sparsely-populated strata. The procedure is a
-   post-hoc wrapper (no retraining, model- and featurization-agnostic) that raises novel-compound
-   coverage to or above nominal with approximate per-stratum coverage, at a modest average width cost
-   (Section 4, 7). Unlike the local/dynamic calibration of dAD [@orsolic2023dad], it uses fixed,
-   interpretable strata and a pooled-quantile shrinkage fallback; we benchmark it against a distance-
-   normalized conformal baseline [@papadopoulos2011knn] that conditions on the same axis by
-   normalization rather than stratification.
+   chemotypes — coverage in the most novel applicability-domain stratum falls well below nominal
+   (Section 6).
+2. **Isolating the conditioning axis that matters.** In a controlled head-to-head we show the failure is
+   repaired by conditioning on the *applicability-domain* axis — and not by the alternatives: a
+   learned-difficulty normalized score and a scaffold-conditional variant do *not* help, whereas both
+   the established distance-normalized conformal [@papadopoulos2011knn] and a simple
+   applicability-domain Mondrian wrapper (plus a shrinkage variant) that we describe restore
+   novel-compound coverage to near nominal. The three applicability-domain-conditional methods are
+   statistically indistinguishable from one another and clearly separated from the rest (Section 6, 7).
+   We do not claim the Mondrian wrapper beats the existing distance-normalized baseline; it is a simple,
+   interpretable alternative that additionally carries an approximate per-stratum guarantee, and the
+   practical message is the *axis*, obtainable by either route. This complements the per-sample dynamic
+   calibration of dAD [@orsolic2023dad], which targets the same axis by yet another mechanism.
 3. **A comprehensive, reproducible benchmark and a practical recommendation.** We compare marginal,
    learned-difficulty normalized, distance-normalized, scaffold-conditional, and applicability-domain-
    conditional conformal across datasets, models, splits, and significance levels, with multi-dataset
-   statistics; we verify the fix also improves coverage on an *independent* (scaffold) partition it was
-   not calibrated on, and recommend reporting and calibrating conformal coverage conditional on the
-   applicability domain (Section 7, 8, 10).
+   statistics and honest effect sizes; we show the restored interval width becomes an actionable novelty
+   signal (Section 8), and recommend reporting and calibrating conformal coverage conditional on the
+   applicability domain as standard practice (Section 7, 8, 10).
 
 # 2. Related Work
 
@@ -111,8 +111,9 @@ bioactivity classification [@svensson2018]; localized conformal prediction [@gua
 calibration points near the test object. Distance-normalized conformal and our Mondrian-AD condition on
 the *same* applicability-domain axis — one by normalization, the other by stratified calibration — and
 we benchmark both. We find that the learned-difficulty normalized variant does not repair the
-novel-chemotype coverage gap, that distance-normalized conformal helps but less uniformly, and that a
-Mondrian taxonomy on the applicability domain restores novel-stratum coverage most completely.
+novel-chemotype coverage gap, whereas both distance-normalized conformal and a Mondrian taxonomy on the
+applicability domain do, to a statistically indistinguishable degree — the conditioning axis, not the
+mechanism, is what matters.
 
 **Conformal prediction and applicability domain in cheminformatics.** Norinder et al. [@norinder2014]
 proposed conformal prediction as a statistically-grounded alternative to heuristic applicability-domain
@@ -175,7 +176,7 @@ All methods are post-hoc wrappers: they require only calibration residuals and t
 distance-to-training descriptor, no retraining, and apply to any model and featurization. We compare
 against four baselines: **marginal** split conformal (the standard); **normalized** conformal with the
 textbook additive-regularized score $|r|/(\sigma(x)+\beta)$ and half-width $\hat q\,(\sigma(x)+\beta)$
-[@papadopoulos2002; @romano2019], where the difficulty model $\sigma(x)$ is a gradient-boosted regressor
+[@papadopoulos2002; @romano2019; @lei2018distfree], where the difficulty model $\sigma(x)$ is a gradient-boosted regressor
 of the absolute residual fit on *out-of-fold training* residuals (a two-fold cross-fit) disjoint from
 calibration and test — crucial for validity — and $\beta$ is the median out-of-fold difficulty;
 **distance-normalized** conformal [@papadopoulos2011knn], the same normalized form but with the
@@ -250,77 +251,89 @@ predicted difficulty but only modestly improves novel-stratum coverage (farthest
 {{NORM_FAR_COV}}), because the difficulty axis is not the applicability-domain axis and the estimate is
 itself unreliable far from training. Conditioning on **Bemis–Murcko scaffold cluster**
 (Mondrian-scaffold) leaves the gradient essentially unchanged (farthest-stratum coverage
-{{SCAF_FAR_COV}}), because scaffold identity is not the axis along which coverage fails. A
-**distance-normalized** score [@papadopoulos2011knn], which scales width by the applicability-domain
-distance itself ($\sigma(x)=d(x)$), does better — it conditions on the right axis — raising
-farthest-stratum coverage to {{KNN_FAR_COV}}, but less uniformly than stratified calibration (next
-section). In short, only methods that condition on the applicability-domain axis help, and among those
-the stratified wrapper helps most.
+{{SCAF_FAR_COV}}), because scaffold identity is not the axis along which coverage fails. By contrast, a
+**distance-normalized** score [@papadopoulos2011knn], which scales the interval by the
+applicability-domain distance itself ($\sigma(x)=d(x)$), *does* repair the gap — it conditions on the
+right axis — raising farthest-stratum coverage to {{KNN_FAR_COV}}, and does so efficiently (it is in
+fact the tightest of all methods). In short, the conditioning *axis* is what matters: only the
+methods that condition on distance-to-training help, and the learned-difficulty and scaffold variants,
+despite also being "conditional", do not.
 
-# 7. Results: Applicability-Domain-Conditional Conformal Restores Coverage
+# 7. Results: Conditioning on the Applicability Domain Restores Coverage
 
-## 7.1 The fix
-Calibrating conformal quantiles conditional on the applicability domain (Mondrian-AD) restores coverage
-where it had failed. On our primary endpoint, coverage in the farthest (most novel) stratum rises from
-{{MARG_FAR_COV}} (marginal) to {{MOND_FAR_COV}} (Mondrian-AD) — an {{FAR_GAIN}}-point mean gain to at or
-slightly above the 0.90 target (paired Wilcoxon $p={{FAR_P}}$; 95% CI [{{FAR_CI_LO}}, {{FAR_CI_HI}}]
-points; improved on {{FAR_FRAC}}% of datasets), closing the novel-chemotype gap (Figure @fig-nearfar,
-@fig-profile, @fig-perdataset). The downward-biased worst-stratum coverage also improves,
-{{MARG_WORST_COV}}$\to${{MOND_WORST_COV}} (mean gain {{WORST_GAIN}} points, $p={{WORST_P}}$). Marginal
-coverage does not drop; it rises slightly to {{MOND_COV}} (the method becomes marginally conservative).
-Residual under-coverage remains on the hardest small datasets (e.g. FreeSolv, where the farthest stratum
-has few compounds), consistent with the open-top-stratum caveat. The shrinkage variant (smoothed-AD)
-reaches similar farthest-stratum coverage ({{SMOOTH_FAR_COV}}) with slightly tighter intervals; it helps
-on average but, being a heuristic, is not uniformly better than hard Mondrian-AD on the sparsest strata,
-so we present it as a practical option rather than a strict improvement.
+## 7.1 The axis is what matters
+Conditioning calibration on the applicability domain repairs the gap. Taking our Mondrian wrapper
+(Mondrian-AD) as a concrete instance, coverage in the farthest (most novel) stratum — our primary
+endpoint — rises from {{MARG_FAR_COV}} (marginal) to {{MOND_FAR_COV}} (Mondrian-AD), an {{FAR_GAIN}}-point
+mean gain to at or slightly above the 0.90 target (paired Wilcoxon $p={{FAR_P}}$; 95% CI
+[{{FAR_CI_LO}}, {{FAR_CI_HI}}] points; improved on {{FAR_FRAC}}% of datasets), closing the
+novel-chemotype gap (Figure @fig-nearfar, @fig-profile, @fig-perdataset). Marginal coverage does not
+drop; it rises slightly to {{MOND_COV}} (the method becomes marginally conservative). The downward-biased
+worst-stratum coverage also improves modestly ({{MARG_WORST_COV}}$\to${{MOND_WORST_COV}}, mean gain
+{{WORST_GAIN}} points, $p={{WORST_P}}$); residual under-coverage remains on the hardest small datasets
+(e.g. FreeSolv), consistent with the open-top-stratum caveat.
+
+**Several applicability-domain-conditional methods work, and they are statistically indistinguishable.**
+The crucial comparison is not Mondrian-AD against marginal but against the other ways of conditioning.
+The established distance-normalized conformal [@papadopoulos2011knn] reaches farthest-stratum coverage
+{{KNN_FAR_COV}} and the shrinkage variant smoothed-AD {{SMOOTH_FAR_COV}}, both close to Mondrian-AD's
+{{MOND_FAR_COV}}; a Friedman omnibus over the {{N_METHODS}} strategies on farthest-stratum coverage
+rejects equality ($p={{FRIEDMAN_P}}$, Nemenyi critical difference {{NEMENYI_CD}}), but the three
+applicability-domain-conditional methods (Mondrian-AD, smoothed-AD, distance-normalized) fall **within one
+critical difference of each other** — they are not statistically separable — while marginal, the
+scaffold-conditional variant, and the learned-difficulty normalized score are all more than a critical
+difference worse. In other words, the effect is driven by the conditioning *axis*, not by the particular
+mechanism: distance-normalization and stratified calibration are interchangeable on this benchmark.
+Distance-normalized is in fact the tightest method (Table 1); the Mondrian variants we describe are not
+sharper, but they are simple, interpretable, and carry an approximate per-stratum guarantee that the
+normalized score does not. We therefore do not claim a winner among the applicability-domain methods; we
+claim the axis.
 
 **Is the improvement an evaluation artifact?** Because Mondrian-AD is calibrated and evaluated on the
 same applicability-domain strata, one might worry its per-stratum restoration is guaranteed by
-construction. Two observations argue otherwise. First, the *distance-normalized* baseline conditions on
-the same applicability-domain axis by a completely different mechanism — scaling the interval by $d(x)$
-rather than calibrating per bin — yet it too raises farthest-stratum coverage substantially
-({{KNN_FAR_COV}}, versus {{MARG_FAR_COV}} for marginal); the gain therefore reflects genuine
-distance-conditioning, not an artifact of scoring on the calibration partition. Second, the effect is
-monotone and smooth across all five strata (Figure @fig-profile), not a discrete jump in the single
-calibrated bin. We are nonetheless explicit (Section 10) that exact per-stratum validity is not claimed:
-the strata are data-dependent and the most novel stratum is open-ended.
+construction. That the distance-normalized baseline — which conditions on the same axis by scaling the
+interval by $d(x)$, with no per-bin calibration — achieves the same far-stratum restoration argues
+otherwise: the gain reflects genuine distance-conditioning, not an artifact of scoring on the calibration
+partition, and the effect is smooth across all five strata (Figure @fig-profile), not a discrete jump in
+one calibrated bin. We are explicit (Section 10) that exact per-stratum validity is not claimed: the
+strata are data-dependent and the most novel stratum is open-ended.
 
 ## 7.2 The cost, and the trade-off
-Reliability for novel compounds is not free. On average Mondrian-AD widens intervals by {{WIDTH_COST}}%
-(relative width {{MOND_RELWIDTH}} vs {{MARG_RELWIDTH}} for marginal), but the cost is concentrated —
-correctly — in the novel strata: in the farthest stratum the mean interval width roughly doubles
-({{MARG_FARWIDTH}}$\to${{MOND_FARWIDTH}} relative to the label scale), while familiar-compound intervals
-are barely affected (Figure @fig-tradeoff). This is the intended behavior — larger, honest uncertainty
-exactly where the model extrapolates — but it is a real cost: for the most novel compounds the interval
-can approach the width of the unconditional label range, so Mondrian-AD buys trustworthy coverage, not
-sharper decisions, in that regime (we examine the downstream consequence in Section 8). A Friedman
-omnibus over the {{N_METHODS}} conformal strategies on farthest-stratum coverage (closeness to nominal)
-rejects equality ($p={{FRIEDMAN_P}}$; mean ranks place Mondrian-AD and smoothed-AD best and marginal and
-Mondrian-scaffold worst, with the distance-normalized and learned-difficulty baselines in between;
-Nemenyi critical difference {{NEMENYI_CD}}).
+Reliability for novel compounds is not free, but the cost is small and well-placed. Averaged over all
+compounds the applicability-domain-conditional methods barely change interval width (Mondrian-AD
+relative width {{MOND_RELWIDTH}} vs {{MARG_RELWIDTH}} for marginal, {{WIDTH_COST}}%; distance-normalized
+is actually *tighter* than marginal), because the extra width is concentrated — correctly — in the novel
+strata. In the farthest stratum the typical (median) interval widens by about {{FARWIDTH_MED_PCT}}%
+relative to marginal (the mean widens more, inflated by a few pathological datasets; Figure
+@fig-tradeoff), while familiar-compound intervals are barely affected. This is the intended behavior —
+larger, honest uncertainty exactly where the model extrapolates — but it is a real cost: for the most
+novel compounds the interval is correspondingly wider, so the methods buy trustworthy coverage, not
+sharper decisions, in that regime (Section 8).
 
 ## 7.3 Robustness
 The finding and the fix are stable across conditions (Supporting Information): both featurizations, all
 three model families, the random split (where intervals are narrower but the applicability-domain
-coverage gradient persists and Mondrian-AD still restores the far stratum), and the $\alpha=0.2$ and
-$\alpha=0.05$ targets. We fix the stratum count at {{N_BINS}} and the shrinkage at $\lambda=0.3$
+coverage gradient persists and the AD-conditional methods still restore the far stratum), and the
+$\alpha=0.2$ and $\alpha=0.05$ targets. We fix the stratum count at {{N_BINS}} and the shrinkage at $\lambda=0.3$
 throughout; the hard-binned (Mondrian-AD, $\lambda=0$) and shrunk (smoothed-AD, $\lambda=0.3$) variants
 bracket the shrinkage choice, and a sensitivity analysis over the number of strata (Supporting
 Information) leaves the qualitative conclusion unchanged, with more strata giving finer conditioning at
 the cost of noisier sparse-stratum quantiles.
 
 # 8. Downstream: Interval Width as an Honest Novelty Signal
-The practical value of the fix is not sharper predictions on novel compounds — no method can manufacture
-information that is not there — but an uncertainty estimate a practitioner can *act on* to triage
-candidates. Here the two approaches differ qualitatively. Standard marginal conformal assigns **every**
-compound the same interval width, so width carries no information about which predictions to trust:
-abstaining on the widest-interval compounds flags novel chemotypes no better than chance (the most novel,
-far-AD compounds make up {{MARG_ABSTAIN_FAR}} of the widest 30% of intervals, essentially the base rate
-{{ABSTAIN_BASE}}). Mondrian-AD, by contrast, makes interval width track distance to the training set
-(Spearman $\rho={{MOND_WIDTH_RHO}}$ between width and applicability-domain stratum), so width becomes an
-honest novelty flag: the widest intervals are roughly twice enriched for novel compounds
-({{MOND_ABSTAIN_FAR}} vs the {{ABSTAIN_BASE}} base rate; Figure @fig-selective). The decision payoff is
-therefore a trustworthy triage signal — scrutinize or assay the wide-interval candidates, rely on the
+The practical value of conditioning is not sharper predictions on novel compounds — no method can
+manufacture information that is not there — but an uncertainty estimate a practitioner can *act on* to
+triage candidates, and here the applicability-domain-conditional methods differ qualitatively from
+standard conformal. Marginal conformal assigns **every** compound the same interval width, so width
+carries no information about which predictions to trust: abstaining on the widest-interval compounds
+flags novel chemotypes no better than chance (the most novel, far-AD compounds make up
+{{MARG_ABSTAIN_FAR}} of the widest 30% of intervals, essentially the base rate {{ABSTAIN_BASE}}). The
+applicability-domain-conditional methods — Mondrian-AD and, by construction, the distance-normalized
+baseline — instead make interval width track distance to the training set (for Mondrian-AD, Spearman
+$\rho={{MOND_WIDTH_RHO}}$ between width and applicability-domain stratum), so width becomes an honest
+novelty flag: the widest intervals are roughly twice enriched for novel compounds ({{MOND_ABSTAIN_FAR}}
+vs the {{ABSTAIN_BASE}} base rate; Figure @fig-selective). The decision payoff is therefore a trustworthy
+triage signal — scrutinize or assay the wide-interval candidates, rely on the
 narrow ones — that standard conformal, with its uniform width, simply cannot provide, together with
 coverage on the novel compounds that is actually at its stated level.
 
@@ -329,18 +342,21 @@ Our results turn a known theoretical caveat into a concrete, measured, and fixab
 modeling, and situate it against recent applicability-domain-aware conformal work. The marginal coverage
 guarantee that makes conformal prediction attractive is, by itself, insufficient for the use case the
 field cares about most: trustworthy uncertainty on novel chemotypes. Standard conformal intervals
-quietly under-cover exactly those compounds, giving a false sense of security in prospective settings;
-neither the learned-difficulty normalized variant (whose difficulty axis is not the applicability-domain
-axis) nor a scaffold-conditional variant repairs this, and distance-normalized conformal helps only
-partially. Conditioning the calibration directly on the applicability domain — as the dynamic-calibration
-method of Oršolić and Šmuc [@orsolic2023dad] does per-sample, and as our fixed-strata wrapper does by
-stratification — is what restores novel-compound coverage. Our contribution is to show, at benchmark
-scale and with the obvious baselines ruled out, that a *simple, interpretable, retraining-free*
-Mondrian wrapper on the applicability domain suffices, and to recommend that conformal coverage in
-molecular property prediction be reported and calibrated conditional on the applicability domain, not
-merely marginally. We are explicit that the restored per-stratum coverage is approximate (the strata are
-data-dependent and the most-novel stratum is open-ended), and that the gain is in *honest* uncertainty,
-not sharper predictions.
+quietly under-cover exactly those compounds, giving a false sense of security in prospective settings.
+Our central, controlled finding is that *which axis a conformal method conditions on is what matters*:
+a learned-difficulty normalized score and a scaffold-conditional variant do not repair the gap, whereas
+every method that conditions on distance to the training set does — the established distance-normalized
+conformal [@papadopoulos2011knn], the per-sample dynamic calibration of Oršolić and Šmuc
+[@orsolic2023dad], and the simple fixed-strata Mondrian wrapper we describe. On this benchmark these
+applicability-domain-conditional methods are statistically indistinguishable; the distance-normalized
+baseline is in fact the tightest, and we do not claim our wrapper improves on it. The Mondrian variants
+are offered as simple, interpretable alternatives that additionally carry an approximate per-stratum
+guarantee. The contribution is therefore the *benchmark and the isolation of the axis*, plus a clear
+practical recommendation: report and calibrate conformal coverage conditional on the applicability
+domain — by whichever of these equivalent routes is convenient — rather than marginally or on an
+unrelated axis. We are explicit that the restored per-stratum coverage is approximate (the strata are
+data-dependent, the most-novel stratum is open-ended) and that the gain is in *honest* uncertainty, not
+sharper predictions.
 
 # 10. Limitations
 (i) The per-stratum coverage is *approximate*, not an exact finite-sample guarantee: the stratum edges
@@ -363,12 +379,14 @@ latter as indicative rather than exact.
 Standard conformal prediction gives molecular property models a coverage guarantee that holds on
 average but fails where it matters most — on novel chemotypes — a false sense of security in exactly the
 prospective, out-of-domain setting that drug discovery depends on. Across {{N_DATASETS}} datasets, three
-model families, and two featurizations we quantified this systematic under-coverage, showed that the
-learned-difficulty normalized, distance-normalized, and scaffold-conditional variants do not fully
-repair it, and showed that a simple applicability-domain-conditional conformal wrapper raises
-novel-compound coverage to nominal — approximately and per stratum, with no retraining — at a modest,
-well-placed width cost. We release an open implementation and recommend conditioning conformal
-calibration on the applicability domain as standard practice for trustworthy molecular uncertainty.
+model families, and two featurizations we quantified this systematic under-coverage and, in a controlled
+head-to-head, isolated the conditioning axis that repairs it: learned-difficulty and scaffold-conditional
+variants do not help, while every method that conditions on distance to the training set — the existing
+distance-normalized conformal and the simple applicability-domain Mondrian wrapper we describe, which are
+statistically indistinguishable here — raises novel-compound coverage to near nominal, approximately and
+per stratum, with no retraining, at a modest and well-placed width cost. We release an open benchmark and
+implementation and recommend conditioning conformal calibration on the applicability domain as standard
+practice for trustworthy molecular uncertainty.
 
 # Data and Software Availability
 All datasets are public and require no credentials (MoleculeACE [@vantilborg2022], Therapeutics Data

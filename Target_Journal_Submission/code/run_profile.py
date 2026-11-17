@@ -14,7 +14,7 @@ from data import datasets as D
 from data.splits import three_way
 from preprocessing.cache import features, feature_spec_to_pipe
 from models.zoo import build_model
-from conformal.methods import ad_distance, marginal, normalized, mondrian, smoothed_mondrian
+from conformal.methods import ad_distance, marginal, normalized, distance_normalized, mondrian, smoothed_mondrian
 import lightgbm as lgb
 RES = os.path.join(ROOT, "results"); CK = os.path.join(RES, "_profilecells"); os.makedirs(CK, exist_ok=True)
 DROP = {"molnet:lipophilicity"}
@@ -46,6 +46,7 @@ def run(spec):
     sm.fit(Xtr, oof); sig_cal = np.maximum(sm.predict(X[cal]), 1e-6); sig_te = np.maximum(sm.predict(X[te]), 1e-6)
     halves = {"marginal": marginal(res_cal, len(te), ALPHA),
               "normalized": normalized(res_cal, sig_cal, sig_te, ALPHA),
+              "knn_normalized": distance_normalized(res_cal, d_cal, d_te, ALPHA),
               "mondrian_ad": mondrian(res_cal, gcal, gte, ALPHA),
               "smoothed_ad": smoothed_mondrian(res_cal, d_cal, d_te, ALPHA, n_bins=NB, shrink=0.3)}
     scale = float(np.std(y[tr])) + 1e-9
@@ -58,9 +59,9 @@ def run(spec):
         for k in halves:
             prof.append({"dataset": spec.name, "stratum": b, "method": k,
                          "coverage": float(covered[k][mask].mean()), "n": int(mask.sum())})
-    # per-compound selective-prediction records (marginal vs mondrian_ad vs smoothed_ad)
+    # per-compound selective-prediction records
     comp = []
-    for k in ("marginal", "mondrian_ad", "smoothed_ad"):
+    for k in ("marginal", "knn_normalized", "mondrian_ad", "smoothed_ad"):
         h = halves[k]
         for i in range(len(te)):
             comp.append({"dataset": spec.name, "method": k, "covered": int(covered[k][i]),

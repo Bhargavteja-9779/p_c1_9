@@ -32,7 +32,7 @@ cannot fully rule out.
 - **Defense.** The *theoretical* caveat is known; what is new is (i) the first benchmark-scale
   *quantification* of the failure along the applicability-domain axis for molecular regression (41
   datasets × 3 models × 2 featurizations, scaffold splits), (ii) the demonstration that the community's
-  default remedy (normalized conformal) does **not** fix it, and (iii) a concrete, guaranteed,
+  default remedy (normalized conformal) does **not** fix it, and (iii) a simple, approximately-guaranteed,
   no-retraining method (Mondrian-AD + shrinkage) with a clear recommendation. Novelty is the
   *empirical finding + method + recommendation*, not a new theorem.
 - **Residual.** A reviewer may still consider the method a direct application of Mondrian conformal
@@ -114,10 +114,15 @@ cannot fully rule out.
 
 ## Overall assessment
 The dominant risk is **novelty perception (R1, R2)** — the same axis that sank the prior paper. The
-defense rests on the combination that none of the prior works provide: a quantified benchmark-scale
-*failure*, *negative controls* that rule out the obvious fixes (normalized, scaffold-Mondrian), a
-*working* guaranteed method, and an actionable recommendation. The result is a strong positive finding
-(not a null/best-practice note), which is what distinguishes it from the earlier submission. Framing
+defense rests on the combination: a quantified benchmark-scale *failure*, *negative controls* that rule
+out the obvious fixes (learned-difficulty normalized, scaffold-Mondrian), isolation of the
+applicability-domain *axis* as the one that repairs coverage (via either the existing distance-normalized
+conformal or our simple Mondrian wrapper — honestly presented as statistically indistinguishable, not
+superior), and an actionable recommendation. The result is a strong, honest positive finding (not a
+null/best-practice note), which is what distinguishes it from the earlier submission. NOTE: the revised
+paper does NOT claim method superiority over the distance-normalized baseline — that was corrected after
+round-2 review found the baseline competitive-to-better; the contribution is the benchmark + axis
+isolation + recommendation. Framing
 throughout foregrounds the finding and the negative controls so the contribution cannot be read as "just
 apply Mondrian conformal."
 

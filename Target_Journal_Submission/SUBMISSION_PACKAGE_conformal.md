@@ -6,12 +6,15 @@ an Applicability-Domain-Conditional Fix
 **Target journal.** Journal of Chemical Information and Modeling (ACS), Q1. See FINAL_DECISION_conformal.md.
 
 **Headline result (scaffold split, 41 datasets × 3 models × 2 featurizations × 3 seeds).**
-Standard conformal meets marginal coverage (0.895) but under-covers the most novel stratum
-(far-AD coverage 0.820 vs 0.90). Applicability-domain-conditional (Mondrian-AD) conformal raises it to
-0.901 (+8.0 points; paired Wilcoxon p = 6×10⁻¹²; improved on 95% of datasets; Friedman over 6 methods
-p = 8×10⁻¹⁷). Learned-difficulty normalized (0.840) and scaffold-Mondrian (0.828) do not fix it;
-distance-normalized conformal (0.892) helps, confirming the applicability-domain axis is the right one.
-Average width cost 4%, concentrated in the novel strata (far-stratum width ~doubles). Every number is
+Standard conformal meets marginal coverage (0.895) but under-covers the most novel stratum (far-AD
+coverage 0.820 vs 0.90). The controlled finding is that *the conditioning axis is what matters*:
+learned-difficulty normalized (0.840) and scaffold-Mondrian (0.828) do NOT repair it, while every method
+that conditions on distance-to-training does — the established distance-normalized conformal (0.892) and
+our simple AD Mondrian wrapper (0.901, +8.0 pts, p=6×10⁻¹², 95% of datasets). The three AD-conditional
+methods are statistically indistinguishable (Friedman over 6 methods p=8×10⁻¹⁷, Nemenyi CD 1.18); we do
+NOT claim our wrapper beats the distance-normalized baseline (which is in fact tighter). The contribution
+is the benchmark + axis isolation + the interpretable guarantee-bearing Mondrian option + recommendation.
+Average width cost 4%, concentrated in the novel strata (far-stratum median width +32%). Every number is
 token-substituted from code/results/conformal_metrics.json — no hand-typed values.
 
 ## Files to submit

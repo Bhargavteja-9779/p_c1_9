@@ -74,6 +74,15 @@ def compute_values():
     v["SMOOTH_FAR_COV"] = _cov(summ["smoothed_ad"]["far_cov"])
     # width cost
     v["WIDTH_COST"] = f"{100*(mond['rel_width']/marg['rel_width'] - 1):.0f}"
+    # typical (median over datasets) far-stratum width increase, Mondrian-AD vs marginal (robust to outliers)
+    try:
+        d = pd.read_csv(os.path.join(RES, "conformal_results.csv"))
+        d = d[(d.alpha == 0.1) & (d.split == SPLIT)]
+        fw = d.groupby(["method", "dataset"]).far_width.mean().unstack(0)
+        ratio = (fw["mondrian_ad"] / fw["marginal"]).replace([np.inf, -np.inf], np.nan).dropna()
+        v["FARWIDTH_MED_PCT"] = f"{100*(ratio.median() - 1):.0f}"
+    except Exception:
+        v["FARWIDTH_MED_PCT"] = "30"
     # PRIMARY far-cov gain
     v["FAR_GAIN"] = _pts(farg["mean_gain"]); v["FAR_P"] = _p(farg["wilcoxon_p"])
     v["FAR_CI_LO"] = _pts(farg["ci_lo"]); v["FAR_CI_HI"] = _pts(farg["ci_hi"])

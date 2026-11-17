@@ -75,7 +75,7 @@ def fig_selective(path):
         return
     d = pd.read_csv(path)
     fig, ax = plt.subplots(figsize=(6.5, 4.2))
-    for mth in [m for m in ["marginal", "smoothed_ad", "mondrian_ad"] if m in d.method.unique()]:
+    for mth in [m for m in ["marginal", "knn_normalized", "smoothed_ad", "mondrian_ad"] if m in d.method.unique()]:
         g = d[d.method == mth].groupby("stratum").rel_width.mean()
         ax.plot(g.index + 1, g.values, marker="o", color=CB.get(mth, "#333"), label=LAB.get(mth, mth), lw=1.8)
     ax.set_xticks(range(1, 6)); ax.set_xticklabels(["1\n(familiar)", "2", "3", "4", "5\n(novel)"])

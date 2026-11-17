@@ -4,11 +4,14 @@
 **Title:** A False Sense of Security: Standard Conformal Prediction Under-Covers Novel Chemotypes,
 and an Applicability-Domain-Conditional Fix
 
-**One-line contribution:** We quantify, at benchmark scale, that standard (marginal) conformal
-prediction systematically under-covers novel chemotypes in molecular property regression, show the
-popular normalized variant does not repair it, and introduce an applicability-domain-conditional
-(Mondrian-AD) conformal procedure that restores novel-compound coverage to nominal with a finite-sample
-per-stratum guarantee and no retraining.
+**One-line contribution:** We quantify, at benchmark scale, that standard (marginal) conformal prediction
+systematically under-covers novel chemotypes in molecular property regression, and in a controlled
+head-to-head isolate the conditioning axis that repairs it — conditioning on distance-to-training (via
+the existing distance-normalized conformal or a simple, interpretable applicability-domain Mondrian
+wrapper we describe, which are statistically indistinguishable) works, while learned-difficulty and
+scaffold conditioning do not — with a practical recommendation to calibrate conformal coverage
+conditional on the applicability domain. (Honest scope: a benchmark + axis-isolation + recommendation
+paper; we do not claim the Mondrian wrapper is superior to the prior-art distance-normalized baseline.)
 
 ## Target journal (primary): *Journal of Chemical Information and Modeling* (JCIM)
 **Publisher:** American Chemical Society (ACS) — a prestigious society publisher on the preferred list
