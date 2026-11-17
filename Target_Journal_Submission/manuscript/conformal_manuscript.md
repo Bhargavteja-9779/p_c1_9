@@ -139,9 +139,15 @@ conditional accuracy for stability in the sparse-novel regime. We report both va
 
 Both methods are post-hoc wrappers: they require only calibration residuals and the cheap
 distance-to-training descriptor, no retraining, and apply to any model and featurization. We compare
-against three baselines: **marginal** split conformal (the standard), **normalized** conformal with a
-learned heteroscedastic $\sigma(x)$, and **Mondrian-scaffold** (the same idea conditioned on Bemis–
-Murcko scaffold cluster rather than applicability domain).
+against three baselines: **marginal** split conformal (the standard); **normalized** conformal with the
+textbook additive-regularized score $|r|/(\sigma(x)+\beta)$ and interval half-width
+$\hat q\,(\sigma(x)+\beta)$ [@papadopoulos2002; @romano2019], where the difficulty model $\sigma(x)$ is a
+gradient-boosted regressor of the absolute residual, $\beta$ is the median calibration difficulty, and —
+crucially for validity — $\sigma$ is fit on *out-of-fold training* residuals (a two-fold cross-fit),
+disjoint from the calibration and test sets, so that normalized conformal keeps its marginal guarantee
+rather than degenerating; and **Mondrian-scaffold** (the same Mondrian idea conditioned on Bemis–Murcko
+scaffold cluster rather than on the applicability domain). We verified that the normalized baseline
+attains near-nominal marginal coverage, confirming it is correctly specified and not handicapped.
 
 # 5. Experimental Setup
 
@@ -191,11 +197,13 @@ distance and consistent across datasets, models, and featurizations. In decision
 ## 6.3 Normalized conformal does not fix the conditional gap
 The remedy most often recommended for conditional coverage — a normalized (heteroscedastic)
 nonconformity score, $|r|/(\sigma(x)+\beta)$ with a learned difficulty model $\sigma(x)$ — does not
-solve the problem. As a valid conformal procedure it retains marginal coverage (median {{NORM_COV}}),
-but it merely *reallocates* interval width according to predicted difficulty, which is not the
-applicability-domain axis and is itself unreliable far from the training set; its worst-stratum coverage
-({{NORM_WORST_COV}}) remains well below nominal, no better than — and on the scaffold split comparable
-to — standard marginal conformal. Conditioning instead on Bemis–Murcko scaffold cluster
+solve the problem. Implemented correctly — with the difficulty model fit on out-of-fold training
+residuals so that the procedure remains valid — it retains marginal coverage (median {{NORM_COV}}) and
+reallocates interval width by predicted difficulty, which yields at most a modest improvement in
+novel-compound coverage: its worst-stratum coverage ({{NORM_WORST_COV}}) stays well short of nominal,
+far from the restoration achieved by conditioning on the applicability domain. The difficulty axis is
+not the applicability-domain axis, and the difficulty estimate is itself unreliable for the compounds
+furthest from training. Conditioning instead on Bemis–Murcko scaffold cluster
 (Mondrian-scaffold) likewise leaves the applicability-domain gradient essentially unchanged
 (worst-stratum coverage {{SCAF_WORST_COV}}), because scaffold identity is not the axis along which
 coverage fails.
@@ -226,8 +234,11 @@ difference {{NEMENYI_CD}}).
 The finding and the fix are stable across conditions (Supporting Information): both featurizations, all
 three model families, the random split (where the applicability-domain gradient is milder but marginal
 conformal still under-covers the far stratum, and Mondrian-AD still restores it), and the $\alpha=0.2$
-and $\alpha=0.05$ targets. The number of strata and the shrinkage strength trade conditional accuracy
-against width and stability without changing the qualitative conclusion.
+and $\alpha=0.05$ targets. We fix the stratum count at {{N_BINS}} and the shrinkage at $\lambda=0.3$
+throughout; the hard-binned (Mondrian-AD, $\lambda=0$) and shrunk (smoothed-AD, $\lambda=0.3$) variants
+already bracket the shrinkage choice, and a sensitivity analysis over the number of strata (Supporting
+Information) shows the qualitative conclusion is unchanged, with more strata giving finer conditional
+coverage at the cost of noisier sparse-stratum quantiles.
 
 # 8. Downstream: Reliable Selection of Novel Candidates
 The practical payoff is in prospective selection. When a campaign uses prediction intervals to screen

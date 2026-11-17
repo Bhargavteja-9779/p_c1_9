@@ -34,9 +34,13 @@ cannot fully rule out.
 **Risk: MEDIUM (mitigated).**
 - **Defense.** Normalized conformal uses the standard additive-regularized score
   |r|/(σ(x)+β) with β = median(σ) (hyperparameter-free), half-width q·(σ+β) — the textbook form
-  [Papadopoulos 2002; Lei et al. 2018; Angelopoulos & Bates 2023]. It attains marginal coverage (as a
-  valid conformal procedure must); our claim is only that it does not repair *conditional* coverage,
-  which we show empirically. No width blow-up, no unfair handicap.
+  [Papadopoulos 2002; Lei et al. 2018; Angelopoulos & Bates 2023]. Critically, the difficulty model σ(x)
+  is fit on OUT-OF-FOLD training residuals (two-fold cross-fit), disjoint from calibration/test, so the
+  score is exchangeable and normalized conformal keeps its marginal guarantee (we verified near-nominal
+  marginal coverage empirically). Our claim is only that, even correctly specified, it does not repair
+  *conditional* (novel-chemotype) coverage. No width blow-up, no in-sample σ leakage, no unfair handicap.
+  (An earlier internal version fit σ in-sample on calibration, which broke marginal coverage; that was
+  caught and corrected before any result was reported.)
 - **Residual.** A reviewer might want conformalized quantile regression (CQR) as an additional
   heteroscedastic baseline. We cite CQR; a limitation note states CQR with a strong conditional base
   model is future work. (Could add if reviewer insists.)

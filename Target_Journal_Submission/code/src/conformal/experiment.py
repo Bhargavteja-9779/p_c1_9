@@ -29,9 +29,24 @@ def run_cell(spec, seed, model_name="lgbm", feat="ecfp", split_kind="scaffold", 
     d_cal = ad_distance([raw[i] for i in cal], tr_smi); d_te = ad_distance([raw[i] for i in te], tr_smi)
     gcal, gte = _ad_bins(d_cal, d_te)
     target = 1 - alpha
-    # normalized sigma(x): LightGBM predicting |residual| from calibration features (heteroscedastic CP)
+    # normalized sigma(x): a heteroscedastic difficulty model for normalized conformal. CRITICAL for
+    # validity: sigma must be independent of the calibration/test labels, else the normalized scores are
+    # not exchangeable and marginal coverage breaks. We therefore train sigma on OUT-OF-FOLD residuals of
+    # the TRAINING set (2-fold cross-fit), disjoint from cal/test, giving a genuine (non-degenerate)
+    # difficulty estimate while preserving the marginal guarantee. sigma_cal/sigma_te are out-of-sample.
+    tr_arr = np.asarray(tr); Xtr = X[tr_arr]; ytr = y[tr_arr]
+    oof_res = np.empty(len(tr_arr))
+    _perm = np.random.default_rng(1000 + seed).permutation(len(tr_arr))
+    _folds = np.array_split(_perm, 2)
+    for _k in range(2):
+        _val = _folds[_k]; _trn = np.concatenate([_folds[_j] for _j in range(2) if _j != _k])
+        if len(_trn) < 2 or len(_val) == 0:
+            oof_res[_val] = np.abs(res_cal).mean() if len(res_cal) else 0.0
+            continue
+        _bk = build_model(model_name, spec.task, seed); _bk.fit(Xtr[_trn], ytr[_trn])
+        oof_res[_val] = np.abs(ytr[_val] - _bk.predict(Xtr[_val]))
     sig_model = lgb.LGBMRegressor(n_estimators=200, num_leaves=15, min_child_samples=20, random_state=seed, n_jobs=1, verbosity=-1)
-    sig_model.fit(X[cal], np.abs(res_cal))
+    sig_model.fit(Xtr, oof_res)
     sig_cal = np.maximum(sig_model.predict(X[cal]), 1e-6); sig_te = np.maximum(sig_model.predict(X[te]), 1e-6)
     # scaffold groups among cal/test (for scaffold-Mondrian + scaffold-conditional eval)
     sc_cal = np.array([hash(murcko_scaffold(raw[i])) % 50 for i in cal])

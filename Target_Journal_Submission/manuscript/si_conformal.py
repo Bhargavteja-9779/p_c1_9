@@ -60,8 +60,11 @@ def main():
         "training neighbours; larger distance = more novel. Test and calibration molecules are assigned "
         "to five AD strata by quintiles of this distance estimated on the calibration set.\n\n"
         "**Marginal** split-conformal uses the absolute residual as the nonconformity score and a single "
-        "calibration quantile. **Normalized** conformal divides the residual by a learned difficulty "
-        "estimate (a LightGBM model of the absolute residual). **Mondrian-scaffold** calibrates a "
+        "calibration quantile. **Normalized** conformal uses the textbook additive-regularized score "
+        "|r|/(sigma(x)+beta) with half-width q*(sigma(x)+beta), where sigma(x) is a gradient-boosted "
+        "model of the absolute residual fit on OUT-OF-FOLD training residuals (two-fold cross-fit), "
+        "disjoint from the calibration and test sets so the procedure stays valid, and beta is the median "
+        "calibration difficulty. **Mondrian-scaffold** calibrates a "
         "separate quantile per Bemis-Murcko scaffold cluster. **Mondrian-AD** (ours) calibrates a "
         "separate quantile per AD stratum. **Smoothed-AD** (ours) shrinks each stratum quantile toward "
         "the pooled marginal quantile, protecting sparse strata. All methods share the same base models, "
@@ -125,6 +128,34 @@ def main():
         h = "| " + " | ".join(adf.columns) + " |\n|" + "|".join(["---"] * len(adf.columns)) + "|\n"
         for _, r in adf.iterrows():
             h += "| " + " | ".join(str(r[c]) for c in adf.columns) + " |\n"
+        doc.append(h + "\n")
+
+    # S5b strata-count sensitivity
+    srp = os.path.join(RES, "conformal_strata_results.csv")
+    if os.path.exists(srp):
+        doc.append("## S5b. Sensitivity to the number of applicability-domain strata\n")
+        doc.append("Mondrian-AD and smoothed-AD calibrated with m ∈ {3,5,10} strata, evaluated on a fixed "
+                   "5-quintile reference grid (lgbm + ECFP, scaffold split, seed 0, all datasets). Marginal "
+                   "conformal is shown for reference. The restoration of worst-stratum coverage is robust to "
+                   "m; more strata give finer conditioning at the cost of noisier sparse strata.\n\n")
+        s = pd.read_csv(srp)
+        rows = []
+        mref = s[s.method == "marginal"]
+        if len(mref):
+            rows.append({"Method": "Marginal (ref)", "m": "—",
+                         "Worst-bin cov.": f"{mref.worst_bin_cov.mean():.3f}",
+                         "Far-AD cov.": f"{mref.far_cov.mean():.3f}"})
+        for mth in ["mondrian_ad", "smoothed_ad"]:
+            for M in [3, 5, 10]:
+                g = s[(s.method == mth) & (s.m == M)]
+                if len(g):
+                    rows.append({"Method": LAB[mth], "m": str(M),
+                                 "Worst-bin cov.": f"{g.worst_bin_cov.mean():.3f}",
+                                 "Far-AD cov.": f"{g.far_cov.mean():.3f}"})
+        sdf = pd.DataFrame(rows)
+        h = "| " + " | ".join(sdf.columns) + " |\n|" + "|".join(["---"] * len(sdf.columns)) + "|\n"
+        for _, r in sdf.iterrows():
+            h += "| " + " | ".join(str(r[c]) for c in sdf.columns) + " |\n"
         doc.append(h + "\n")
 
     # S6 omnibus
