@@ -98,6 +98,7 @@ def compute_values():
         v["LEAK_ID_LEAK"] = f"{int(la.scaffold_id_leak.sum())} molecules"
         v["N_COLLAPSE"] = f"{int(la.std_collapse_pairs.sum()):,}"
         v["N_DUP_DISAGREE"] = f"{int(la.dup_label_disagree.sum()):,}"
+        v["LEAK_PCT"] = f"{100*la.scaffold_id_leak.sum()/la.n.sum():.2f}"
     return v
 
 

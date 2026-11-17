@@ -24,5 +24,6 @@
  "SHORTCUT_SORB_DROP": "a negligible -0.003, paired Wilcoxon p = 5e-10",
  "LEAK_ID_LEAK": "82 molecules",
  "N_COLLAPSE": "2,832",
- "N_DUP_DISAGREE": "851"
+ "N_DUP_DISAGREE": "851",
+ "LEAK_PCT": "0.06"
 }

@@ -206,7 +206,7 @@ ablation we toggle one operation at a time from a common base.
 
 **Statistics.** Each configuration is run with five seeds. Per-dataset paired comparisons across
 seeds use the Wilcoxon signed-rank test with rank-biserial effect sizes; across datasets we use the
-Friedman test with Nemenyi critical-difference analysis. We report bootstrap 95% confidence
+Friedman test with Nemenyi critical-difference analysis [@demsar2006]. We report bootstrap 95% confidence
 intervals for headline differences and apply Holm–Bonferroni/Benjamini–Hochberg corrections for
 multiplicity. We adopt the practically-significant comparison framing of Ash et al. [@ash2025] and
 do not claim significance from a single seed or dataset. Primary metrics are RMSE (regression) and

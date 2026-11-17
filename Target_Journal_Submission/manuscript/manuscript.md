@@ -192,7 +192,7 @@ confound — including any residual duplication or leakage — constant across p
 isolates the standardization effect. We separately audit each dataset against a
 standardization-invariant canonical identity (largest fragment + neutralized + canonical tautomer +
 stereo-stripped InChIKey; Supporting Information, Table S1): residual canonical-identity overlap
-across the scaffold split is {{LEAK_ID_LEAK}} in total (0.06% of all molecules), arising when exact
+across the scaffold split is {{LEAK_ID_LEAK}} in total ({{LEAK_PCT}}% of all molecules), arising when exact
 duplicates carry tautomer-dependent Murcko scaffolds, far too small to affect any comparison. The
 audit also quantifies a phenomenon directly relevant to our thesis: {{N_COLLAPSE}} pairs of distinct
 raw SMILES across the benchmarks collapse to a single molecule after standardization, and
@@ -206,7 +206,7 @@ ablation we toggle one operation at a time from a common base.
 
 **Statistics.** Each configuration is run with five seeds. Per-dataset paired comparisons across
 seeds use the Wilcoxon signed-rank test with rank-biserial effect sizes; across datasets we use the
-Friedman test with Nemenyi critical-difference analysis. We report bootstrap 95% confidence
+Friedman test with Nemenyi critical-difference analysis [@demsar2006]. We report bootstrap 95% confidence
 intervals for headline differences and apply Holm–Bonferroni/Benjamini–Hochberg corrections for
 multiplicity. We adopt the practically-significant comparison framing of Ash et al. [@ash2025] and
 do not claim significance from a single seed or dataset. Primary metrics are RMSE (regression) and
@@ -224,7 +224,7 @@ data instructions are released (Section 10).
 ## 6.1 Data integrity and leakage controls
 Before modeling, we audited every dataset against a standardization-invariant canonical identity
 (Supporting Information, Table S1). Residual canonical-identity overlap across the scaffold split is
-{{LEAK_ID_LEAK}} across all 55 datasets (0.06%), too small to influence any result; and because the
+{{LEAK_ID_LEAK}} across all 55 datasets ({{LEAK_PCT}}%), too small to influence any result; and because the
 identical split is reused for every pipeline, all duplicate and near-duplicate structure is held fixed
 across pipelines and cannot explain pipeline-to-pipeline differences. The audit additionally reveals
 that {{N_COLLAPSE}} pairs of distinct raw SMILES collapse to one molecule after standardization and
