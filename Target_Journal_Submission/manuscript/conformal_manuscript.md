@@ -27,8 +27,10 @@ estimate that is itself unreliable out of domain, leaving novel-compound coverag
 {{NORM_WORST_COV}}). We introduce an **applicability-domain-conditional
 conformal** procedure that calibrates separately across strata defined by distance to the training set
 (a Mondrian taxonomy on the applicability domain), with a shrinkage variant for sparse strata. It
-restores novel-compound coverage to nominal (worst-stratum coverage {{MOND_WORST_COV}}, a
-{{WORST_GAIN}}-point gain; paired $p={{WORST_P}}$) at a modest width cost ({{WIDTH_COST}}%), while
+restores coverage for the most novel compounds to nominal (farthest-stratum coverage
+{{MARG_FAR_COV}}$\to${{MOND_FAR_COV}}) and substantially closes the worst-stratum gap (worst-stratum
+coverage {{MARG_WORST_COV}}$\to${{MOND_WORST_COV}}, a {{WORST_GAIN}}-point median gain, improved on
+{{WORST_FRAC}}% of datasets; paired $p={{WORST_P}}$), at a modest width cost ({{WIDTH_COST}}%) and while
 preserving marginal coverage. The method is model- and featurization-agnostic, requires no retraining,
 and is validated across splits and significance levels. We provide an open, reproducible implementation
 and a simple recommendation: report and calibrate conformal coverage conditional on the applicability
@@ -211,12 +213,14 @@ coverage fails.
 # 7. Results: Applicability-Domain-Conditional Conformal Restores Coverage
 
 ## 7.1 The fix
-Calibrating conformal quantiles conditional on the applicability domain (Mondrian-AD) restores
-novel-compound coverage to nominal: the worst-stratum coverage rises from {{MARG_WORST_COV}} (marginal)
-to {{MOND_WORST_COV}} (Mondrian-AD), a median gain of {{WORST_GAIN}} points (paired Wilcoxon
-$p={{WORST_P}}$; 95% CI [{{WORST_CI_LO}}, {{WORST_CI_HI}}]; improved on {{WORST_FRAC}}% of datasets),
-and the conditional-coverage gap falls from {{MARG_GAP}} to {{MOND_GAP}} (Figure @fig-nearfar,
-@fig-perdataset). Marginal coverage is preserved ({{MOND_COV}}). The shrinkage variant (smoothed-AD)
+Calibrating conformal quantiles conditional on the applicability domain (Mondrian-AD) restores coverage
+where it had failed. Coverage in the farthest (most novel) stratum rises from {{MARG_FAR_COV}} to
+{{MOND_FAR_COV}} — back to the nominal level — a {{FAR_GAIN}}-point gain, and the worst-stratum coverage
+rises from {{MARG_WORST_COV}} (marginal) to {{MOND_WORST_COV}} (Mondrian-AD), a median gain of
+{{WORST_GAIN}} points (paired Wilcoxon $p={{WORST_P}}$; 95% CI [{{WORST_CI_LO}}, {{WORST_CI_HI}}];
+improved on {{WORST_FRAC}}% of datasets), closing most of the gap to nominal. The conditional-coverage
+gap falls from {{MARG_GAP}} to {{MOND_GAP}} points (Figure @fig-nearfar, @fig-perdataset). Marginal
+coverage is preserved ({{MOND_COV}}). The shrinkage variant (smoothed-AD)
 achieves nearly the same conditional coverage (worst-stratum {{SMOOTH_WORST_COV}}) with slightly
 tighter intervals, and is the more robust default when the novel stratum is sparse.
 

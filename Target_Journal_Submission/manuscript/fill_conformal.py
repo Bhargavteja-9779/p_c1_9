@@ -46,7 +46,9 @@ def compute_values():
     v["MARG_RELWIDTH"] = f"{marg['rel_width']:.2f}"
     # mondrian-AD
     v["MOND_COV"] = _cov(mond["marginal_cov"])
+    v["MOND_FAR_COV"] = _cov(mond["far_cov"])
     v["MOND_WORST_COV"] = _cov(mond["worst_bin_cov"])
+    v["FAR_GAIN"] = _pts(mond["far_cov"] - marg["far_cov"])
     v["MOND_GAP"] = _pts(TARGET - mond["worst_bin_cov"])
     v["MOND_RELWIDTH"] = f"{mond['rel_width']:.2f}"
     # normalized / scaffold / smoothed
