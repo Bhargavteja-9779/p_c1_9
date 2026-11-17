@@ -1,78 +1,100 @@
 """Substitute {{TOKEN}} placeholders in conformal_manuscript.md with values computed from the
-machine-readable conformal results (code/results/conformal_metrics.json + tables/conformal_summary_*.csv).
-Every quantitative claim must trace to an experimental output; no number is hand-typed.
-Run after run_conformal.py (full) + src/conformal/analyze.py.
-Writes conformal_manuscript_filled.md and conformal_values.json (audit trail).
+machine-readable results (code/results/conformal_metrics.json + conformal_selective_results.csv).
+Every quantitative claim traces to an experimental output; no number is hand-typed.
+Primary endpoint = farthest-stratum coverage. Writes conformal_manuscript_filled.md + conformal_values.json.
 """
 from __future__ import annotations
 import os, json, re
+import numpy as np, pandas as pd
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.join(HERE, "..")
-RES = os.path.join(ROOT, "code", "results")
-SPLIT = "scaffold"   # primary split for the headline numbers; random is reported as robustness in SI
+RES = os.path.join(os.path.join(HERE, "..", "code", "results"))
+SPLIT = "scaffold"
 TARGET = 0.90
+LAB = {"marginal": "Marginal (standard)", "normalized": "Learned-difficulty normalized",
+       "knn_normalized": "Distance-normalized", "mondrian_scaffold": "Mondrian-scaffold",
+       "smoothed_ad": "Smoothed-AD (ours)", "mondrian_ad": "Mondrian-AD (ours)"}
+ORDER = ["marginal", "normalized", "knn_normalized", "mondrian_scaffold", "smoothed_ad", "mondrian_ad"]
 
 
-def _cov(x):
-    """coverage as 3-decimal fraction, e.g. 0.866"""
-    return f"{x:.3f}"
+def _cov(x): return f"{x:.3f}"
+def _pts(x): return f"{100*x:.1f}"
+def _p(x): return f"{x:.1g}" if x >= 1e-4 else f"{x:.0e}"
 
 
-def _pts(x):
-    """points (percentage points), 1 decimal, e.g. 8.8"""
-    return f"{100*x:.1f}"
+def _selective_retain(frac=0.70):
+    """Mean (over datasets) coverage on the `frac` narrowest-interval test compounds, per method."""
+    p = os.path.join(RES, "conformal_selective_results.csv")
+    if not os.path.exists(p):
+        return {}
+    d = pd.read_csv(p)
+    out = {}
+    for method, g in d.groupby("method"):
+        covs = []
+        for ds, gg in g.groupby("dataset"):
+            gg = gg.sort_values("rel_width")
+            k = max(1, int(round(frac * len(gg))))
+            covs.append(gg.iloc[:k].covered.mean())
+        out[method] = float(np.mean(covs))
+    return out
 
 
 def compute_values():
     m = json.load(open(os.path.join(RES, "conformal_metrics.json")))
     summ = {r["method"]: r for r in m[f"summary_{SPLIT}"]}
-    gain = m[f"worst_cov_gain_{SPLIT}"]
-    fried = m.get(f"friedman_worstcov_{SPLIT}", {})
+    med = {r["method"]: r for r in m[f"summary_median_{SPLIT}"]}
+    farg = m[f"far_cov_gain_{SPLIT}"]
+    worstg = m[f"worst_cov_gain_{SPLIT}"]
+    scg = m.get(f"scaffold_gap_{SPLIT}", {})
+    fried = m.get(f"friedman_farcov_{SPLIT}", {})
     marg, mond = summ["marginal"], summ["mondrian_ad"]
-    norm = summ.get("normalized", {})
-    scaf = summ.get("mondrian_scaffold", {})
-    smooth = summ.get("smoothed_ad", {})
     v = {}
-    v["N_DATASETS"] = str(gain["n_datasets"])
-    v["N_BINS"] = "5"
-    # marginal conformal
-    v["MARG_COV"] = _cov(marg["marginal_cov"])
-    v["MARG_NEAR_COV"] = _cov(marg["near_cov"])
-    v["MARG_FAR_COV"] = _cov(marg["far_cov"])
-    v["MARG_FAR_PCT"] = f"{100*marg['far_cov']:.0f}"
-    v["MARG_WORST_COV"] = _cov(marg["worst_bin_cov"])
-    v["MARG_GAP"] = _pts(TARGET - marg["worst_bin_cov"])          # max deviation from nominal, points
-    v["MARG_RELWIDTH"] = f"{marg['rel_width']:.2f}"
+    v["N_DATASETS"] = str(farg["n_datasets"]); v["N_BINS"] = "5"
+    v["N_METHODS"] = str(fried.get("n_methods", len(ORDER)))
+    # marginal
+    v["MARG_COV"] = _cov(marg["marginal_cov"]); v["MARG_NEAR_COV"] = _cov(marg["near_cov"])
+    v["MARG_FAR_COV"] = _cov(marg["far_cov"]); v["MARG_FAR_COV_MED"] = _cov(med["marginal"]["far_cov"])
+    v["MARG_FAR_PCT"] = f"{100*marg['far_cov']:.0f}"; v["MARG_WORST_COV"] = _cov(marg["worst_bin_cov"])
+    v["MARG_RELWIDTH"] = f"{marg['rel_width']:.2f}"; v["MARG_FARWIDTH"] = f"{marg['far_width']:.1f}"
     # mondrian-AD
-    v["MOND_COV"] = _cov(mond["marginal_cov"])
-    v["MOND_FAR_COV"] = _cov(mond["far_cov"])
-    v["MOND_WORST_COV"] = _cov(mond["worst_bin_cov"])
-    v["FAR_GAIN"] = _pts(mond["far_cov"] - marg["far_cov"])
-    v["MOND_GAP"] = _pts(TARGET - mond["worst_bin_cov"])
-    v["MOND_RELWIDTH"] = f"{mond['rel_width']:.2f}"
-    # normalized / scaffold / smoothed
-    if norm:
-        v["NORM_COV"] = _cov(norm["marginal_cov"])
-        v["NORM_WORST_COV"] = _cov(norm["worst_bin_cov"])
-    if scaf:
-        v["SCAF_WORST_COV"] = _cov(scaf["worst_bin_cov"])
-    if smooth:
-        v["SMOOTH_WORST_COV"] = _cov(smooth["worst_bin_cov"])
-    # width cost of mondrian-AD over marginal (%)
+    v["MOND_COV"] = _cov(mond["marginal_cov"]); v["MOND_FAR_COV"] = _cov(mond["far_cov"])
+    v["MOND_WORST_COV"] = _cov(mond["worst_bin_cov"]); v["MOND_RELWIDTH"] = f"{mond['rel_width']:.2f}"
+    v["MOND_FARWIDTH"] = f"{mond['far_width']:.1f}"
+    # other methods' far coverage
+    v["NORM_COV"] = _cov(summ["normalized"]["marginal_cov"]); v["NORM_FAR_COV"] = _cov(summ["normalized"]["far_cov"])
+    v["SCAF_FAR_COV"] = _cov(summ["mondrian_scaffold"]["far_cov"])
+    v["KNN_FAR_COV"] = _cov(summ["knn_normalized"]["far_cov"])
+    v["SMOOTH_FAR_COV"] = _cov(summ["smoothed_ad"]["far_cov"])
+    # width cost
     v["WIDTH_COST"] = f"{100*(mond['rel_width']/marg['rel_width'] - 1):.0f}"
-    # headline gain (paired Wilcoxon, worst-bin coverage)
-    v["WORST_GAIN"] = _pts(gain["median_gain"])
-    p = gain["wilcoxon_p"]
-    v["WORST_P"] = f"{p:.1g}" if p >= 1e-4 else f"{p:.0e}"
-    v["WORST_CI_LO"] = _pts(gain["ci_lo"])
-    v["WORST_CI_HI"] = _pts(gain["ci_hi"])
-    v["WORST_FRAC"] = f"{100*gain['frac_improved']:.0f}"
-    # Friedman omnibus over methods
+    # PRIMARY far-cov gain
+    v["FAR_GAIN"] = _pts(farg["mean_gain"]); v["FAR_P"] = _p(farg["wilcoxon_p"])
+    v["FAR_CI_LO"] = _pts(farg["ci_lo"]); v["FAR_CI_HI"] = _pts(farg["ci_hi"])
+    v["FAR_FRAC"] = f"{100*farg['frac_improved']:.0f}"
+    # secondary worst-cov gain
+    v["WORST_GAIN"] = _pts(worstg["median_gain"]); v["WORST_P"] = _p(worstg["wilcoxon_p"])
+    # scaffold-conditional gap (independent partition)
+    if scg:
+        v["MARG_SCAFGAP"] = _cov(scg["b_mean"]); v["MOND_SCAFGAP"] = _cov(scg["a_mean"]); v["SCAFGAP_P"] = _p(scg["wilcoxon_p"])
+    # Friedman (far-cov)
     if fried:
-        fp = fried["p"]
-        v["FRIEDMAN_P"] = f"{fp:.1g}" if fp >= 1e-4 else f"{fp:.0e}"
-        v["NEMENYI_CD"] = f"{fried['nemenyi_cd']:.2f}"
+        v["FRIEDMAN_P"] = _p(fried["p"]); v["NEMENYI_CD"] = f"{fried['nemenyi_cd']:.2f}"
+    # selective-prediction retention at 70%
+    ret = _selective_retain(0.70)
+    if ret:
+        if "marginal" in ret: v["MARG_RETAIN70"] = _cov(ret["marginal"])
+        if "mondrian_ad" in ret: v["MOND_RETAIN70"] = _cov(ret["mondrian_ad"])
+    # main-text summary table (scaffold)
+    hdr = ("| Method | Marginal cov. | Near-AD cov. | **Far-AD cov.** | Worst-bin cov. | Rel. width |\n"
+           "|---|---|---|---|---|---|\n")
+    for k in ORDER:
+        if k in summ:
+            r = summ[k]
+            hdr += (f"| {LAB[k]} | {r['marginal_cov']:.3f} | {r['near_cov']:.3f} | "
+                    f"**{r['far_cov']:.3f}** | {r['worst_bin_cov']:.3f} | {r['rel_width']:.2f} |\n")
+    v["TABLE_SUMMARY"] = ("Table 1: Coverage and interval width by method (scaffold split, 90% target, mean "
+                          "over 41 datasets × 3 models × 2 featurizations × 3 seeds). Far-AD coverage (the "
+                          "most novel stratum) is the primary endpoint; nominal is 0.90.\n\n" + hdr)
     return v
 
 

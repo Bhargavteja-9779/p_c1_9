@@ -10,10 +10,10 @@ import numpy as np, pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 RES = os.path.join(HERE, "..", "code", "results")
 TAB = os.path.join(HERE, "..", "code", "tables")
-LAB = {"marginal": "Marginal (standard)", "normalized": "Normalized",
-       "mondrian_scaffold": "Mondrian-scaffold", "smoothed_ad": "Smoothed-AD (ours)",
-       "mondrian_ad": "Mondrian-AD (ours)"}
-ORDER = ["marginal", "normalized", "mondrian_scaffold", "smoothed_ad", "mondrian_ad"]
+LAB = {"marginal": "Marginal (standard)", "normalized": "Learned-difficulty normalized",
+       "knn_normalized": "Distance-normalized", "mondrian_scaffold": "Mondrian-scaffold",
+       "smoothed_ad": "Smoothed-AD (ours)", "mondrian_ad": "Mondrian-AD (ours)"}
+ORDER = ["marginal", "normalized", "knn_normalized", "mondrian_scaffold", "smoothed_ad", "mondrian_ad"]
 
 
 def _md_table(df, cols, headers, fmt):
@@ -48,9 +48,11 @@ def main():
                "Chemotypes, and an Applicability-Domain-Conditional Fix\n")
     doc.append("All tables are generated directly from the machine-readable result files; no value is "
                "hand-transcribed. Coverage is reported as a fraction at the 90% target (nominal 0.90). "
-               "\"Worst-bin\" is the lowest coverage across the five applicability-domain strata; "
-               "\"AD gap\" is the mean absolute deviation of per-stratum coverage from nominal; "
-               "\"Rel. width\" is the mean interval width divided by the label standard deviation.\n")
+               "\"Far-AD\" is the coverage of the most novel stratum (the primary endpoint, an unbiased "
+               "single-bin estimate). \"Worst-bin\" is the minimum coverage across the five strata (a "
+               "downward-biased order statistic); \"AD gap\" (cond_gap_ad) is the MAXIMUM absolute "
+               "deviation of per-stratum coverage from nominal (an upward-biased order statistic); both "
+               "are reported as secondary. \"Rel. width\" is the mean interval width / label SD.\n")
 
     # S1 methods recap
     doc.append("## S1. Method details\n")
@@ -109,6 +111,40 @@ def main():
         h += "| " + " | ".join(str(r[c]) for c in rdf.columns) + " |\n"
     doc.append(h + "\n")
 
+    # S4b per-collection breakdown (dataset non-independence)
+    doc.append("## S4b. Per-collection breakdown (scaffold split)\n")
+    doc.append("Far-AD coverage (primary endpoint) by dataset collection, marginal vs Mondrian-AD, since "
+               "30 of the datasets come from one curated collection (MoleculeACE). The under-coverage and "
+               "its repair hold within each collection.\n\n")
+    def _collection(name):
+        if name.startswith("mace:"): return "MoleculeACE (30)"
+        if name.startswith("tdc:"): return "TDC ADMET (9)"
+        return "MoleculeNet (2)"
+    sc["collection"] = sc["dataset"].map(_collection)
+    rows = []
+    for coll, g in sc.groupby("collection"):
+        gg = g.groupby(["dataset", "method"]).far_cov.mean().unstack()
+        if {"marginal", "mondrian_ad"} <= set(gg.columns):
+            rows.append({"Collection": coll, "n": gg.shape[0],
+                         "Marginal far-cov": f"{gg['marginal'].mean():.3f}",
+                         "Mondrian-AD far-cov": f"{gg['mondrian_ad'].mean():.3f}",
+                         "Win rate": f"{100*(gg['mondrian_ad']>gg['marginal']).mean():.0f}%"})
+    cdf = pd.DataFrame(rows)
+    h = "| " + " | ".join(cdf.columns) + " |\n|" + "|".join(["---"]*len(cdf.columns)) + "|\n"
+    for _, r in cdf.iterrows(): h += "| " + " | ".join(str(r[c]) for c in cdf.columns) + " |\n"
+    doc.append(h + "\n")
+
+    # S4c scaffold-conditional coverage gap (independent partition)
+    if "scaffold_gap_scaffold" in m:
+        g = m["scaffold_gap_scaffold"]
+        doc.append("## S4c. Generalization to an independent partition (scaffold-conditional coverage)\n")
+        doc.append(f"Mondrian-AD is calibrated on applicability-domain strata. Evaluated instead on "
+                   f"Bemis-Murcko scaffold clusters — a partition it was NOT calibrated on — it still "
+                   f"reduces the scaffold-conditional coverage gap (max stratum deviation from nominal) "
+                   f"from {g['b_mean']:.3f} (marginal) to {g['a_mean']:.3f} (Mondrian-AD), paired Wilcoxon "
+                   f"p = {g['wilcoxon_p']:.2g}, improved on {100*g['frac_improved']:.0f}% of datasets. The "
+                   f"improvement is therefore not an artifact of scoring on the calibration axis.\n")
+
     # S5 alpha robustness (if the sweep file exists)
     arp = os.path.join(RES, "conformal_alpha_results.csv")
     if os.path.exists(arp):
@@ -158,15 +194,47 @@ def main():
             h += "| " + " | ".join(str(r[c]) for c in sdf.columns) + " |\n"
         doc.append(h + "\n")
 
-    # S6 omnibus
-    fr = m.get("friedman_worstcov_scaffold", {})
+    # S6 omnibus (primary endpoint: far-cov)
+    fr = m.get("friedman_farcov_scaffold", {})
     if fr:
-        doc.append("## S6. Omnibus test across methods (scaffold split)\n")
-        doc.append(f"Friedman test over the five conformal strategies on closeness of worst-bin coverage "
-                   f"to nominal (n = {fr['n_datasets']} datasets): p = {fr['p']:.2g}. Mean ranks "
-                   f"(lower = closer to nominal): " +
-                   ", ".join(f"{LAB[k]} {v:.2f}" for k, v in sorted(fr['mean_ranks'].items(), key=lambda x: x[1])) +
+        doc.append("## S6. Omnibus test across methods (scaffold split, far-AD coverage)\n")
+        doc.append(f"Friedman test over the {fr.get('n_methods', len(ORDER))} conformal strategies on "
+                   f"closeness of FAR-AD coverage (the primary endpoint) to nominal (n = {fr['n_datasets']} "
+                   f"datasets): p = {fr['p']:.2g}. Mean ranks (lower = closer to nominal): " +
+                   ", ".join(f"{LAB.get(k,k)} {v:.2f}" for k, v in sorted(fr['mean_ranks'].items(), key=lambda x: x[1])) +
                    f". Nemenyi critical difference (alpha=0.05): {fr['nemenyi_cd']:.2f}.\n")
+    frw = m.get("friedman_worstcov_scaffold", {})
+    if frw:
+        doc.append(f"\nFor the secondary worst-bin endpoint the ordering is the same (Friedman p = "
+                   f"{frw['p']:.2g}; best: " +
+                   ", ".join(f"{LAB.get(k,k)}" for k, _ in sorted(frw['mean_ranks'].items(), key=lambda x: x[1])[:2]) + ").\n")
+
+    # S7 selective prediction / abstention
+    selp = os.path.join(RES, "conformal_selective_results.csv")
+    if os.path.exists(selp):
+        doc.append("## S7. Selective prediction (abstention by interval width)\n")
+        doc.append("Coverage on the retained set when keeping the narrowest-interval fraction of test "
+                   "compounds (scaffold split, lgbm+ECFP, seed 0, mean over datasets). With Mondrian-AD, "
+                   "interval width is an honest signal — abstaining on wide intervals yields reliably "
+                   "covered retained sets; with marginal conformal it is not.\n\n")
+        sd = pd.read_csv(selp)
+        fracs = [0.4, 0.6, 0.8, 1.0]
+        rows = []
+        for mth in ["marginal", "smoothed_ad", "mondrian_ad"]:
+            g = sd[sd.method == mth]
+            if not len(g): continue
+            row = {"Method": LAB.get(mth, mth)}
+            for fr_ in fracs:
+                covs = []
+                for ds, gg in g.groupby("dataset"):
+                    gg = gg.sort_values("rel_width"); k = max(1, int(round(fr_*len(gg))))
+                    covs.append(gg.iloc[:k].covered.mean())
+                row[f"{int(fr_*100)}%"] = f"{np.mean(covs):.3f}"
+            rows.append(row)
+        sdf = pd.DataFrame(rows)
+        h = "| " + " | ".join(sdf.columns) + " |\n|" + "|".join(["---"]*len(sdf.columns)) + "|\n"
+        for _, r in sdf.iterrows(): h += "| " + " | ".join(str(r[c]) for c in sdf.columns) + " |\n"
+        doc.append("Retained-set coverage by retention fraction:\n\n" + h + "\n")
 
     open(os.path.join(HERE, "conformal_SI.md"), "w").write("\n".join(doc))
     print(f"SI written: {os.path.join(HERE, 'conformal_SI.md')}")

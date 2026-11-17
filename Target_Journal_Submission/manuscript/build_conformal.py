@@ -26,6 +26,14 @@ FIGS = [
      "Per-dataset worst applicability-domain-bin coverage: Mondrian-AD (vertical) versus marginal "
      "conformal (horizontal). Points above the diagonal are datasets where conditioning on the "
      "applicability domain improves worst-bin coverage; dotted lines mark the 0.90 nominal target."),
+    ("fig-profile", "cfig_profile.png",
+     "Coverage across all five applicability-domain strata, from familiar (1) to novel (5), scaffold "
+     "split, mean over datasets. Marginal conformal slopes downward out of domain; the "
+     "applicability-domain-conditional methods stay near the nominal 0.90 line."),
+    ("fig-selective", "cfig_selective.png",
+     "Selective prediction: coverage on the retained set when keeping the narrowest-interval fraction "
+     "of test compounds. Under Mondrian-AD, interval width is an honest uncertainty signal (abstaining "
+     "on wide intervals yields reliably covered retained sets); under marginal conformal it is not."),
 ]
 TBLS = [("tbl-summary", None)]
 

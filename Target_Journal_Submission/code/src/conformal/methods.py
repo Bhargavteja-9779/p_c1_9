@@ -30,14 +30,17 @@ def ad_distance(query_smiles, train_smiles, k=5, n_bits=2048, radius=2):
 
 
 def conformal_quantile(scores, alpha):
-    """The (1-alpha) conformal quantile with finite-sample correction. Returns +inf if too few points."""
-    n = len(scores)
+    """The split-conformal quantile: the ceil((n+1)(1-alpha))-th smallest nonconformity score
+    (1-indexed), i.e. exactly the finite-sample quantile the guarantee requires. Returns +inf when
+    ceil((n+1)(1-alpha)) > n (too few calibration points for the target level)."""
+    s = np.sort(np.asarray(scores, dtype=float))
+    n = s.size
     if n == 0:
         return np.inf
-    level = np.ceil((n + 1) * (1 - alpha)) / n
-    if level > 1:
+    k = int(np.ceil((n + 1) * (1.0 - alpha)))
+    if k > n:
         return np.inf
-    return float(np.quantile(scores, level, method="higher"))
+    return float(s[k - 1])
 
 
 # ---- conformal methods: return per-test half-width q_i (interval = pred ± q_i) ----------------
@@ -61,6 +64,23 @@ def normalized(res_cal, sigma_cal, sigma_te, alpha, beta=None):
     sc = np.abs(res_cal) / (sigma_cal + beta)
     q = conformal_quantile(sc, alpha)
     return q * (sigma_te + beta)
+
+
+def distance_normalized(res_cal, dist_cal, dist_te, alpha, beta=None):
+    """k-NN distance-normalized conformal [Papadopoulos & Haralambous 2011; Johansson et al.]: the
+    heteroscedastic score uses the applicability-domain distance itself as the difficulty estimate,
+    score = |r|/(d(x)+beta), half-width_i = q*(d_i+beta). This is the most relevant AD-aware baseline:
+    it conditions on the SAME distance-to-training axis as Mondrian-AD, but by normalization rather than
+    stratified calibration. beta defaults to the median calibration distance."""
+    dc = np.maximum(np.asarray(dist_cal, float), 0.0)
+    dt = np.maximum(np.asarray(dist_te, float), 0.0)
+    if beta is None:
+        beta = float(np.median(dc))
+    if not np.isfinite(beta) or beta <= 0:
+        beta = float(np.mean(dc)) if np.mean(dc) > 0 else 1e-3
+    sc = np.abs(res_cal) / (dc + beta)
+    q = conformal_quantile(sc, alpha)
+    return q * (dt + beta)
 
 
 def mondrian(res_cal, group_cal, group_te, alpha, fallback_q=None):

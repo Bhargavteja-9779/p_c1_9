@@ -7,8 +7,8 @@ import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
 ROOT = os.path.join(os.path.dirname(__file__), "..", ".."); RES = os.path.join(ROOT, "results"); FIG = os.path.join(ROOT, "figures")
 os.makedirs(FIG, exist_ok=True)
 plt.rcParams.update({"font.size": 10, "axes.spines.top": False, "axes.spines.right": False, "savefig.bbox": "tight", "axes.grid": True, "grid.alpha": 0.25})
-CB = {"marginal": "#D55E00", "normalized": "#999999", "mondrian_scaffold": "#E69F00", "smoothed_ad": "#56B4E9", "mondrian_ad": "#0072B2"}
-LAB = {"marginal": "marginal (standard)", "normalized": "normalized", "mondrian_scaffold": "Mondrian-scaffold", "smoothed_ad": "smoothed-AD (ours)", "mondrian_ad": "Mondrian-AD (ours)"}
+CB = {"marginal": "#D55E00", "normalized": "#999999", "knn_normalized": "#CC79A7", "mondrian_scaffold": "#E69F00", "smoothed_ad": "#56B4E9", "mondrian_ad": "#0072B2"}
+LAB = {"marginal": "marginal (standard)", "normalized": "normalized (learned)", "knn_normalized": "distance-normalized", "mondrian_scaffold": "Mondrian-scaffold", "smoothed_ad": "smoothed-AD (ours)", "mondrian_ad": "Mondrian-AD (ours)"}
 
 def _save(fig, n):
     for e in ("png", "pdf"): fig.savefig(os.path.join(FIG, f"{n}.{e}"), dpi=600)
@@ -16,7 +16,7 @@ def _save(fig, n):
 
 def fig_nearfar(d):
     ds = d[(d.split == "scaffold") & (d.alpha == 0.1)]
-    methods = ["marginal", "normalized", "mondrian_scaffold", "smoothed_ad", "mondrian_ad"]
+    methods = [x for x in ["marginal", "normalized", "knn_normalized", "mondrian_scaffold", "smoothed_ad", "mondrian_ad"] if x in ds.method.unique()]
     near = ds.groupby("method").near_cov.mean(); far = ds.groupby("method").far_cov.mean()
     fig, ax = plt.subplots(figsize=(7, 4)); x = np.arange(len(methods)); w = 0.38
     ax.bar(x - w/2, [near[m] for m in methods], w, label="familiar (near AD)", color="#56B4E9")
@@ -50,9 +50,53 @@ def fig_perdataset(d):
         ax.set_title("Per-dataset worst-AD-bin coverage\n(points above diagonal = improved)")
         _save(fig, "cfig_perdataset")
 
+def fig_profile(path):
+    """Coverage across all 5 AD strata (familiar->novel) for marginal vs AD-conditional methods."""
+    if not os.path.exists(path):
+        return
+    p = pd.read_csv(path)
+    methods = [m for m in ["marginal", "normalized", "smoothed_ad", "mondrian_ad"] if m in p.method.unique()]
+    fig, ax = plt.subplots(figsize=(6.5, 4.2))
+    for mth in methods:
+        g = p[p.method == mth].groupby("stratum").coverage.mean()
+        ax.plot(g.index + 1, g.values, marker="o", color=CB.get(mth, "#333"), label=LAB.get(mth, mth), lw=1.8)
+    ax.axhline(0.9, color="k", ls="--", lw=1, label="nominal 0.90")
+    ax.set_xticks(range(1, 6)); ax.set_xticklabels(["1\n(familiar)", "2", "3", "4", "5\n(novel)"])
+    ax.set_xlabel("applicability-domain stratum"); ax.set_ylabel("coverage"); ax.set_ylim(0.6, 1.0)
+    ax.set_title("Coverage across the applicability domain (scaffold split, mean over datasets)")
+    ax.legend(fontsize=8, loc="lower left")
+    _save(fig, "cfig_profile")
+
+
+def fig_selective(path):
+    """Abstention curve: coverage on the retained (narrowest-interval) fraction."""
+    if not os.path.exists(path):
+        return
+    d = pd.read_csv(path)
+    fracs = np.linspace(0.3, 1.0, 8)
+    fig, ax = plt.subplots(figsize=(6.5, 4.2))
+    for mth in [m for m in ["marginal", "smoothed_ad", "mondrian_ad"] if m in d.method.unique()]:
+        g = d[d.method == mth]
+        ys = []
+        for fr in fracs:
+            covs = []
+            for ds, gg in g.groupby("dataset"):
+                gg = gg.sort_values("rel_width"); k = max(1, int(round(fr * len(gg))))
+                covs.append(gg.iloc[:k].covered.mean())
+            ys.append(np.mean(covs))
+        ax.plot(100 * fracs, ys, marker="o", color=CB.get(mth, "#333"), label=LAB.get(mth, mth), lw=1.8)
+    ax.axhline(0.9, color="k", ls="--", lw=1, label="nominal 0.90")
+    ax.set_xlabel("retention (%) — keep narrowest-interval compounds"); ax.set_ylabel("coverage on retained set")
+    ax.set_title("Selective prediction: is interval width an honest signal?")
+    ax.legend(fontsize=8, loc="lower right")
+    _save(fig, "cfig_selective")
+
+
 def main():
     d = pd.read_csv(os.path.join(RES, "conformal_results.csv"))
     fig_nearfar(d); fig_tradeoff(d); fig_perdataset(d)
+    fig_profile(os.path.join(RES, "conformal_profile_results.csv"))
+    fig_selective(os.path.join(RES, "conformal_selective_results.csv"))
     print("conformal figures written")
 
 if __name__ == "__main__":

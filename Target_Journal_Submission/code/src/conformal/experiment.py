@@ -5,9 +5,16 @@ from data import datasets as D
 from data.splits import three_way, murcko_scaffold
 from preprocessing.cache import features, feature_spec_to_pipe
 from models.zoo import build_model
-from conformal.methods import (ad_distance, marginal, normalized, mondrian, smoothed_mondrian,
-                               coverage, group_coverage, conditional_gap, conformal_quantile)
+from conformal.methods import (ad_distance, marginal, normalized, distance_normalized, mondrian,
+                               smoothed_mondrian, coverage, group_coverage, conditional_gap, conformal_quantile)
 import lightgbm as lgb
+import hashlib
+
+
+def _scaffold_bucket(smiles, nbuckets=50):
+    """Deterministic scaffold -> bucket id (hashlib, not Python's salted hash())."""
+    sc = murcko_scaffold(smiles) or ""
+    return int(hashlib.md5(sc.encode("utf-8")).hexdigest(), 16) % nbuckets
 
 N_EVAL_BINS = 5  # evaluation AD bins (quintiles of calibration distance)
 
@@ -48,13 +55,17 @@ def run_cell(spec, seed, model_name="lgbm", feat="ecfp", split_kind="scaffold", 
     sig_model = lgb.LGBMRegressor(n_estimators=200, num_leaves=15, min_child_samples=20, random_state=seed, n_jobs=1, verbosity=-1)
     sig_model.fit(Xtr, oof_res)
     sig_cal = np.maximum(sig_model.predict(X[cal]), 1e-6); sig_te = np.maximum(sig_model.predict(X[te]), 1e-6)
-    # scaffold groups among cal/test (for scaffold-Mondrian + scaffold-conditional eval)
-    sc_cal = np.array([hash(murcko_scaffold(raw[i])) % 50 for i in cal])
-    sc_te = np.array([hash(murcko_scaffold(raw[i])) % 50 for i in te])
+    beta_norm = float(np.median(np.maximum(oof_res, 0.0)))  # normalized regularizer from OOF train (cal-independent)
+    if not np.isfinite(beta_norm) or beta_norm <= 0:
+        beta_norm = None
+    # scaffold groups among cal/test (deterministic hash; for scaffold-Mondrian + scaffold-conditional eval)
+    sc_cal = np.array([_scaffold_bucket(raw[i]) for i in cal])
+    sc_te = np.array([_scaffold_bucket(raw[i]) for i in te])
 
     halves = {
         "marginal": marginal(res_cal, len(te), alpha),
-        "normalized": normalized(res_cal, sig_cal, sig_te, alpha),
+        "normalized": normalized(res_cal, sig_cal, sig_te, alpha, beta=beta_norm),
+        "knn_normalized": distance_normalized(res_cal, d_cal, d_te, alpha),
         "mondrian_ad": mondrian(res_cal, gcal, gte, alpha),
         "smoothed_ad": smoothed_mondrian(res_cal, d_cal, d_te, alpha, n_bins=N_EVAL_BINS, shrink=0.3),
         "mondrian_scaffold": mondrian(res_cal, sc_cal, sc_te, alpha),
