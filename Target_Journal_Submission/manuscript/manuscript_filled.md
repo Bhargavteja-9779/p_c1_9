@@ -124,7 +124,11 @@ aromaticity model). For a target property $y$ that is invariant to these choices
 $f$ should satisfy *standardization invariance*:
 $$ f(x_i) \approx f(x_j) \quad \text{for all equivalent representations } x_i, x_j. $$
 We call the set of representations reachable from a molecule by applying standardization operations
-its **standardization orbit** $\mathcal{O}(x)$. A model's **standardization sensitivity** on a test
+its **standardization orbit** $\mathcal{O}(x)$.
+
+![A single molecule and members of its standardization orbit (chemically equivalent forms) receive materially different predictions from a fingerprint linear model, although the measured property is identical; the spread of predictions is spurious.](../code/figures/fig1_concept.png){#fig:concept width=80%}
+
+A model's **standardization sensitivity** on a test
 molecule is the spread (standard deviation) of its predictions over the orbit,
 $ s(x) = \mathrm{SD}_{x' \in \mathcal{O}(x)}\, f(x') $, which is $0$ for a perfectly invariant model.
 We report $s$ relative to the label standard deviation of the dataset so that magnitudes are
@@ -260,12 +264,29 @@ terms, for potency datasets this corresponds to prediction shifts on the order o
 log unit — comparable to a fraction of experimental assay noise — induced purely by an upstream
 standardization convention and invisible in the aggregate metric.
 
+: Standardization-invariance violation by model and featurization: per-prediction orbit SD and realistic-pipeline SD, each relative to the dataset label SD (median over datasets). {#tbl:inv}
+
+| Model | Featurization | Orbit SD / label SD | Pipeline SD / label SD |
+|---|---|---|---|
+| lgbm | desc | 0.084 | 0.0040 |
+| lgbm | ecfp | 0.119 | 0.0071 |
+| linear | desc | 0.071 | 0.0039 |
+| linear | ecfp | 0.425 | 0.0286 |
+
+![Standardization-invariance violation is representation-dependent: per-prediction orbit SD (relative to label SD) by model and featurization. Fingerprint linear models are most sensitive; tree ensembles least.](../code/figures/fig_invariance_by_representation.png){#fig:inv width=70%}
+
+![The silent confounder: aggregate benchmark metrics are nearly unchanged across pipelines (a), while per-prediction orbit SD is substantial (b).](../code/figures/fig_silent_contrast.png){#fig:silent width=85%}
+
+
 ## 6.5 Which operation is responsible (RQ3)
 A one-operation-at-a-time ablation attributes most of the effect to tautomer canonicalization, consistent with
 the chemistry: tautomer and protonation changes alter the most descriptor- and fingerprint-relevant
 substructures (Figure 4; Table S3). The magnitude of a dataset's instability correlates with its
 fraction of ionizable/tautomerizable molecules (Supporting Information), explaining why potency and
 permeability datasets are more affected than simple physicochemical sets.
+
+![One-operation-at-a-time ablation: median absolute change in the primary metric attributable to each standardization operation.](../code/figures/fig_operation_ablation.png){#fig:abl width=60%}
+
 
 # 7. Results: Standardization-Orbit Robust Learning
 
@@ -280,7 +301,10 @@ independent of the arbitrary standardization of its input. **Training augmentati
 reduces the orbit prediction spread by a median of 0.032 of the label SD (a
 36% relative reduction, on 91% of cases; Figure 5a), i.e.,
 the model *learns* partial invariance without any inference-time averaging. This comes at a small
-accuracy cost that is model-dependent (Section 7.2). **SORB-full** combines both. We emphasize that
+accuracy cost that is model-dependent (Section 7.2). **SORB-full** combines both.
+
+![SORB effect: (a) training augmentation reduces the per-prediction orbit SD (points below the diagonal); (b) accuracy effect of each SORB variant across datasets (test-orbit averaging is accuracy-neutral).](../code/figures/fig_method_effect.png){#fig:method width=85%}
+ We emphasize that
 SORB's contribution is reliability — reproducible, standardization-invariant predictions — not an
 improvement in aggregate accuracy, which it is not designed to provide.
 
