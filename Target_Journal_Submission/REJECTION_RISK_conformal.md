@@ -1,5 +1,26 @@
 # Rejection-risk report — conformal paper
 
+## Post-panel revision status (round 1)
+An 8-reviewer adversarial panel (REVIEW_HISTORY_conformal.md) was run and the manuscript revised. Key
+risks now **addressed**: (R1/R2 novelty) prior art cited and differentiated (dAD 2023, Hosni 2026,
+Papadopoulos-kNN 2011); framing changed from "discovery" to "systematic benchmark + simple wrapper".
+(R3/baselines) added the distance-normalized k-NN conformal baseline — the one AD-aware baseline a
+knowledgeable reviewer demands; it conditions on the same axis and helps partially, which strengthens
+rather than weakens the result. (Guarantee honesty) downgraded "exact finite-sample per-stratum
+guarantee" to approximate, with the data-dependent-binning, open-top-stratum, and cal/test
+non-exchangeability caveats stated; smoothed-AD disclosed as guarantee-free. (Circularity) far-stratum
+coverage made the primary (unbiased) endpoint; worst-bin/AD-gap flagged as biased order statistics;
+scaffold-conditional coverage aggregated to show the fix generalizes to an un-calibrated partition.
+(§8) grounded in a real selective-prediction/abstention analysis. (Consistency) mean/median, Friedman
+method count, gap definition, "preserves"→over-covers, random-split wording, far-width doubling all
+fixed; per-collection breakdown added for dataset non-independence. **Deferred to Limitations** (not
+run): GNN/pretrained base model, temporal split, alternative AD descriptors, CQR/localized-CP baselines.
+Residual top risk remains **novelty perception** — mitigated but not eliminated; the paper now stands or
+falls as an honest benchmark-plus-practical-wrapper contribution, which is a legitimate JCIM article.
+
+---
+
+
 Honest pre-submission assessment of the most likely reviewer objections, our current defense, and the
 residual risk. "Defense" points to evidence already in the manuscript/SI; "Residual" states what we
 cannot fully rule out.

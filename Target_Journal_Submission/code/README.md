@@ -29,17 +29,31 @@ git clone --depth 1 https://github.com/molML/MoleculeACE.git data_cache/molecule
 ```
 
 ## 3. Reproduce
+
+### 3a. Conformal study (primary paper: AD-conditional conformal prediction)
 ```bash
-python run_all.py --mode quick    # pipeline check (~3 min): small subset
-python run_all.py --mode full     # full study (~2-3 h wall on 4 cores), checkpointed & resumable
-python -m src.visualization.analyze    # -> results/metrics.json, statistics.json, tables/*.csv
-python -m src.visualization.figures    # -> figures/*.{png,pdf}
-python -m src.visualization.tables     # -> tables/*.{md,tex}
-python scripts/leakage_audit.py        # -> results/leakage_audit.csv
-pytest -q tests                        # unit tests
+python run_conformal.py --mode full --nproc 3 --splits scaffold,random --alphas 0.1   # main study (1476 cells, ~30-40 min, checkpointed -> results/_confcells/)
+python run_conformal.py --mode full --models lgbm,rf,linear --feats ecfp,desc --seeds 0 \
+       --splits scaffold --alphas 0.05,0.2 --out conformal_alpha_results.csv            # alpha robustness
+python run_strata_sens.py --nproc 3        # strata-count sensitivity -> results/conformal_strata_results.csv
+python run_profile.py --nproc 3            # 5-stratum profile + selective-prediction data
+python src/conformal/analyze.py            # -> results/conformal_metrics.json, tables/conformal_summary_*.csv
+python src/conformal/figures.py            # -> figures/cfig_*.{png,pdf}
+cd ../manuscript && python fill_conformal.py && python build_conformal.py && python si_conformal.py
+bash build_conformal.sh                    # or: ../code/finalize_conformal.sh  (DOCX/PDF + SI)
 ```
-Re-running skips completed cells (`results/_cells/`). All randomness is seeded; the full study uses
-seeds 0–4. Hardware auto-detected (CPU/CUDA/MPS).
+Every manuscript number is token-substituted from `conformal_metrics.json` (no hand-typed values).
+Re-running skips completed cells (`results/_confcells/`). All randomness is seeded; the conformal study
+uses seeds 0–2 (three seeds).
+
+### 3b. Standardization study (archived; superseded by the conformal paper — see PROJECT_STATE.md)
+```bash
+python run_all.py --mode full          # checkpointed -> results/_cells/
+python -m src.visualization.analyze    # -> results/metrics.json, tables/*.csv
+python -m src.visualization.figures ; python -m src.visualization.tables
+python scripts/leakage_audit.py ; pytest -q tests
+```
+Hardware auto-detected (CPU/CUDA/MPS).
 
 ## 4. Layout
 ```

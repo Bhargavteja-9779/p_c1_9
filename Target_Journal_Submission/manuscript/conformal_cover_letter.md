@@ -26,15 +26,19 @@ interval a chemist would trust for a genuinely new candidate covers the truth ma
 advertised: a quantified "false sense of security."
 
 **Why it matters, and what is new.** It is textbook that marginal coverage does not imply conditional
-coverage; what has not been done, to our knowledge, is to *quantify this specific failure for molecular
-models along the applicability-domain axis at benchmark scale*, to show that the community's go-to
-remedy — normalized/heteroscedastic conformal — does not address the problem (it preserves marginal
-coverage but only reallocates interval width by a learned difficulty estimate that is itself unreliable
-out of domain, leaving novel-chemotype coverage low), and to provide a simple, guaranteed fix. We introduce **applicability-domain-conditional (Mondrian-AD)
-conformal**, which calibrates separately across strata defined by distance to the training set, with a
-shrinkage variant for sparse strata. It restores novel-compound coverage to nominal with a
-finite-sample per-stratum guarantee, at a modest and well-placed width cost, with no retraining and no
-dependence on the base model or featurizer.
+coverage, and recent cheminformatics work has begun to address applicability-domain-aware conformal
+calibration (notably the dynamic-calibration method of Oršolić and Šmuc, *Bioinformatics* 2023, and,
+concurrently, Hosni et al., *ACS Omega* 2026). Our contribution is the *systematic, benchmark-scale*
+characterization these do not provide — 41 single-task molecular-regression datasets, three model
+families, two featurizations, with coverage resolved continuously along the applicability domain — and,
+with the obvious remedies ruled out as negative controls (a learned-difficulty normalized score, a
+distance-normalized score, and a scaffold-conditional variant), a demonstration that a *simple,
+interpretable, retraining-free* applicability-domain-conditional wrapper (Mondrian-AD, with a shrinkage
+variant) raises novel-compound coverage to nominal. We are explicit about scope: the restored per-stratum
+coverage is approximate (the strata are data-dependent and the most novel stratum is open-ended), the
+gain is in *honest* uncertainty rather than sharper predictions, and we verify the fix improves coverage
+even on an independent (scaffold) partition it was not calibrated on. The method is model- and
+featurization-agnostic and needs no retraining.
 
 **Rigor and reproducibility.** Every quantitative claim in the manuscript is generated directly from
 machine-readable result files by a token-substitution pipeline — no number is hand-transcribed. We use
