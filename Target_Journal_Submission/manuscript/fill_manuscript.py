@@ -60,15 +60,29 @@ def compute_values():
                            "+stripstereo": "stereochemistry handling", "+mdlarom": "the aromaticity model",
                            "-neutralize": "charge/neutralization"}.get(top, top)
     # RQ5 invariance
-    r5 = m.get("RQ5_invariance", {}).get("baseline_invariance_by_representation", [])
+    inv = m.get("RQ5_invariance", {})
+    r5 = inv.get("baseline_invariance_by_representation", [])
+    clf5 = inv.get("classification_probability_sd", [])
     if r5:
         ov = [r["orbit_mean_rel_sd"] for r in r5]
+        pv = [r["pipe_mean_rel_sd"] for r in r5]
         v["RQ5_ORBIT_MEDIAN"] = f"{np.median(ov):.2f}×"
         v["RQ5_ORBIT_MAX"] = f"{max(ov):.2f}×"
+        v["PIPE_SD_MEDIAN"] = f"{np.median(pv):.3f}×"
         lin = [r for r in r5 if r["model"] == "linear" and r["feat"] == "ecfp"]
         tree = [r for r in r5 if r["model"] == "lgbm" and r["feat"] == "ecfp"]
         if lin: v["RQ5_ORBIT_LINEAR"] = f"{lin[0]['orbit_mean_rel_sd']:.2f}×"
         if tree: v["RQ5_ORBIT_TREE"] = f"{tree[0]['orbit_mean_rel_sd']:.2f}×"
+        if clf5:
+            v["CLF_PROB_SD_MEDIAN"] = f"{np.median([r['pipe_prob_sd'] for r in clf5]):.3f}"
+        # machine-generated invariance table (regression)
+        tbl = (": Standardization-invariance violation (regression), median over datasets: per-prediction "
+               "SD relative to the label SD, across a molecule's full equivalent-form orbit and across the "
+               "six realistic pipelines. {#tbl:inv}\n\n"
+               "| Model | Featurization | Orbit SD / label SD | Pipeline SD / label SD |\n|---|---|---|---|\n")
+        for r in r5:
+            tbl += f"| {r['model']} | {r['feat']} | {r['orbit_mean_rel_sd']:.3f} | {r['pipe_mean_rel_sd']:.4f} |\n"
+        v["TABLE_INVARIANCE"] = tbl
     # RQ4 pooled method
     mp = m.get("RQ4_method_pooled", {})
     # prefer regression primary (rmse): median improvement -> report as metric units
@@ -77,6 +91,20 @@ def compute_values():
         v["SORB_TESTORBIT_MED"] = f"a negligible {to['median_improvement']:+.4f} in RMSE"
         v["SORB_TESTORBIT_FRAC"] = _pct(100 * to["frac_improved"])
         v["SORB_TESTORBIT_P"] = f"{to['wilcoxon_p']:.2g}"
+    om = m.get("RQ4_omnibus", {})
+    fr = om.get("friedman")
+    if fr:
+        v["FRIEDMAN_P"] = f"{fr['p']:.1g}"
+        v["NEMENYI_CD"] = f"{fr['nemenyi_cd']:.2f}"
+        mr = fr["mean_ranks"]
+        v["RANK_BASELINE"] = f"{mr['baseline']:.2f}"
+        v["RANK_TESTORBIT"] = f"{mr['sorb_testorbit']:.2f}"
+        v["RANK_FULL"] = f"{mr['sorb_full']:.2f}"
+        v["RANK_TRAINAUG"] = f"{mr['sorb_trainaug']:.2f}"
+    mu = om.get("multiplicity")
+    if mu:
+        v["N_SIG_RAW"] = str(mu["n_sig_raw_0.05"])
+        v["N_SIG_HOLM"] = str(mu["n_sig_holm_0.05"])
     ti = mp.get("trainaug_invariance")
     if ti:
         v["SORB_TRAINAUG_INVRED"] = f"{ti['median_abs_reduction']:.3f} of the label SD"
