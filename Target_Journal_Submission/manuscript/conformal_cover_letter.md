@@ -1,7 +1,7 @@
-**[Author Name(s)]**
-[Affiliation]
-[Address]
-[corresponding@author.email]
+**Ragavan K** (corresponding author), on behalf of **P. N. Bhargav Teja** and Ragavan K
+[Affiliation — to be completed]
+[Address — to be completed]
+[corresponding e-mail — to be completed]
 
 [Date]
 
@@ -54,10 +54,10 @@ applicability domain, and uncertainty quantification for chemical data, and it o
 immediately actionable recommendation: report and calibrate conformal coverage *conditional on the
 applicability domain*, so that the uncertainty attached to a novel candidate can actually be trusted.
 
-This manuscript is original, is not under consideration elsewhere, and all authors have approved the
-submission. We have no conflicts of interest to declare. We thank the editors and reviewers in advance
-for their time.
+This manuscript is original, is not under consideration elsewhere, and both authors have approved the
+submission. We received no specific funding for this work and declare no competing financial interest.
+We thank the editors and reviewers in advance for their time.
 
 Sincerely,
 
-[Author Name(s)], on behalf of all authors
+Ragavan K, corresponding author, on behalf of P. N. Bhargav Teja and Ragavan K

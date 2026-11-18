@@ -95,6 +95,22 @@ def compute_values():
     # Friedman (far-cov)
     if fried:
         v["FRIEDMAN_P"] = _p(fried["p"]); v["NEMENYI_CD"] = f"{fried['nemenyi_cd']:.2f}"
+    # mechanism: growth of difficulty signals from familiar->novel stratum (why learned difficulty fails)
+    mp = os.path.join(RES, "conformal_mechanism_results.csv")
+    if os.path.exists(mp):
+        md = pd.read_csv(mp)
+        g5 = {"ad_dist": [], "sigma_learned": [], "abs_resid": []}
+        for ds, gg in md.groupby("dataset"):
+            if len(gg) < 25:
+                continue
+            q = pd.qcut(gg.ad_dist.rank(method="first"), 5, labels=False)
+            for key in g5:
+                s = gg.groupby(q)[key].mean()
+                if s.iloc[0] > 0:
+                    g5[key].append(s.iloc[-1] / s.iloc[0])
+        v["SIGMA_GROWTH"] = f"{100*(np.median(g5['sigma_learned'])-1):.0f}"
+        v["RESID_GROWTH"] = f"{100*(np.median(g5['abs_resid'])-1):.0f}"
+        v["DIST_GROWTH"] = f"{100*(np.median(g5['ad_dist'])-1):.0f}"
     # selective-prediction: is interval width an honest novelty signal?
     sig = _selective_signal(0.30)
     if sig:

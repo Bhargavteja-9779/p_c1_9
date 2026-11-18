@@ -67,7 +67,13 @@ def run(spec):
             comp.append({"dataset": spec.name, "method": k, "covered": int(covered[k][i]),
                          "rel_width": float(2 * h[i] / scale), "stratum": int(gte[i]),
                          "far": int(gte[i] == NB - 1)})
-    return {"profile": prof, "compound": comp}
+    # mechanism: per-compound AD distance, true abs residual, and the LEARNED difficulty sigma(x).
+    # If the learned sigma does NOT track AD distance while the true error does, that explains why
+    # learned-difficulty normalized conformal fails on novel chemotypes.
+    abs_res_te = np.abs(yte - pred_te)
+    mech = [{"dataset": spec.name, "ad_dist": float(d_te[i]), "abs_resid": float(abs_res_te[i]),
+             "sigma_learned": float(sig_te[i])} for i in range(len(te))]
+    return {"profile": prof, "compound": comp, "mech": mech}
 
 
 def _job(spec):
@@ -85,14 +91,15 @@ def main():
     set_global_seed(0)
     specs = [s for s in D.regression_registry() if s.name not in DROP]
     print(f"profile: {len(specs)} datasets x {NB} strata", flush=True)
-    prof, comp = [], []
+    prof, comp, mech = [], [], []
     with Pool(a.nproc) as pool:
         for i, r in enumerate(pool.imap_unordered(_job, specs), 1):
             if isinstance(r, dict):
-                prof.extend(r.get("profile", [])); comp.extend(r.get("compound", []))
+                prof.extend(r.get("profile", [])); comp.extend(r.get("compound", [])); mech.extend(r.get("mech", []))
             if i % 10 == 0 or i == len(specs): print(f"  {i}/{len(specs)}", flush=True)
     pd.DataFrame(prof).to_csv(os.path.join(RES, "conformal_profile_results.csv"), index=False)
     pd.DataFrame(comp).to_csv(os.path.join(RES, "conformal_selective_results.csv"), index=False)
+    pd.DataFrame(mech).to_csv(os.path.join(RES, "conformal_mechanism_results.csv"), index=False)
     print("DONE", flush=True)
 
 

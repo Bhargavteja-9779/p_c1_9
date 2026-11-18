@@ -1,13 +1,16 @@
 ---
 title: "A False Sense of Security: Standard Conformal Prediction Under-Covers Novel Chemotypes, and the Case for Applicability-Domain-Conditional Calibration"
 author:
-  - name: "[Author Name(s)]"
-    affiliation: "[Affiliation]"
-    email: "[corresponding@author.email]"
-keywords: "conformal prediction; uncertainty quantification; applicability domain; QSAR; molecular property prediction; distribution shift; prediction intervals; drug discovery"
+  - "P. N. Bhargav Teja$^{1}$"
+  - "Ragavan K$^{1,*}$"
+keywords: "conformal prediction; uncertainty quantification; applicability domain; QSAR; molecular property prediction; prediction intervals; drug discovery"
 bibliography: references.bib
 csl: assets/acs.csl
 ---
+
+$^{1}$[Affiliation — to be completed]
+
+$^{*}$Corresponding author: Ragavan K ([corresponding e-mail — to be completed])
 
 # Abstract
 
@@ -22,8 +25,10 @@ marginal coverage ({{MARG_COV}} at a 90% target) yet **under-cover the most nove
 test molecules in the farthest applicability-domain stratum, coverage falls to {{MARG_FAR_COV}} — a
 false sense of security for the extrapolation regime. We show that *which conditioning axis* a remedy
 uses is what matters: a learned-difficulty normalized score (farthest-stratum coverage {{NORM_FAR_COV}})
-and a scaffold-conditional variant ({{SCAF_FAR_COV}}) do not repair the gap, whereas conditioning on the
-applicability-domain axis does — both the established distance-normalized conformal ({{KNN_FAR_COV}})
+and a scaffold-conditional variant ({{SCAF_FAR_COV}}) do not repair the gap — the learned difficulty,
+fit in-domain, grows only {{SIGMA_GROWTH}}% from familiar to novel compounds while the true error grows
+{{RESID_GROWTH}}%, so it cannot react to novelty — whereas conditioning on the applicability-domain axis
+does — both the established distance-normalized conformal ({{KNN_FAR_COV}})
 and a simple applicability-domain Mondrian wrapper we describe ({{MOND_FAR_COV}}) raise novel-compound
 coverage to near nominal (the applicability-domain-conditional methods are statistically indistinguishable
 from one another and clearly separated from the rest by a Friedman/Nemenyi analysis). The Mondrian
@@ -259,6 +264,19 @@ fact the tightest of all methods). In short, the conditioning *axis* is what mat
 methods that condition on distance-to-training help, and the learned-difficulty and scaffold variants,
 despite also being "conditional", do not.
 
+## 6.4 Why learned difficulty fails to adapt to novelty
+The failure of the normalized score has a simple, measurable cause. A difficulty model $\sigma(x)$ is
+trained on in-domain residuals, so it learns what makes *familiar* compounds hard — and that signal does
+not extrapolate. Stratifying the test set by applicability-domain distance and measuring how each
+quantity grows from the familiar to the novel stratum (Figure @fig-mechanism), the true prediction error
+grows by about {{RESID_GROWTH}}% (median over datasets), but the learned difficulty $\sigma(x)$ grows by
+only {{SIGMA_GROWTH}}% — it barely registers that novel compounds are harder, so it cannot widen their
+intervals enough. Distance to the training set, by contrast, grows by {{DIST_GROWTH}}% out of domain by
+construction, more than covering the error growth; that is precisely why conditioning on it restores
+coverage while conditioning on a learned difficulty does not. The lesson generalizes beyond conformal
+prediction: any heteroscedastic uncertainty estimate learned in-domain will tend to under-react to
+novelty, and novelty must be measured, not learned.
+
 # 7. Results: Conditioning on the Applicability Domain Restores Coverage
 
 ## 7.1 The axis is what matters
@@ -389,18 +407,21 @@ implementation and recommend conditioning conformal calibration on the applicabi
 practice for trustworthy molecular uncertainty.
 
 # Data and Software Availability
-All datasets are public and require no credentials (MoleculeACE [@vantilborg2022], Therapeutics Data
-Commons [@tdc2021], MoleculeNet [@moleculenet2018]); download instructions are in the repository README.
-Complete source code, environment specifications, deterministic seeds, and scripts that regenerate every
-figure and table from machine-readable result files are released under the MIT License at [repository
-URL — to be inserted on acceptance]. Models use scikit-learn [@sklearn2011] and LightGBM [@lightgbm2017];
-fingerprints and descriptors use RDKit [@rdkit].
+All datasets used in this study are publicly available and require no credentials: the MoleculeACE
+activity-cliff benchmark collection (https://github.com/molML/MoleculeACE) [@vantilborg2022], the
+Therapeutics Data Commons ADMET regression tasks (https://tdcommons.ai/) [@tdc2021], and the MoleculeNet
+physicochemical sets ESOL and FreeSolv (https://moleculenet.org/) [@moleculenet2018]. The complete source
+code, environment specifications, deterministic seeds, and scripts that regenerate every figure and table
+from machine-readable result files will be made available by the authors upon reasonable request. Models
+use scikit-learn [@sklearn2011] and LightGBM [@lightgbm2017]; fingerprints and descriptors use RDKit
+[@rdkit].
 
 # Acknowledgments
-[To be completed.]
+The authors received no specific funding for this work.
 
 # Author Contributions
-[To be completed.]
+P. N. Bhargav Teja conceived and carried out the study — the implementation, experiments, analysis, and
+writing. Ragavan K supervised the work. Both authors reviewed and approved the manuscript.
 
 # Competing Interests
 The authors declare no competing financial interest.

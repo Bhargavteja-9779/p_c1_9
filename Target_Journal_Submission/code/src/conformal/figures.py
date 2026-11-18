@@ -85,11 +85,41 @@ def fig_selective(path):
     _save(fig, "cfig_selective")
 
 
+def fig_mechanism(path):
+    """Why learned difficulty fails: growth of the difficulty signals across AD strata, normalized to the
+    familiar stratum. The learned sigma(x) barely grows; AD distance and the true error grow strongly."""
+    if not os.path.exists(path):
+        return
+    d = pd.read_csv(path)
+    rows = {"ad_dist": [], "sigma_learned": [], "abs_resid": []}
+    for ds, g in d.groupby("dataset"):
+        if len(g) < 25:
+            continue
+        q = pd.qcut(g.ad_dist.rank(method="first"), 5, labels=False)
+        for key in rows:
+            s = g.groupby(q)[key].mean()
+            if s.iloc[0] > 0:
+                rows[key].append((s / s.iloc[0]).values)
+    fig, ax = plt.subplots(figsize=(6.5, 4.2))
+    style = {"ad_dist": ("#009E73", "AD distance $d(x)$ — used by distance-normalized"),
+             "abs_resid": ("#000000", "true |error| — what coverage needs"),
+             "sigma_learned": ("#999999", "learned difficulty $\\sigma(x)$ — used by normalized")}
+    for key, (c, lab) in style.items():
+        m = np.nanmedian(np.array(rows[key]), 0)
+        ax.plot(range(1, 6), m, marker="o", color=c, label=lab, lw=1.8)
+    ax.set_xticks(range(1, 6)); ax.set_xticklabels(["1\n(familiar)", "2", "3", "4", "5\n(novel)"])
+    ax.set_xlabel("applicability-domain stratum"); ax.set_ylabel("growth relative to familiar stratum")
+    ax.set_title("Why learned difficulty fails to adapt to novelty")
+    ax.legend(fontsize=8, loc="upper left")
+    _save(fig, "cfig_mechanism")
+
+
 def main():
     d = pd.read_csv(os.path.join(RES, "conformal_results.csv"))
     fig_nearfar(d); fig_tradeoff(d); fig_perdataset(d)
     fig_profile(os.path.join(RES, "conformal_profile_results.csv"))
     fig_selective(os.path.join(RES, "conformal_selective_results.csv"))
+    fig_mechanism(os.path.join(RES, "conformal_mechanism_results.csv"))
     print("conformal figures written")
 
 if __name__ == "__main__":

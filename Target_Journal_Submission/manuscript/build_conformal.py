@@ -26,6 +26,12 @@ FIGS = [
      "Per-dataset worst applicability-domain-bin coverage: Mondrian-AD (vertical) versus marginal "
      "conformal (horizontal). Points above the diagonal are datasets where conditioning on the "
      "applicability domain improves worst-bin coverage; dotted lines mark the 0.90 nominal target."),
+    ("fig-mechanism", "cfig_mechanism.png",
+     "Why learned difficulty fails to adapt to novelty. Growth of three quantities from the familiar to "
+     "the novel applicability-domain stratum, normalized to the familiar stratum (median over datasets). "
+     "The true prediction error grows substantially out of domain and the applicability-domain distance "
+     "grows more, but the learned difficulty sigma(x) barely grows — so a normalized score built on it "
+     "cannot widen novel-compound intervals enough."),
     ("fig-profile", "cfig_profile.png",
      "Coverage across all five applicability-domain strata, from familiar (1) to novel (5), scaffold "
      "split, mean over datasets. Marginal conformal slopes downward out of domain; the "
